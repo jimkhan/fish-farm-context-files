@@ -1,0 +1,83 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$meta": {
+    "project": "Fish Farm Management System (FMS)",
+    "version": "0.1.0",
+    "consumedBy": ["fish-farm-web", "fish-farm-mobile-app"],
+    "notes": "Single-brand tokens shared by web (Tailwind config) and mobile (RN theme). Alert-severity palette mirrors GLOSSARY AlertSeverity. Fonts include a Bangla-capable stack for Bengali numerals/dates (NFR-002). Values are stubs to be refined during UI module detailing (Phase 5)."
+  },
+  "color": {
+    "brand": {
+      "primary": { "value": "#0E7490", "description": "Teal — water/aquaculture" },
+      "primaryDark": { "value": "#155E75" },
+      "accent": { "value": "#0891B2" }
+    },
+    "neutral": {
+      "bg": { "value": "#F8FAFC" },
+      "surface": { "value": "#FFFFFF" },
+      "border": { "value": "#E2E8F0" },
+      "textPrimary": { "value": "#0F172A" },
+      "textSecondary": { "value": "#475569" },
+      "textInverse": { "value": "#FFFFFF" }
+    },
+    "severity": {
+      "info": { "value": "#0284C7", "description": "AlertSeverity.INFO" },
+      "warning": { "value": "#D97706", "description": "AlertSeverity.WARNING" },
+      "critical": { "value": "#DC2626", "description": "AlertSeverity.CRITICAL — water/oxygen emergency" }
+    },
+    "status": {
+      "ok": { "value": "#16A34A" },
+      "muted": { "value": "#94A3B8" },
+      "danger": { "value": "#DC2626" }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "base": { "value": "Inter, system-ui, sans-serif" },
+      "bangla": { "value": "'Noto Sans Bengali', 'Hind Siliguri', sans-serif", "description": "Worker-facing Bangla text + Bengali numerals" },
+      "mono": { "value": "'JetBrains Mono', monospace" }
+    },
+    "fontSize": {
+      "xs": { "value": "12" },
+      "sm": { "value": "14" },
+      "md": { "value": "16", "description": "Base; large enough for low-literacy worker UI" },
+      "lg": { "value": "20" },
+      "xl": { "value": "24" },
+      "2xl": { "value": "32" }
+    },
+    "fontWeight": {
+      "regular": { "value": "400" },
+      "medium": { "value": "500" },
+      "bold": { "value": "700" }
+    },
+    "lineHeight": {
+      "tight": { "value": "1.2" },
+      "normal": { "value": "1.5" }
+    }
+  },
+  "spacing": {
+    "0": { "value": "0" },
+    "1": { "value": "4" },
+    "2": { "value": "8" },
+    "3": { "value": "12" },
+    "4": { "value": "16" },
+    "6": { "value": "24" },
+    "8": { "value": "32" },
+    "touchTarget": { "value": "48", "description": "Minimum tap target for mobile (NFR-009/014)" }
+  },
+  "radius": {
+    "sm": { "value": "6" },
+    "md": { "value": "10" },
+    "lg": { "value": "16" },
+    "pill": { "value": "999" }
+  },
+  "elevation": {
+    "card": { "value": "0 1px 3px rgba(15,23,42,0.08)" },
+    "modal": { "value": "0 10px 30px rgba(15,23,42,0.18)" }
+  },
+  "icon": {
+    "sizeSm": { "value": "20" },
+    "sizeMd": { "value": "28" },
+    "sizeLg": { "value": "40", "description": "Icon-first worker actions" }
+  }
+}

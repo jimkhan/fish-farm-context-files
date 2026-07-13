@@ -1,0 +1,881 @@
+openapi: 3.1.0
+info:
+  title: Fish Farm Management System (FMS) API
+  version: 0.1.6
+  description: >
+    Contract-first API for the FMS. The backend (fish-farm-backend) implements this contract;
+    the web and mobile clients are generated from it (ADR-003). Every operation carries a CON- id
+    in its `description` and traces the FR- it serves. Defined: CON-001…CON-048, CON-051, CON-052
+    (health CON-047, species CON-048, treatments CON-051, and growth-ADG/SGR CON-052 activated in
+    the Phase-6+ closure passes — CON-052 only for ADG/SGR, not FCR, TASK-030's separate scope).
+    CON-049…CON-050, CON-053…CON-057 remain reserved for deferred P2/P3 endpoints — see the
+    registry at the foot of this file. Any change here is a human-approved guardrail (it affects
+    all surfaces).
+    0.1.1 (ERD-alignment pass): response schemas now return the persisted fields they accept
+    (Mortality.photoUrl, Harvest.revenue, FeedingLog.observation, FinancialTxn.note); added
+    WaterReading.deviceId and FinancialTxn/CreateFinancialTxn.sourceRef; Money.currency restricted
+    to BDT (ADR-018); Pond.areaDecimal renamed to `area` (value is in the project's landUnit,
+    ADR-018); SAMPLING and POND_ACTION added to the sync entity enum (CreateSampling now requires
+    clientMutationId); CON-056 (device registration) and CON-057 (audit-log view) reserved.
+    0.1.2 (TASK-028): CON-051 (`POST /projects/{projectId}/batches/{batchId}/treatments`)
+    activated — CreateTreatment/Treatment schemas added.
+    0.1.3 (TASK-020): CreateInventoryTxn/InventoryTxn gained an optional `cost` (`Money`, AC-082/
+    R8 — inventory receipt cost was never modeled anywhere in ERD.md or this contract before).
+    0.1.4 (TASK-029): CON-052 (`GET /projects/{projectId}/batches/{batchId}/growth`) activated for
+    ADG/SGR — new `Growth` schema (no `fcr` field; TASK-030 owns FCR).
+    0.1.5 (TASK-017): `Alert` gained `escalatedAt` (nullable, R7/AC-054 — set once a CRITICAL
+    alert is re-notified past the SLA).
+    0.1.6 (TASK-021): `FeedPlan` gained `adjustmentReason` (nullable — R3/AC-073 require an
+    "explicit reason" for a temp/DO-adjusted quota, never modeled as a field before this task).
+    Tenant isolation (NFR-011): all `/projects/{projectId}/...` resources are auto-scoped to the
+    caller's ProjectMembership; a non-member receives 403/404 uniformly and never another
+    project's data.
+
+servers:
+  - url: https://api.example.com/v1
+    description: Production (single VPS)
+  - url: http://localhost:3000/v1
+    description: Local development
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: platform
+  - name: auth
+  - name: identity
+  - name: projects
+  - name: ponds
+  - name: feed
+  - name: water
+  - name: health
+  - name: growth
+  - name: harvest
+  - name: inventory
+  - name: finance
+  - name: tasks
+  - name: monitoring
+  - name: notifications
+  - name: sync
+  - name: reporting
+  - name: calendar
+
+paths:
+  # ---------------- platform / health (NFR-007, NFR-010) ----------------
+  /health:
+    get:
+      tags: [platform]
+      summary: Liveness/readiness probe
+      description: "CON-047 — NFR-007, NFR-010. Public. Delivered by TASK-001. Returns service + dependency (db) status for uptime monitoring and container orchestration."
+      security: []
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Health' } } } }
+        '503': { description: Service Unavailable, content: { application/json: { schema: { $ref: '#/components/schemas/Health' } } } }
+
+  # ---------------- auth (FR-001, FR-006) ----------------
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Authenticate and receive JWT tokens
+      description: "CON-001 — FR-001. Public."
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/AuthTokens' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+  /auth/refresh:
+    post:
+      tags: [auth]
+      summary: Exchange a refresh token for new access token
+      description: "CON-002 — FR-001. Public (refresh token in body)."
+      security: []
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/RefreshRequest' } } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/AuthTokens' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+  /auth/password-reset/request:
+    post:
+      tags: [auth]
+      summary: Request a password reset
+      description: "CON-003 — FR-006. Public."
+      security: []
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PasswordResetRequest' } } } }
+      responses: { '202': { description: Accepted } }
+  /auth/password-reset/confirm:
+    post:
+      tags: [auth]
+      summary: Confirm a password reset
+      description: "CON-004 — FR-006. Public."
+      security: []
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PasswordResetConfirm' } } } }
+      responses: { '204': { description: No Content }, '400': { $ref: '#/components/responses/Error' } }
+
+  # ---------------- identity / membership (FR-002) ----------------
+  /me:
+    get:
+      tags: [identity]
+      summary: Current user and their project memberships
+      description: "CON-005 — FR-002. Capabilities are derived from these memberships, not a global role."
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Me' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+
+  # ---------------- projects & portfolio (FR-007..FR-011) ----------------
+  /projects:
+    get:
+      tags: [projects]
+      summary: List projects the caller is a member of
+      description: "CON-006 — FR-010, FR-011, NFR-011. Scoped to caller's memberships."
+      parameters: [ { $ref: '#/components/parameters/cursor' }, { $ref: '#/components/parameters/limit' } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ProjectPage' } } } }
+    post:
+      tags: [projects]
+      summary: Create a project (optionally with first pond)
+      description: "CON-007 — FR-007, FR-008. OWNER only. Inline first pond supported."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateProject' } } } }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Project' } } } }
+        '403': { $ref: '#/components/responses/Error' }
+  /projects/{projectId}:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [projects]
+      summary: Get a project
+      description: "CON-008 — FR-011, NFR-011. Member-only."
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Project' } } } }
+        '403': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+    patch:
+      tags: [projects]
+      summary: Update project settings/status
+      description: "CON-009 — FR-007. OWNER only."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/UpdateProject' } } } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Project' } } } } }
+  /projects/{projectId}/members:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [projects]
+      summary: List members of a project
+      description: "CON-010 — FR-009. OWNER only."
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Membership' } } } } } }
+    post:
+      tags: [projects]
+      summary: Invite/assign a member with a role
+      description: "CON-011 — FR-009. OWNER only. A WORKER may hold only one active project."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateMembership' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Membership' } } } }, '409': { $ref: '#/components/responses/Error' } }
+  /projects/{projectId}/members/{membershipId}:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { name: membershipId, in: path, required: true, schema: { type: string, format: uuid } } ]
+    delete:
+      tags: [projects]
+      summary: Remove a member
+      description: "CON-012 — FR-009. OWNER only."
+      responses: { '204': { description: No Content } }
+  /portfolio/summary:
+    get:
+      tags: [projects]
+      summary: Portfolio roll-up across owned projects
+      description: "CON-035 — FR-010, FR-047. OWNER. Aggregates biomass, alerts, finances."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PortfolioSummary' } } } } }
+
+  # ---------------- ponds / stocking / batches (FR-012..FR-015, FR-038) ----------------
+  /projects/{projectId}/ponds:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [ponds]
+      summary: List ponds
+      description: "CON-013 — FR-012."
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Pond' } } } } } }
+    post:
+      tags: [ponds]
+      summary: Create a pond
+      description: "CON-014 — FR-012. OWNER."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreatePond' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Pond' } } } } }
+  /projects/{projectId}/ponds/{pondId}/stockings:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/pondId' } ]
+    post:
+      tags: [ponds]
+      summary: Record a stocking event (creates a Batch)
+      description: "CON-015 — FR-013, FR-014. Returns the created Batch with survival estimate."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateStocking' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Batch' } } } } }
+  /projects/{projectId}/batches:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [ponds]
+      summary: List batches
+      description: "CON-016 — FR-014, FR-038."
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Batch' } } } } } }
+  /projects/{projectId}/batches/{batchId}:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/batchId' } ]
+    get:
+      tags: [ponds]
+      summary: Get a batch with biomass/survival
+      description: "CON-017 — FR-014, FR-038."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Batch' } } } } }
+  /projects/{projectId}/biomass:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [ponds]
+      summary: Project biomass overview per species
+      description: "CON-043 — FR-038."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/BiomassOverview' } } } } }
+
+  # ---------------- species reference (FR-013) ----------------
+  /species:
+    get:
+      tags: [ponds]
+      summary: List stockable species (seeded reference data)
+      description: "CON-048 — FR-013. Reference lookup so web/mobile can pick a species when recording a stocking. Not project-scoped (shared reference); seeded by TASK-018."
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Species' } } } } }
+
+  # ---------------- feed (FR-016..FR-021) ----------------
+  /projects/{projectId}/batches/{batchId}/feed-plan:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/batchId' } ]
+    get:
+      tags: [feed]
+      summary: Today's feed quota (BW% × latest sampling, temp/DO-adjusted)
+      description: "CON-018a — FR-016, FR-017, FR-018. Separates floating vs sinking."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/FeedPlan' } } } }, '409': { $ref: '#/components/responses/Error' } }
+  /projects/{projectId}/batches/{batchId}/feedings:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/batchId' } ]
+    post:
+      tags: [feed]
+      summary: Log a completed feeding (auto-deducts inventory)
+      description: "CON-018 — FR-020, FR-021. Emits FeedingLogged; deducts InventoryItem; low-stock alert may fire."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateFeedingLog' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/FeedingLog' } } } } }
+
+  # ---------------- health / mortality (FR-027..FR-030) ----------------
+  /projects/{projectId}/batches/{batchId}/mortalities:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/batchId' } ]
+    post:
+      tags: [health]
+      summary: Log a mortality (updates survival & biomass)
+      description: "CON-019 — FR-027, FR-028, FR-030. Emits MortalityRecorded; spike detection may alert."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateMortality' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Mortality' } } } } }
+  /projects/{projectId}/batches/{batchId}/treatments:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/batchId' } ]
+    post:
+      tags: [health]
+      summary: Record a treatment (withdrawal period → export-harvest advisory)
+      description: "CON-051 — FR-029. Owner-only. Withdrawal window checked by TASK-031's harvest use-case (AC-101)."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateTreatment' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Treatment' } } } } }
+
+  # ---------------- growth / sampling (FR-035..FR-037) ----------------
+  /projects/{projectId}/batches/{batchId}/samplings:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/batchId' } ]
+    post:
+      tags: [growth]
+      summary: Record a sampling (drives feed quota, ADG/SGR, FCR)
+      description: "CON-020 — FR-035, FR-036, FR-037."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateSampling' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Sampling' } } } } }
+  /projects/{projectId}/batches/{batchId}/growth:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/batchId' } ]
+    get:
+      tags: [growth]
+      summary: ADG/SGR growth analytics for this batch's species
+      description: "CON-052 — FR-036. Activated for ADG/SGR only (TASK-029); FCR is a separate concern (TASK-030) and is not part of this response."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Growth' } } } } }
+
+  # ---------------- harvest (FR-039..FR-041) ----------------
+  /projects/{projectId}/batches/{batchId}/harvests:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/batchId' } ]
+    post:
+      tags: [harvest]
+      summary: Record a partial harvest (reduces biomass, adds revenue)
+      description: "CON-021 — FR-039, FR-040. Grade export|local."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateHarvest' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Harvest' } } } } }
+
+  # ---------------- inventory (FR-042..FR-044) ----------------
+  /projects/{projectId}/inventory:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [inventory]
+      summary: List inventory items (per project)
+      description: "CON-022 — FR-042, FR-043."
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/InventoryItem' } } } } } }
+    post:
+      tags: [inventory]
+      summary: Create an inventory item
+      description: "CON-023 — FR-042. OWNER."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateInventoryItem' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/InventoryItem' } } } } }
+  /projects/{projectId}/inventory/{itemId}/transactions:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { name: itemId, in: path, required: true, schema: { type: string, format: uuid } } ]
+    post:
+      tags: [inventory]
+      summary: Record a stock movement (receipt/adjustment)
+      description: "CON-024 — FR-042, FR-044. Deductions are created automatically by feeding logs."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateInventoryTxn' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/InventoryTxn' } } } } }
+
+  # ---------------- water (FR-022..FR-026) ----------------
+  /projects/{projectId}/ponds/{pondId}/water-readings:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/pondId' } ]
+    get:
+      tags: [water]
+      summary: List water readings (trend data)
+      description: "CON-025 — FR-022, FR-024."
+      parameters: [ { name: parameter, in: query, schema: { $ref: '#/components/schemas/WaterParameter' } } ]
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/WaterReading' } } } } } }
+    post:
+      tags: [water]
+      summary: Record a water reading (may breach threshold → alert)
+      description: "CON-026 — FR-022, FR-023. Emits WaterThresholdBreached when out of range."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateWaterReading' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/WaterReading' } } } } }
+  /projects/{projectId}/water-thresholds:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [water]
+      summary: Get configured safe-range thresholds
+      description: "CON-027a — FR-023."
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/WaterThreshold' } } } } } }
+    put:
+      tags: [water]
+      summary: Configure safe-range thresholds
+      description: "CON-027 — FR-023. OWNER."
+      requestBody: { required: true, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/WaterThreshold' } } } } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/WaterThreshold' } } } } } }
+  /projects/{projectId}/water-events:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    post:
+      tags: [water]
+      summary: Raise an emergency water event (one-tap)
+      description: "CON-028 — FR-026, FR-054. Raises a CRITICAL alert to the owner via the most reliable channel."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateWaterEvent' } } } }
+      responses: { '202': { description: Accepted, content: { application/json: { schema: { $ref: '#/components/schemas/Alert' } } } } }
+
+  # ---------------- tasks (FR-031..FR-033) ----------------
+  /projects/{projectId}/tasks:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [tasks]
+      summary: List tasks (scheduled/due)
+      description: "CON-029 — FR-031."
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Task' } } } } } }
+    post:
+      tags: [tasks]
+      summary: Create a recurring task
+      description: "CON-030 — FR-031. OWNER."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateTask' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Task' } } } } }
+  /projects/{projectId}/tasks/{taskId}/logs:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { name: taskId, in: path, required: true, schema: { type: string, format: uuid } } ]
+    post:
+      tags: [tasks]
+      summary: Mark a task complete (timestamp + optional proof photo)
+      description: "CON-031 — FR-032."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateTaskLog' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/TaskLog' } } } } }
+
+  # ---------------- finance (FR-045..FR-048) ----------------
+  /projects/{projectId}/finance/transactions:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [finance]
+      summary: List financial transactions
+      description: "CON-032 — FR-045, FR-046, FR-048. OWNER + PARTNER (read-only); hidden from WORKER."
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/FinancialTxn' } } } } }, '403': { $ref: '#/components/responses/Error' } }
+    post:
+      tags: [finance]
+      summary: Record a cost or revenue
+      description: "CON-033 — FR-045, FR-046. OWNER only."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateFinancialTxn' } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/FinancialTxn' } } } } }
+  /projects/{projectId}/finance/summary:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [finance]
+      summary: Real-time net profit and projected ROI
+      description: "CON-034 — FR-047, FR-048. OWNER + PARTNER (read-only)."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/FinanceSummary' } } } } }
+
+  # ---------------- monitoring (FR-049..FR-051) ----------------
+  /projects/{projectId}/camera:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [monitoring]
+      summary: Camera stream configuration (HLS/WebRTC URL)
+      description: "CON-036 — FR-049, FR-050. Live-only in MVP."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/CameraConfig' } } } } }
+  /projects/{projectId}/weather:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [monitoring]
+      summary: Site-local weather snapshot
+      description: "CON-037 — FR-051. Degrades gracefully if the weather API is down."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/WeatherSnapshot' } } } } }
+
+  # ---------------- notifications (FR-052..FR-054) ----------------
+  /projects/{projectId}/alerts:
+    parameters: [ { $ref: '#/components/parameters/projectId' } ]
+    get:
+      tags: [notifications]
+      summary: List alerts for a project
+      description: "CON-038 — FR-053."
+      responses: { '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Alert' } } } } } }
+  /projects/{projectId}/alerts/{alertId}/acknowledge:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { name: alertId, in: path, required: true, schema: { type: string, format: uuid } } ]
+    post:
+      tags: [notifications]
+      summary: Acknowledge an alert (SLA tracked)
+      description: "CON-039 — FR-054, NFR-013."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Alert' } } } } }
+  /notifications/devices:
+    post:
+      tags: [notifications]
+      summary: Register an FCM device token
+      description: "CON-045 — FR-052, FR-054."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/RegisterDevice' } } } }
+      responses: { '204': { description: No Content } }
+  /devices/{deviceId}/readings:
+    parameters: [ { name: deviceId, in: path, required: true, schema: { type: string, format: uuid } } ]
+    post:
+      tags: [water]
+      summary: Secured sensor ingestion of water readings
+      description: "CON-044 — FR-022 (source=SENSOR). Authenticated by device key."
+      security: [ { deviceKey: [] } ]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SensorReading' } } } }
+      responses: { '202': { description: Accepted } }
+
+  # ---------------- sync (FR-034 / NFR-001) ----------------
+  /sync:
+    post:
+      tags: [sync]
+      summary: Batch replay of offline mobile mutations
+      description: "CON-040 — FR-034, NFR-001. Idempotent via clientMutationId; server-authoritative conflict resolution (ADR-010)."
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SyncRequest' } } } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/SyncResponse' } } } } }
+
+  # ---------------- reporting (FR-055, FR-056) ----------------
+  /projects/{projectId}/reports/daily-summary:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { name: date, in: query, schema: { type: string, format: date } } ]
+    get:
+      tags: [reporting]
+      summary: Daily owner summary
+      description: "CON-042 — FR-055. Feed used, mortalities, water status, tasks done."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DailySummary' } } } } }
+  /projects/{projectId}/reports/export:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { name: kind, in: query, required: true, schema: { type: string, enum: [growth, financial, harvest] } } ]
+    get:
+      tags: [reporting]
+      summary: Export a report
+      description: "CON-046 — FR-056. OWNER + PARTNER for financial."
+      responses: { '200': { description: OK, content: { application/octet-stream: { schema: { type: string, format: binary } } } } }
+
+  # ---------------- calendar (FR-057..FR-061) ----------------
+  /calendar/convert:
+    get:
+      tags: [calendar]
+      summary: Convert Gregorian↔Bangla and return ritu
+      description: "CON-041 — FR-057, FR-059, FR-061. Bangladesh-revised 2019 rules; server mirror of packages/calendar."
+      parameters: [ { name: date, in: query, required: true, schema: { type: string, format: date } } ]
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/BanglaDate' } } } } }
+
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+    deviceKey: { type: apiKey, in: header, name: X-Device-Key }
+
+  parameters:
+    projectId: { name: projectId, in: path, required: true, schema: { type: string, format: uuid } }
+    pondId: { name: pondId, in: path, required: true, schema: { type: string, format: uuid } }
+    batchId: { name: batchId, in: path, required: true, schema: { type: string, format: uuid } }
+    cursor: { name: cursor, in: query, schema: { type: string } }
+    limit: { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 50 } }
+
+  responses:
+    Error:
+      description: Error
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+
+  schemas:
+    # ---- platform ----
+    Health:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [ok, degraded, down] }
+        version: { type: string }
+        checks:
+          type: object
+          additionalProperties: { type: string, enum: [ok, down] }
+          description: "Per-dependency status, e.g. db=ok"
+    Species:
+      type: object
+      description: Seeded reference variety (Golda/Parse/Carp/grass carp…).
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        category: { type: string, enum: [PRAWN, FISH] }
+        defaultDensityMin: { type: number, nullable: true, description: sane-range lower bound (count per decimal) }
+        defaultDensityMax: { type: number, nullable: true }
+
+    # ---- shared ----
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string, description: Stable machine-readable code mapped from a domain error }
+        message: { type: string }
+        details: { type: object, additionalProperties: true }
+        correlationId: { type: string }
+    Money:
+      type: object
+      description: Money as integer minor units (never float). BDT only in v1 (ADR-018).
+      required: [amountMinor, currency]
+      properties:
+        amountMinor: { type: integer, description: e.g. poisha for BDT }
+        currency: { type: string, enum: [BDT], default: BDT }
+    # ---- enums (mirror GLOSSARY §4) ----
+    Role: { type: string, enum: [OWNER, WORKER, PARTNER] }
+    ProjectStatus: { type: string, enum: [ACTIVE, CLOSED] }
+    BatchStatus: { type: string, enum: [ACTIVE, HARVESTING, CLOSED] }
+    WaterParameter: { type: string, enum: [DO, TEMP, PH, AMMONIA, NITRITE, ALKALINITY, SECCHI] }
+    WaterSource: { type: string, enum: [MANUAL, SENSOR] }
+    FeedType: { type: string, enum: [FLOATING, SINKING, NURSERY_DUST] }
+    FeedObservation: { type: string, enum: [NORMAL, LEFTOVER, EMPTY] }
+    TaskStatus: { type: string, enum: [SCHEDULED, DUE, DONE, MISSED] }
+    HarvestGrade: { type: string, enum: [EXPORT, LOCAL] }
+    AlertType: { type: string, enum: [WATER_THRESHOLD, WATER_EMERGENCY, LOW_STOCK, MISSED_TASK, ABNORMAL_MORTALITY] }
+    AlertSeverity: { type: string, enum: [INFO, WARNING, CRITICAL] }
+    AlertState: { type: string, enum: [RAISED, SENT, ACKNOWLEDGED, RESOLVED] }
+    Channel: { type: string, enum: [PUSH, SMS, WHATSAPP] }
+    Ritu: { type: string, enum: [GRISHMO, BORSHA, SHAROD, HEMONTO, SHEET, BOSONTO] }
+    FinancialKind: { type: string, enum: [COST, REVENUE] }
+
+    # ---- auth / identity ----
+    LoginRequest: { type: object, required: [email, password], properties: { email: { type: string, format: email }, password: { type: string } } }
+    RefreshRequest: { type: object, required: [refreshToken], properties: { refreshToken: { type: string } } }
+    PasswordResetRequest: { type: object, required: [email], properties: { email: { type: string, format: email } } }
+    PasswordResetConfirm: { type: object, required: [token, newPassword], properties: { token: { type: string }, newPassword: { type: string } } }
+    AuthTokens: { type: object, required: [accessToken, refreshToken], properties: { accessToken: { type: string }, refreshToken: { type: string }, expiresIn: { type: integer } } }
+    Me:
+      type: object
+      properties:
+        user: { $ref: '#/components/schemas/User' }
+        memberships: { type: array, items: { $ref: '#/components/schemas/Membership' } }
+    User: { type: object, properties: { id: { type: string, format: uuid }, email: { type: string, format: email }, name: { type: string } } }
+    Membership:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        role: { $ref: '#/components/schemas/Role' }
+    CreateMembership: { type: object, required: [email, role], properties: { email: { type: string, format: email }, role: { $ref: '#/components/schemas/Role' } } }
+
+    # ---- projects ----
+    Project:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        siteLat: { type: number }
+        siteLng: { type: number }
+        address: { type: string }
+        currency: { type: string, default: BDT }
+        landUnit: { type: string, enum: [DECIMAL, KATHA, BIGHA], default: BIGHA }
+        status: { $ref: '#/components/schemas/ProjectStatus' }
+    CreateProject:
+      type: object
+      required: [name, siteLat, siteLng]
+      properties:
+        name: { type: string }
+        siteLat: { type: number }
+        siteLng: { type: number }
+        address: { type: string }
+        currency: { type: string, default: BDT }
+        landUnit: { type: string, enum: [DECIMAL, KATHA, BIGHA], default: BIGHA }
+        firstPond: { $ref: '#/components/schemas/CreatePond' }
+    UpdateProject:
+      type: object
+      properties:
+        name: { type: string }
+        address: { type: string }
+        status: { $ref: '#/components/schemas/ProjectStatus' }
+    ProjectPage:
+      type: object
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/Project' } }
+        nextCursor: { type: string, nullable: true }
+    PortfolioSummary:
+      type: object
+      properties:
+        totalBiomassKg: { type: number }
+        openCriticalAlerts: { type: integer }
+        netProfit: { $ref: '#/components/schemas/Money' }
+        projects: { type: array, items: { type: object, properties: { projectId: { type: string, format: uuid }, name: { type: string }, biomassKg: { type: number }, openAlerts: { type: integer } } } }
+
+    # ---- ponds / batches ----
+    Pond:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        name: { type: string }
+        area: { type: number, description: in the project's landUnit (ADR-018) }
+        depthM: { type: number }
+        notes: { type: string }
+    CreatePond: { type: object, required: [name, area], properties: { name: { type: string }, area: { type: number, description: in the project's landUnit (ADR-018) }, depthM: { type: number }, notes: { type: string } } }
+    CreateStocking:
+      type: object
+      required: [speciesId, count, stockedOn]
+      properties:
+        speciesId: { type: string, format: uuid }
+        source: { type: string, enum: [HATCHERY, WILD, OTHER] }
+        hatcheryName: { type: string }
+        count: { type: integer }
+        stockedOn: { type: string, format: date }
+        stockingCost: { $ref: '#/components/schemas/Money' }
+    Batch:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        pondId: { type: string, format: uuid }
+        speciesId: { type: string, format: uuid }
+        initialCount: { type: integer }
+        cumulativeMortality: { type: integer }
+        survivalEstimate: { type: integer, description: initialCount - cumulativeMortality }
+        latestAvgWeightG: { type: number, nullable: true }
+        status: { $ref: '#/components/schemas/BatchStatus' }
+        stockedOn: { type: string, format: date }
+    BiomassOverview:
+      type: object
+      properties:
+        totalKg: { type: number }
+        perSpecies: { type: array, items: { type: object, properties: { speciesId: { type: string, format: uuid }, biomassKg: { type: number }, survivalRate: { type: number } } } }
+
+    # ---- feed ----
+    FeedPlan:
+      type: object
+      properties:
+        batchId: { type: string, format: uuid }
+        totalKg: { type: number }
+        adjustedForTempDo: { type: boolean }
+        adjustmentReason: { type: string, nullable: true, description: "R3/AC-073 — set whenever adjustedForTempDo is true; null otherwise." }
+        lines: { type: array, items: { type: object, properties: { feedType: { $ref: '#/components/schemas/FeedType' }, kg: { type: number } } } }
+    CreateFeedingLog:
+      type: object
+      required: [inventoryItemId, qtyKg, fedAt, clientMutationId]
+      properties:
+        inventoryItemId: { type: string, format: uuid }
+        qtyKg: { type: number }
+        fedAt: { type: string, format: date-time }
+        observation: { $ref: '#/components/schemas/FeedObservation' }
+        clientMutationId: { type: string }
+    FeedingLog:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        batchId: { type: string, format: uuid }
+        inventoryItemId: { type: string, format: uuid }
+        qtyKg: { type: number }
+        observation: { $ref: '#/components/schemas/FeedObservation' }
+        fedAt: { type: string, format: date-time }
+
+    # ---- health / growth / harvest ----
+    CreateMortality:
+      type: object
+      required: [count, causeCategory, occurredAt, clientMutationId]
+      properties:
+        count: { type: integer }
+        causeCategory: { type: string }
+        photoUrl: { type: string }
+        occurredAt: { type: string, format: date-time }
+        clientMutationId: { type: string }
+    Mortality:
+      type: object
+      properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, batchId: { type: string, format: uuid }, count: { type: integer }, causeCategory: { type: string }, photoUrl: { type: string, nullable: true }, occurredAt: { type: string, format: date-time } }
+    CreateTreatment:
+      type: object
+      required: [product, dose, administeredOn, withdrawalDays]
+      properties: { product: { type: string }, dose: { type: string }, administeredOn: { type: string, format: date }, withdrawalDays: { type: integer } }
+    Treatment:
+      type: object
+      properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, batchId: { type: string, format: uuid }, product: { type: string }, dose: { type: string }, administeredOn: { type: string, format: date }, withdrawalDays: { type: integer }, exportSafeAfter: { type: string, format: date, description: "Derived — administeredOn + withdrawalDays." } }
+    CreateSampling:
+      type: object
+      required: [sampleSize, avgWeightG, sampledOn, clientMutationId]
+      properties: { sampleSize: { type: integer }, avgWeightG: { type: number }, sampledOn: { type: string, format: date }, clientMutationId: { type: string } }
+    Sampling:
+      type: object
+      properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, batchId: { type: string, format: uuid }, sampleSize: { type: integer }, avgWeightG: { type: number }, sampledOn: { type: string, format: date } }
+    Growth:
+      type: object
+      description: "ADG/SGR only (TASK-029) — no `fcr` field until TASK-030."
+      properties: { batchId: { type: string, format: uuid }, speciesId: { type: string, format: uuid }, samplings: { type: array, items: { $ref: '#/components/schemas/Sampling' } }, adgGPerDay: { type: number, nullable: true }, sgrPercentPerDay: { type: number, nullable: true }, growthAnomaly: { type: boolean } }
+    CreateHarvest:
+      type: object
+      required: [quantity, totalWeightKg, grade, harvestedOn]
+      properties: { quantity: { type: integer }, totalWeightKg: { type: number }, grade: { $ref: '#/components/schemas/HarvestGrade' }, harvestedOn: { type: string, format: date }, revenue: { $ref: '#/components/schemas/Money' } }
+    Harvest:
+      type: object
+      properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, batchId: { type: string, format: uuid }, quantity: { type: integer }, totalWeightKg: { type: number }, grade: { $ref: '#/components/schemas/HarvestGrade' }, harvestedOn: { type: string, format: date }, revenue: { $ref: '#/components/schemas/Money' } }
+
+    # ---- inventory ----
+    InventoryItem:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        name: { type: string }
+        feedType: { $ref: '#/components/schemas/FeedType' }
+        unit: { type: string, example: kg }
+        quantity: { type: number }
+        lowStockThreshold: { type: number }
+    CreateInventoryItem: { type: object, required: [name, unit], properties: { name: { type: string }, feedType: { $ref: '#/components/schemas/FeedType' }, unit: { type: string }, lowStockThreshold: { type: number } } }
+    CreateInventoryTxn: { type: object, required: [delta, reason], properties: { delta: { type: number, description: positive = receipt, negative = adjustment }, reason: { type: string }, cost: { $ref: '#/components/schemas/Money', description: "TASK-020 addition — AC-082/R8, optional receipt cost." } } }
+    InventoryTxn: { type: object, properties: { id: { type: string, format: uuid }, itemId: { type: string, format: uuid }, delta: { type: number }, reason: { type: string }, cost: { $ref: '#/components/schemas/Money', nullable: true }, at: { type: string, format: date-time } } }
+
+    # ---- water ----
+    CreateWaterReading:
+      type: object
+      required: [parameter, value, readAt, clientMutationId]
+      properties:
+        parameter: { $ref: '#/components/schemas/WaterParameter' }
+        value: { type: number }
+        source: { $ref: '#/components/schemas/WaterSource' }
+        readAt: { type: string, format: date-time }
+        clientMutationId: { type: string }
+    WaterReading:
+      type: object
+      properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, pondId: { type: string, format: uuid }, parameter: { $ref: '#/components/schemas/WaterParameter' }, value: { type: number }, source: { $ref: '#/components/schemas/WaterSource' }, deviceId: { type: string, format: uuid, nullable: true, description: set when source=SENSOR }, readAt: { type: string, format: date-time } }
+    WaterThreshold:
+      type: object
+      required: [parameter]
+      properties: { parameter: { $ref: '#/components/schemas/WaterParameter' }, min: { type: number, nullable: true }, max: { type: number, nullable: true }, critical: { type: number, nullable: true } }
+    SensorReading: { type: object, required: [parameter, value, readAt], properties: { parameter: { $ref: '#/components/schemas/WaterParameter' }, value: { type: number }, readAt: { type: string, format: date-time } } }
+    CreateWaterEvent: { type: object, properties: { pondId: { type: string, format: uuid }, note: { type: string }, clientMutationId: { type: string } } }
+
+    # ---- tasks ----
+    Task:
+      type: object
+      properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, pondId: { type: string, format: uuid, nullable: true }, title: { type: string }, recurrenceDays: { type: integer, nullable: true }, status: { $ref: '#/components/schemas/TaskStatus' }, dueOn: { type: string, format: date } }
+    CreateTask: { type: object, required: [title], properties: { title: { type: string }, pondId: { type: string, format: uuid }, recurrenceDays: { type: integer } } }
+    CreateTaskLog: { type: object, required: [completedAt, clientMutationId], properties: { completedAt: { type: string, format: date-time }, photoUrl: { type: string }, clientMutationId: { type: string } } }
+    TaskLog: { type: object, properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, taskId: { type: string, format: uuid }, completedAt: { type: string, format: date-time }, photoUrl: { type: string } } }
+
+    # ---- finance ----
+    CreateFinancialTxn:
+      type: object
+      required: [kind, category, amount, occurredOn]
+      properties:
+        kind: { $ref: '#/components/schemas/FinancialKind' }
+        category: { type: string, enum: [FEED, SALARY, MEDICINE, STOCKING, EQUIPMENT, MISC, HARVEST] }
+        amount: { $ref: '#/components/schemas/Money' }
+        occurredOn: { type: string, format: date }
+        sourceRef: { type: string, nullable: true, description: idempotent event-ingestion key (e.g. originating harvest/stocking id) }
+        note: { type: string }
+    FinancialTxn:
+      type: object
+      properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, kind: { $ref: '#/components/schemas/FinancialKind' }, category: { type: string }, amount: { $ref: '#/components/schemas/Money' }, occurredOn: { type: string, format: date }, sourceRef: { type: string, nullable: true }, note: { type: string, nullable: true } }
+    FinanceSummary:
+      type: object
+      properties:
+        totalCost: { $ref: '#/components/schemas/Money' }
+        totalRevenue: { $ref: '#/components/schemas/Money' }
+        netProfit: { $ref: '#/components/schemas/Money' }
+        projectedRoiPct: { type: number }
+        remainingHarvestValue: { $ref: '#/components/schemas/Money' }
+
+    # ---- monitoring ----
+    CameraConfig: { type: object, properties: { projectId: { type: string, format: uuid }, streamUrl: { type: string }, protocol: { type: string, enum: [HLS, WEBRTC] }, online: { type: boolean } } }
+    WeatherSnapshot: { type: object, properties: { projectId: { type: string, format: uuid }, tempC: { type: number }, condition: { type: string }, heavyRain: { type: boolean }, extremeHeat: { type: boolean }, fetchedAt: { type: string, format: date-time }, stale: { type: boolean } } }
+
+    # ---- notifications ----
+    Alert:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        type: { $ref: '#/components/schemas/AlertType' }
+        severity: { $ref: '#/components/schemas/AlertSeverity' }
+        state: { $ref: '#/components/schemas/AlertState' }
+        message: { type: string }
+        raisedAt: { type: string, format: date-time }
+        acknowledgedAt: { type: string, format: date-time, nullable: true }
+        escalatedAt: { type: string, format: date-time, nullable: true, description: "TASK-017 addition — set once if this CRITICAL alert was re-notified past the SLA (R7/AC-054)." }
+    RegisterDevice: { type: object, required: [fcmToken], properties: { fcmToken: { type: string }, platform: { type: string, enum: [ANDROID, WEB] } } }
+
+    # ---- sync ----
+    SyncRequest:
+      type: object
+      required: [mutations]
+      properties:
+        mutations:
+          type: array
+          items:
+            type: object
+            required: [clientMutationId, entity, op, payload]
+            properties:
+              clientMutationId: { type: string }
+              entity: { type: string, enum: [FEEDING_LOG, MORTALITY, WATER_READING, TASK_LOG, WATER_EVENT, SAMPLING, POND_ACTION] }
+              op: { type: string, enum: [CREATE] }
+              payload: { type: object, additionalProperties: true }
+    SyncResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              clientMutationId: { type: string }
+              status: { type: string, enum: [SYNCED, CONFLICT, FAILED] }
+              serverId: { type: string, format: uuid, nullable: true }
+              error: { $ref: '#/components/schemas/Error' }
+
+    # ---- reporting / calendar ----
+    DailySummary:
+      type: object
+      properties:
+        date: { type: string, format: date }
+        feedUsedKg: { type: number }
+        mortalities: { type: integer }
+        waterStatus: { type: string, enum: [OK, WARNING, CRITICAL] }
+        tasksDone: { type: integer }
+        tasksMissed: { type: integer }
+    BanglaDate:
+      type: object
+      properties:
+        gregorian: { type: string, format: date }
+        banglaYear: { type: integer }
+        banglaMonth: { type: string, enum: [BOISHAKH, JOISHTHO, ASHARH, SRABON, BHADRO, ASHSHIN, KARTIK, OGROHAYON, POUSH, MAGH, FALGUN, CHOITRO] }
+        banglaDay: { type: integer }
+        ritu: { $ref: '#/components/schemas/Ritu' }
+        formattedBn: { type: string, description: Rendered with Bengali numerals }
+
+# =====================================================================
+# Reserved CON- ids (declared, NOT yet defined — deferred P2/P3 endpoints)
+# Recorded here and in TRACEABILITY_MATRIX.md so the ids do not dangle.
+# Adding any of these is a contract change (human-approved guardrail).
+#   CON-049 — PUT /projects/{projectId}/feed/bw-config   (BW% table config UI)      — MOD-05, P2
+#   CON-050 — GET|POST /projects/{projectId}/pond-actions (chain-drag/aeration log; offline-syncable → clientMutationId) — MOD-06, P2
+#   CON-051 — defined (TASK-028): POST /projects/{projectId}/batches/{batchId}/treatments
+#   CON-052 — defined (TASK-029): GET /projects/{projectId}/batches/{batchId}/growth (ADG/SGR
+#     only; FCR remains unaddressed pending TASK-030, which may extend this schema)
+#   CON-053 — GET /projects/{projectId}/harvest-progress (harvest-to-date vs proj.) — MOD-07, P2
+#   CON-054 — PUT /projects/{projectId}/finance/market-rates (market-rate config)   — MOD-08, P2
+#   CON-055 — camera recording/clip endpoints                                        — MOD-10, P3
+#   CON-056 — POST /projects/{projectId}/devices (owner registers sensor device, receives one-time device key) — MOD-06, P3
+#   CON-057 — GET /projects/{projectId}/audit (OWNER-only paginated audit-log view)  — MOD-01, P2/P3
+# =====================================================================

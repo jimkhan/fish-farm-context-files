@@ -1,0 +1,291 @@
+# Technical Specification — Fish Farm Management System (FMS)
+
+> Version 1.0 · 2026-07-02 · Defers to `GLOSSARY.md` for terms and `DECISIONS.md` for the "why".
+> Cites `FR-`/`NFR-` (from `PRODUCT_SPECIFICATION.md`) and honours every invariant in `CLAUDE.md`.
+> The API is **contract-first**: `contracts/openapi.yaml` is the source of truth the backend
+> implements and the web + mobile clients generate from.
+
+---
+
+## 1. Architecture overview
+
+Three client-facing surfaces over one backend and one database, bound by a shared contract:
+
+```
+[ web (Next.js) ]        [ mobile (React Native, offline-first) ]
+        \                              /
+         \  HTTPS / JSON (contracts/openapi.yaml)  /
+          \                          /
+        [ backend: NestJS modular monolith, Clean Architecture ]
+                          |
+                  [ PostgreSQL (TypeORM, Data Mapper) ]
+        external: [ Weather API ] [ FCM / SMS / WhatsApp ] [ per-site media server (RTSP→HLS/WebRTC) ]
+shared packages: packages/calendar (Bangla) · packages/shared (DTOs + domain-event contracts)
+```
+
+- **Project is the tenant boundary.** A central project-scope guard + a scoped-repository base
+  apply the `project_id` filter automatically on every project-owned query (NFR-011, FR-003). No
+  endpoint queries project data unscoped.
+- **Clean Architecture per module.** `presentation → application → domain` and
+  `infrastructure → domain`; the domain layer imports zero frameworks (NFR-006).
+- **Contract-first.** The backend implements `openapi.yaml`; clients are generated from it so the
+  three surfaces cannot drift.
+- **Offline-first mobile.** A local DB + ordered sync queue lets the worker log fully offline and
+  reconcile on reconnect (NFR-001).
+
+## 2. Tech stack per surface (+ shared)
+
+| Surface | Framework & key libraries | Version target |
+|---|---|---|
+| **backend** | NestJS (TypeScript, strict), TypeORM (Data Mapper), PostgreSQL, class-validator/class-transformer for DTOs, `@nestjs/jwt` + Passport for auth, Jest for tests, `@nestjs/schedule` for reminders/cron. | Node LTS 20.x; NestJS 10.x; TypeORM 0.3.x; PostgreSQL 15+. |
+| **web** | Next.js (App Router, TypeScript), TanStack Query (server state), Tailwind + shadcn/ui (tokens from `design-tokens.json`), HLS.js/WebRTC for camera, an OpenAPI-generated typed client. | Next.js 14.x; React 18.x. |
+| **mobile** | React Native (TypeScript), WatermelonDB (offline SQLite store), a sync-queue layer, react-i18next (Bangla), FCM (`@react-native-firebase/messaging`), an OpenAPI-generated typed client. | RN 0.74.x; Android 9+ (API 28+). iOS not targeted in v1. |
+| **shared** | `packages/calendar` (Bangla Gregorian↔Bangla, numerals, ritu — no `Intl`/ICU); `packages/shared` (DTO types, domain-event contracts, enums mirrored from GLOSSARY); `contracts/` (openapi.yaml, schemas, design-tokens.json). | TypeScript project references. |
+| **infra** | One modest Linux VPS; Docker Compose (api + Postgres + media server); Nginx/Caddy TLS; automated daily `pg_dump` backups. Per-site media server = MediaMTX/ffmpeg. | — |
+
+## 3. Repo layout and naming conventions
+
+**Four separate repos** under one `fish-farm/` parent workspace (ADR-002; the monorepo ADR-017 was
+reverted). Currently the `fish-project/` folder:
+
+```
+fish-farm/
+├── fish-farm-context-files/   ← THE HUB (specs + contracts + this file) — source of truth
+├── fish-farm-backend/         ← NestJS code only (+ .cursorrules, README.md)
+│   └── packages/              ← shared packages hosted here, published to web/mobile (OI-1 default)
+│       ├── calendar/          ← Bangla calendar (Gregorian↔Bangla, numerals, ritu) — no Intl/ICU
+│       └── shared/            ← cross-cutting DTOs, domain-event contracts, GLOSSARY enums
+├── fish-farm-web/             ← Next.js code only (+ .cursorrules, README.md)  — consumes @fish-farm/* packages
+└── fish-farm-mobile-app/      ← React Native code only (+ .cursorrules, README.md) — consumes @fish-farm/* packages
+```
+
+> **Shared packages (OI-1).** `packages/calendar` + `packages/shared` live in `fish-farm-backend/
+> packages/*` and are **published to the web + mobile clients** (npm registry or git dependency).
+> The Bangla calendar therefore stays byte-identical across surfaces (NFR-016) without a monorepo.
+> The clients keep the hub in context via a multi-root workspace or a `fish-farm-context-files`
+> submodule (see ADR-002).
+
+Backend internal layout — modular monolith, one folder per module under `src/modules/<module>/`:
+
+```
+src/modules/<module>/
+  domain/          entities (pure), value objects, domain services, ports (interfaces), domain errors, events
+  application/     use-cases, app services, application DTOs, port consumers
+  infrastructure/  TypeORM persistence models + mappers, repository implementations, adapters
+  presentation/    controllers, request/response DTOs, guards, mappers to HTTP
+src/shared-kernel/ project-scope guard, scoped-repository base, tenant context, base entities, audit, error→HTTP filter
+src/platform/      config, db/typeorm data source, migrations wiring, event bus, scheduler, health
+/migrations/       TypeORM migrations (synchronize:false always)
+```
+
+**Conventions (from `CLAUDE.md` §5):** classes/entities `PascalCase`; files `kebab-case`; DB
+tables/columns `snake_case`; events `PascalCase` past-tense (`WaterThresholdBreached`); IDs UUID
+v4; money integer minor units or `decimal`; TypeScript strict, no `any` without a justifying
+comment. Every project-owned table carries an indexed `project_id`.
+
+## 4. Major components (per surface, responsibility + interface)
+
+**Backend (each is a NestJS module):**
+
+| Component | Responsibility | Key interface (ports/endpoints) |
+|---|---|---|
+| `auth` | Login, JWT issue/refresh, password reset. | `POST /auth/login` (CON-001), `POST /auth/refresh` (CON-002), reset (CON-003/004); `TokenService` port. |
+| `iam` (identity/membership) | Users, `ProjectMembership`, resolve caller's project roles. | `GET /me` (CON-005); `MembershipResolver` used by the scope guard. |
+| `projects` | Project CRUD, inline first pond, portfolio roll-up. | CON-006…CON-012, CON-035. |
+| `ponds` | Pond, Stocking, Batch, biomass/survival derivation. | CON-013…CON-017, CON-043. |
+| `feed` | Feed quota calc (BW% × sampling, temp/DO adjust), schedules, feeding logs → inventory deduction, check-tray. | CON-018; `FeedQuotaCalculator` domain service. |
+| `water` | Water readings, thresholds, trend data, emergency event, aeration/chain-drag logs. | CON-025…CON-028; emits `WaterThresholdBreached`. |
+| `health` | Mortality (→ survival/biomass), treatments, spike detection. | CON-019. |
+| `growth` | Sampling, ADG/SGR, pond-level FCR, survival. | CON-020. |
+| `harvest` | Partial harvests, biomass reduction, revenue feed-forward. | CON-021. |
+| `inventory` | Per-project stock, transactions, low-stock alerts, reconciliation. | CON-022…CON-024. |
+| `finance` | Costs/revenue in BDT, net profit + projected ROI, role-gated. | CON-032…CON-034. |
+| `tasks` | Scheduler, recurring reminders, task logs w/ proof photo. | CON-029…CON-031. |
+| `monitoring` | Camera stream config, weather fetch/cache. | CON-036, CON-037. |
+| `notifications` | Alert lifecycle; channel adapters (FCM MVP; SMS/WhatsApp Phase 2 stubs). | CON-038/039, CON-045; `NotificationChannel` port. |
+| `sync` | Batch ingest of offline mobile mutations; idempotency; conflict resolution. | `POST /sync` (CON-040). |
+| `reporting` | Daily owner summary; report exports. | CON-042, CON-046. |
+| `calendar` (thin API over `packages/calendar`) | Conversion + ritu for server-side reports. | CON-041. |
+| `shared-kernel` | Project-scope guard, scoped-repository base, tenant context, audit interceptor, domain-error→HTTP filter, event bus. | cross-cutting. |
+
+**Web (Next.js):** portfolio dashboard, project drill-down, membership admin, water-trend charts,
+finance views (role-gated), camera player, weather widget, reports, dual-date rendering.
+
+**Mobile (React Native):** scoped-to-one-project shell, daily-log form, tasks with proof photos,
+water readings, feeding logs, emergency button, camera view; offline store + sync-queue engine.
+
+## 5. State management (per client surface)
+
+- **web:** Server state via **TanStack Query** (typed OpenAPI client); minimal local UI state via
+  React state/context; the selected-project id lives in the URL/route and is sent on every call.
+  No ad-hoc browser storage of domain data (CLAUDE.md invariant #7) — persistence is server-side.
+- **mobile:** **WatermelonDB** is the local source of truth; UI reads from it reactively. A
+  **sync-queue** table records pending mutations with `sync_state` (`PENDING`→`SYNCED`/`CONFLICT`/
+  `FAILED`). The app is bound to exactly one project; no cross-project data is ever stored locally.
+
+## 6. Data models and schema
+
+Canonical entities from `GLOSSARY.md §2`. Authoritative schema definitions live in
+`contracts/openapi.yaml` (`components/schemas`); `contracts/schemas/` documents where they live.
+Rules: every project-owned table has an indexed `project_id` (NFR-011); UUID v4 PKs; UTC
+timestamps; money as integer minor units or `decimal` (NFR-015); enums exactly per GLOSSARY §4.
+
+Core relationships (see BRD §9 ER diagram):
+`Project 1─* Pond`, `Project 1─* ProjectMembership *─1 User`, `Project 1─* InventoryItem`,
+`Project 1─* FinancialTxn`, `Project 1─* Camera`, `Pond 1─* Stocking 1─1 Batch`,
+`Batch 1─* {Sampling, Mortality, Harvest, FeedingLog}`, `Pond 1─* {WaterReading, TaskLog, Device}`,
+`InventoryItem 1─* {FeedingLog, InventoryTxn}`, `Species 1─* Stocking`. `AuditEntry` and `Alert`
+attach to a project via their source. **Every schema change ships a reversible TypeORM migration;
+`synchronize:false` always** (CLAUDE.md invariant #4).
+
+## 7. API design (contract-first)
+
+- **Style:** RESTful JSON over HTTPS; resources nested under `/projects/{projectId}/…` so scope is
+  explicit in the path and enforced by the guard (ADR-006). Portfolio/auth/calendar live at root.
+- **Versioning:** `/(v1)` prefix; the contract's `info.version` is authoritative.
+- **Auth:** `bearerAuth` JWT (ADR-005); the token carries the user id; memberships are resolved
+  server-side per request — the client cannot assert a role.
+- **Pagination:** cursor/limit on list endpoints; standard `{ data, nextCursor }`.
+- **Errors:** a single error contract (`Error` schema) — typed `code`, `message`, `details`;
+  domain errors map to HTTP at the presentation layer (CLAUDE.md §5).
+- **Idempotency:** `POST /sync` and mutation endpoints accept a client `clientMutationId` for
+  safe offline replay.
+- Every endpoint is tagged with a `CON-` id in its description and traces the `FR-` it serves.
+  Full list in `contracts/openapi.yaml`.
+
+## 8. Navigation / screen hierarchy
+
+**Web (owner/partner):**
+```
+/login
+/portfolio                     (roll-up: biomass, alerts, finance snapshot)  [Owner]
+/projects/{id}                 (project dashboard)
+  /overview   /ponds   /water (+trends)   /feed   /inventory
+  /growth   /harvest   /finance (role-gated)   /camera   /weather
+  /tasks   /members (Owner)   /reports   /settings (Owner)
+```
+**Mobile (worker, single project):**
+```
+Login → Home (today) 
+  Daily Log (feed · mortality · water)   Tasks (+proof photo)   Feeding
+  Water reading   ⚠ Emergency   Camera view   Sync status
+```
+All worker-facing screens render Bangla + Bengali numerals; owner screens show dual dates.
+
+## 9. UI architecture
+
+- **Design tokens:** `contracts/design-tokens.json` (color, type, spacing, radii, alert-severity
+  palette, Bangla-capable font stack) shared by web + mobile.
+- **web:** Tailwind configured from tokens + shadcn/ui components; charts via a lightweight lib.
+- **mobile:** a small token-driven component kit; large touch targets, high-contrast icons,
+  icon-first labels (NFR-009, NFR-014).
+- Theming is single-brand in v1; tokens make later theming cheap.
+
+## 10. Reusable + shared code strategy
+
+- **Shared across surfaces (`packages/`):** `calendar` (Bangla), `shared` (DTO/type definitions,
+  domain-event contracts, GLOSSARY enums). The **API contract** and **generated clients** are the
+  primary cross-surface reuse mechanism (ADR-003, ADR-009).
+- **Not shared:** UI components (web vs mobile differ), persistence, framework wiring.
+- **Backend reuse:** `shared-kernel` (scope guard, scoped repo base, audit, error filter, event
+  bus) is used by every module; domain services (e.g. `FeedQuotaCalculator`) stay in their module.
+
+## 11. Utility / helper strategy
+
+Cross-surface pure utilities live in `packages/shared` (money formatting to BDT minor units,
+enum guards, id helpers) and `packages/calendar` (dates). Surface-specific helpers stay in their
+repo. No utility duplicates a `packages/` capability; no util reaches into another module's domain.
+
+## 12. Localization / i18n
+
+- Worker UI is **Bangla-only** with **Bengali numerals** and **Bangla-calendar dates** via
+  `packages/calendar` (NFR-002, FR-057/058). react-i18next holds strings.
+- Owner UI shows **dual dates** (Bangla + Gregorian).
+- **Never** use `Intl`/ICU for Bangla dates (CLAUDE.md invariant #6, NFR-016). Number formatting to
+  Bengali numerals is a `packages/shared`/`calendar` helper, not `Intl`.
+- **Money (ADR-018):** single currency **BDT** (no multi-currency/FX); a `packages/shared` helper
+  formats amounts South-Asian — **lakh/crore grouping**, **৳** symbol, Bengali numerals in the worker
+  app. Storage stays integer minor units / `decimal` (ADR-013).
+
+## 13. Error handling
+
+- **Shared error contract:** `{ code, message, details? }` (`Error` schema in openapi). Codes are
+  stable strings mapped from typed domain errors; never raw strings (CLAUDE.md §5).
+- **backend:** a global exception filter maps `DomainError` subclasses → HTTP (400/403/404/409/422)
+  and unknown errors → 500 with a correlation id; tenant-isolation violations → 403 (never leak
+  existence of another project's resource — return 403/404 uniformly).
+- **web:** TanStack Query error boundaries + toast; auth 401 → re-login.
+- **mobile:** offline writes never error to the user; sync failures set `sync_state=FAILED` and
+  surface a retry affordance; conflicts set `CONFLICT` for review.
+
+## 14. Performance (per surface, satisfies NFRs)
+
+- **backend:** p95 < 300 ms @ 100 concurrent (NFR-004); indexed `project_id` + query scoping;
+  `/sync` batch of ≤200 in < 5 s; connection pooling.
+- **mobile:** cold start ≤ 3 s, daily log ≤ 2 min on ~2 GB Android (NFR-003, NFR-009); local reads
+  from WatermelonDB; images compressed before queueing.
+- **web:** Next.js server components + query caching; charts lazy-loaded; camera player mounted on
+  demand.
+
+## 15. Accessibility
+
+- **web:** WCAG 2.1 AA (NFR-014) — contrast, focus order, labels, keyboard nav.
+- **mobile:** large touch targets, high-contrast icons, icon+text, minimal reading load for low
+  literacy; TalkBack labels on key actions.
+
+## 16. Security
+
+- **Auth flow (shared):** login → JWT access (short-lived) + refresh; token carries `sub` (user
+  id) only; the server resolves `ProjectMembership` per request (ADR-005). Clients cannot self-
+  assert role or project.
+- **Authorization:** project-scope guard + role checks; Worker denied finance/settings; Partner
+  read-only; enforced centrally (NFR-011, FR-003/004).
+- **Tenant isolation:** scoped-repository base injects `project_id = :ctxProject` into every
+  project-owned query; the negative test (non-member denied) is a first-class deliverable.
+- **Data protection:** TLS 1.2+; passwords hashed with argon2id; secrets via env only (no secrets
+  in code, CLAUDE.md invariant #5); audit trail on every state change (NFR-012).
+- **Sensitive data:** finances gated by role; sensor ingestion endpoint (CON-044) authenticated
+  with a device key.
+
+## 17. Testing strategy
+
+Per `CLAUDE.md §7` Definition of Done:
+- **Unit:** domain logic (pure) — feed quota, survival/biomass, FCR, calendar conversion.
+- **Integration:** one happy path + one failure path per module against a real Postgres (test
+  container).
+- **Tenant-isolation (negative):** every unit touching project-owned data ships a test proving a
+  non-member is denied — a required deliverable.
+- **Calendar anchor tests:** 21 Feb=8 Falgun, 26 Mar=12 Choitro, 16 Dec=1 Poush, 14 Apr=1 Boishakh
+  (FR-061).
+- **Offline path:** worker units — write offline → sync → assert no loss (NFR-001).
+- **Contract tests:** backend responses validated against `openapi.yaml`; clients generated from it.
+- Gate: lint + type-check + tests green before hand-off.
+
+## 18. Build, CI/CD, release
+
+- **Per repo:** install → typecheck → lint → test → build. Migrations run explicitly
+  (`migration:run`), never auto-sync.
+- **Coordination:** the contract is versioned in the hub; a contract change regenerates clients;
+  backend contract-tests must pass before web/mobile regenerate. Guardrail: contract changes stop
+  for human approval (affects all surfaces).
+- **Release:** Docker Compose to one VPS (api + Postgres + media server) behind TLS; daily
+  automated `pg_dump` backup with documented restore (NFR-008).
+
+## 19. Scalability
+
+One modest VPS serves the whole portfolio (NFR-010). Scale path if needed: vertical first;
+then read replicas; then extract hot modules (Feed, Inventory) from the monolith — the module
+boundaries and ports make extraction cheap. Camera load is per-site (media server), independent of
+the app tier.
+
+## 20. Coding standards summary
+
+TypeScript strict, no `any` without a justifying comment; naming per §3; DTOs validate at the
+presentation boundary and never leak persistence models; typed domain errors mapped to HTTP; UUID
+v4; UTC storage; money never in floats; domain layer framework-free; TypeORM Data Mapper in
+infrastructure only; migrations only (`synchronize:false`); Bangla dates only via
+`packages/calendar`. Full contract in `CLAUDE.md`.
+
+---
+
+*Technical Specification — Fish Farm Management System. Phase 3 artifact. See DECISIONS.md for the "why" and contracts/ for the machine-readable contract.*
