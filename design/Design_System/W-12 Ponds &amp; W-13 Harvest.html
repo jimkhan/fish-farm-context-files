@@ -1,0 +1,1317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · Ponds &amp; Batches / Harvest (Owner)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;--tint-muted:#F1F5F9;
+  --focus:#0891B2;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --font:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.bn{font-family:var(--bn)}
+a{color:var(--brand);text-decoration:none}a:hover{color:var(--brand-dark)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:var(--r-sm)}
+
+/* app bar */
+.appbar{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;gap:16px;padding:0 20px}
+.mark{display:flex;align-items:center;gap:9px}
+.mark .logo{width:30px;height:30px;border-radius:8px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.5px}
+.switcher{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text)}
+.switcher svg{width:16px;height:16px;color:var(--text-2)}
+.abspacer{flex:1}
+.iconbtn{position:relative;width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+.iconbtn:hover{background:var(--surface-muted);color:var(--text)}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn .cnt{position:absolute;top:4px;right:4px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--critical);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.userchip{display:flex;align-items:center;gap:10px;padding:4px 10px 4px 4px;border-radius:var(--r-pill);border:1px solid var(--border)}
+.userchip .av{width:32px;height:32px;border-radius:50%;background:var(--brand-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.userchip .un{font-size:13px;font-weight:600;line-height:1.2}
+.userchip .ur{font-size:11px;color:var(--text-2)}
+
+/* shell */
+.shell{display:grid;grid-template-columns:248px 1fr;align-items:start}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:16px 12px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.sb-proj{padding:8px 10px 14px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sb-proj .pn{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px}
+.sb-proj .pl{font-size:12px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:5px}
+.sb-proj .pl svg{width:12px;height:12px}
+.navgroup{margin-bottom:14px}
+.navgroup .gh{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:0 10px;margin-bottom:6px}
+.navitem{display:flex;align-items:center;gap:11px;height:40px;padding:0 10px;border-radius:var(--r-md);font-size:14px;font-weight:500;color:var(--text-2);position:relative}
+.navitem:hover{background:var(--surface-muted);color:var(--text)}
+.navitem svg{width:20px;height:20px;flex-shrink:0}
+.navitem .nb{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:99px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.navitem .nb.crit{background:var(--critical);color:#fff}
+.navitem .nb.warn{background:var(--tint-warning);color:#92400E}
+.navitem.active{background:var(--tint-brand);color:var(--brand-dark);font-weight:700}
+.navitem.active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--brand)}
+.navitem.active svg{color:var(--brand)}
+
+/* main */
+.main{padding:24px 28px 60px;min-width:0}
+.maintag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--tint-brand);padding:5px 12px;border-radius:var(--r-pill);margin-bottom:16px}
+
+/* header */
+.phead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.phead h1{font-size:26px;font-weight:700;letter-spacing:-.5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.phead .meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--text-2)}
+.phead .meta .m{display:flex;align-items:center;gap:6px}
+.phead .meta .m svg{width:15px;height:15px;color:var(--muted)}
+.phead .acts{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:1px solid transparent}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--brand);border-color:var(--border-strong)}.btn.secondary:hover{background:var(--surface-muted)}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:12px;font-weight:600;white-space:nowrap}
+.badge svg{width:13px;height:13px}
+.dot{width:7px;height:7px;border-radius:50%}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-muted{background:var(--surface-muted);color:var(--text-2)}.b-muted .dot{background:var(--muted)}
+.b-crit{background:var(--tint-critical);color:#991B1B}.b-crit .dot{background:var(--critical)}
+.b-info{background:var(--tint-info);color:#075985}.b-info .dot{background:var(--info)}
+.b-warn{background:var(--tint-warning);color:#92400E}.b-warn .dot{background:var(--warning)}
+.tbadge{font-size:11px;font-weight:700;letter-spacing:.03em;padding:3px 8px;border-radius:6px;background:var(--surface-muted);color:var(--text-2);border:1px solid var(--border);white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.tbadge svg{width:12px;height:12px}
+.sp-golda{background:#E0F2FE;color:#075985;border-color:#BAE0F5}
+.sp-rui{background:var(--tint-brand);color:var(--brand-dark);border-color:#A5DCE4}
+.sp-parse{background:#EEF2FF;color:#3730A3;border-color:#C7D2FE}
+/* grade badges */
+.grade{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+.grade svg{width:13px;height:13px}
+.grade-export{background:var(--brand-dark);color:#fff}
+.grade-local{background:#EEF2FF;color:#3730A3;border:1px solid #C7D2FE}
+.grade-blocked{background:var(--tint-critical);color:#991B1B;border:1px solid #FCA5A5}
+
+/* filters */
+.filters{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:13px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);margin-bottom:20px}
+.fgroup{display:flex;align-items:center;gap:10px}
+.fglab{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.selctl{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text);background:var(--surface)}
+.selctl svg{width:15px;height:15px;color:var(--text-2)}
+.seg{display:inline-flex;background:var(--surface-muted);border-radius:var(--r-md);padding:3px}
+.seg button{height:32px;padding:0 15px;border-radius:7px;font-size:13px;font-weight:600;color:var(--text-2)}
+.seg button.on{background:var(--surface);color:var(--brand-dark);box-shadow:var(--sh-card)}
+.fspacer{flex:1}
+
+/* KPI */
+.kpirow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px;display:flex;flex-direction:column;min-height:150px}
+.kpi .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.kpi .lab{font-size:13px;font-weight:600;color:var(--text-2)}
+.kpi .ico{width:32px;height:32px;border-radius:var(--r-md);background:var(--surface-muted);color:var(--text-2);display:flex;align-items:center;justify-content:center}
+.kpi .ico svg{width:19px;height:19px}
+.kpi .val{font-size:30px;font-weight:700;letter-spacing:-.5px;margin-top:auto;line-height:1.05}
+.kpi .val.bn{font-size:27px}
+.kpi .val .u{font-size:15px;color:var(--text-2);font-weight:500}
+.kpi .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.delta{display:inline-flex;align-items:center;gap:4px;width:fit-content;font-size:13px;font-weight:600;padding:3px 9px;border-radius:var(--r-pill);font-variant-numeric:tabular-nums}
+.delta.up{color:var(--ok);background:var(--tint-ok)}
+.delta.down{color:var(--danger);background:var(--tint-critical)}
+.delta.flat{color:var(--text-2);background:var(--surface-muted)}
+.delta .cx{font-size:11px}
+.kpi .subnote{font-size:12px;color:var(--text-2)}
+.kpi .subnote .deriv{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)}
+.kpi.warnkpi{background:var(--tint-warning);border-color:#FCD8A0}
+.kpi.warnkpi .lab{color:#92400E}.kpi.warnkpi .ico{background:var(--warning);color:#fff}.kpi.warnkpi .val{color:#B45309}
+.kpi.warnkpi .subnote{color:#92400E;font-weight:600}
+/* progress ring bar inside KPI */
+.progtrack{height:8px;border-radius:99px;background:var(--surface-muted);overflow:hidden;margin-top:2px}
+.progfill{height:100%;border-radius:99px;background:var(--brand)}
+
+/* advisory */
+.advisory{background:var(--tint-warning);border:1px solid #FCD8A0;border-left:4px solid var(--warning);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:22px;display:flex;gap:16px}
+.advisory .ai{width:44px;height:44px;border-radius:var(--r-pill);background:var(--warning);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.advisory .ai svg{width:24px;height:24px}
+.advisory .aw{flex:1;min-width:0}
+.advisory .ate{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.advisory .att{font-size:16px;font-weight:700;color:#92400E}
+.distinct{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#92400E;background:var(--surface);border:1px solid #FCD8A0;padding:3px 10px;border-radius:var(--r-pill)}
+.distinct svg{width:13px;height:13px}
+.advisory .abd{font-size:14px;color:#7c3a09;margin-top:7px;line-height:1.55;max-width:860px}
+.advisory .abd b{color:#92400E}
+.calcchip{display:inline-flex;align-items:center;gap:8px;margin:12px 0 2px;font-weight:700;font-variant-numeric:tabular-nums;font-size:15px;color:#92400E;background:var(--surface);border:1px solid #FCD8A0;border-radius:var(--r-md);padding:7px 12px}
+.calcchip .eq{color:var(--warning)}
+.calcchip .over{color:var(--critical)}
+.aacts{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.abtn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border-radius:var(--r-md);font-size:13px;font-weight:600}
+.abtn svg{width:16px;height:16px}
+.abtn.primary{background:var(--warning);color:#fff}.abtn.primary:hover{background:#B45309}
+.abtn.ghost{background:var(--surface);color:#92400E;border:1px solid #FCD8A0}.abtn.ghost:hover{background:#FEF3E2}
+
+/* panel */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden;margin-bottom:22px}
+.ph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700}
+.ph svg{width:17px;height:17px}
+.ph .cnt{margin-left:auto;font-size:12px;font-weight:600;color:var(--text-2)}
+.ph .phact{margin-left:auto}
+.editbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--border-strong);color:var(--brand);font-size:13px;font-weight:600;background:var(--surface)}
+.editbtn:hover{background:var(--surface-muted)}
+.editbtn svg{width:15px;height:15px}
+
+/* pond cards */
+.pondgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+.pondcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden;display:flex;flex-direction:column}
+.pondcard.flag{border-color:#FCD8A0}
+.pc-head{display:flex;align-items:flex-start;gap:12px;padding:16px 16px 14px;border-bottom:1px solid var(--border)}
+.pc-head .pcn{font-size:17px;font-weight:700;letter-spacing:-.2px}
+.pc-head .pcm{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:5px;font-size:12px;color:var(--text-2)}
+.pc-head .pcm .mm{display:inline-flex;align-items:center;gap:5px}
+.pc-head .pcm .mm svg{width:13px;height:13px;color:var(--muted)}
+.pc-head .pcm .mm b{color:var(--text);font-weight:700;font-variant-numeric:tabular-nums}
+.pc-head .pcspacer{flex:1}
+.pc-badges{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.batchlist{padding:14px 16px;display:flex;flex-direction:column;gap:12px;flex:1}
+.batch{border:1px solid var(--border);border-radius:var(--r-md);padding:13px 14px}
+.batch.over{border-color:#FCD8A0;background:var(--tint-warning)}
+.batch-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.batch-top .bspacer{flex:1}
+.batch-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:11px}
+.bf .bl{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.bf .bv{font-size:14px;font-weight:700;margin-top:1px;font-variant-numeric:tabular-nums}
+.bf .bv .u{font-size:11px;color:var(--text-2);font-weight:500}
+.bf .bv .bn{font-family:var(--bn)}
+/* density row */
+.dens{margin-top:12px;padding-top:12px;border-top:1px dashed var(--border-strong)}
+.dens-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:12px}
+.dens-top .dl{font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.04em;font-size:10px}
+.dens-top .dcalc{font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+.dens-top .dcalc .eq{color:var(--muted);font-weight:600}
+.dens-status{margin-left:auto;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:99px}
+.dens-status svg{width:12px;height:12px}
+.ds-ok{background:var(--tint-ok);color:#166534}
+.ds-over{background:var(--critical);color:#fff}
+.ds-none{background:var(--surface-muted);color:var(--text-2)}
+.dbar{position:relative;height:9px;border-radius:99px;background:var(--surface-muted);margin-top:9px}
+.dbar .safe{position:absolute;top:0;height:100%;background:#BBF7D0;border-radius:99px}
+.dbar .mk{position:absolute;top:-3px;width:3px;height:15px;border-radius:2px;background:var(--brand)}
+.dbar .mk.over{background:var(--critical)}
+.dbar .mk.none{background:var(--muted)}
+.dbar-labs{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:5px;font-variant-numeric:tabular-nums}
+.dens-note{font-size:12px;color:#7c3a09;margin-top:9px;display:flex;gap:7px;align-items:flex-start}
+.dens-note svg{width:13px;height:13px;flex-shrink:0;margin-top:2px;color:var(--warning)}
+.dens-note.none{color:var(--text-2)}
+.dens-note.none svg{color:var(--muted)}
+.water-foot{display:flex;align-items:center;gap:8px;padding:11px 16px;border-top:1px solid var(--border);background:var(--surface-muted);font-size:12px;color:var(--text-2)}
+.water-foot svg{width:14px;height:14px;color:var(--muted)}
+.water-foot .wspacer{flex:1}
+
+/* tables */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:11px 16px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface)}
+.dtable th.num{text-align:right}
+.dtable th .sortable{display:inline-flex;align-items:center;gap:5px}
+.dtable th svg{width:12px;height:12px;opacity:.6}
+.dtable td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+.dtable td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.dtable td.money{text-align:right;font-family:var(--bn);font-weight:700;white-space:nowrap}
+.dtable tr:last-child td{border-bottom:none}
+.dtable .ts{font-variant-numeric:tabular-nums;white-space:nowrap}
+.dtable .tsb{font-size:12px;color:var(--text-2);font-family:var(--bn)}
+.dtable .strong{font-weight:700}
+.dtable tfoot td{padding:12px 16px;border-top:2px solid var(--border-strong);font-weight:700;background:var(--surface-muted)}
+.dtable tfoot td.num{font-variant-numeric:tabular-nums}
+.dtable tfoot td.money{font-family:var(--bn)}
+.src{display:inline-flex;align-items:center;gap:8px;font-size:13px}
+.src .sa{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.src .worker{background:var(--brand-dark);color:#fff}
+.src .auto{background:var(--surface-muted);color:var(--text-2)}
+.hatch{display:inline-flex;align-items:center;gap:6px}
+.hatch svg{width:14px;height:14px;color:var(--muted)}
+.hatch .wild{font-size:11px;color:var(--text-2);font-style:italic}
+.pager{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-2)}
+.pgset{display:flex;gap:6px}
+.pgbtn{min-width:32px;height:32px;padding:0 8px;border-radius:var(--r-md);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--text-2);background:var(--surface)}
+.pgbtn.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.pgbtn svg{width:14px;height:14px}
+
+/* withdrawal gate */
+.withdraw{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--critical);color:#fff;border-radius:var(--r-md)}
+.withdraw svg{width:20px;height:20px;flex-shrink:0}
+.withdraw .wt{font-size:14px;font-weight:700}
+.withdraw .wd{font-size:12px;color:rgba(255,255,255,.9);margin-top:1px}
+.withdraw .wdays{margin-left:auto;text-align:center;background:rgba(255,255,255,.16);border-radius:var(--r-md);padding:6px 12px;flex-shrink:0}
+.withdraw .wdays .n{font-size:20px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.withdraw .wdays .l{font-size:10px;text-transform:uppercase;letter-spacing:.04em;opacity:.85}
+
+/* record-harvest panel */
+.rh{padding:18px 16px}
+.rh-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field .fl{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.inp{height:42px;border:1px solid var(--border-strong);border-radius:var(--r-md);padding:0 12px;font-size:14px;font-weight:600;font-family:inherit;color:var(--text);background:var(--surface);display:flex;align-items:center;gap:8px}
+.inp svg{width:15px;height:15px;color:var(--text-2)}
+.inp .ph2{color:var(--muted);font-weight:500}
+.gradepick{display:flex;gap:12px}
+.gopt{flex:1;border:1.5px solid var(--border-strong);border-radius:var(--r-md);padding:13px 14px;position:relative;background:var(--surface)}
+.gopt.sel{border-color:var(--brand);background:var(--tint-brand)}
+.gopt.disabled{background:var(--surface-muted);border-color:var(--border);cursor:not-allowed}
+.gopt .got{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700}
+.gopt .got .ck{width:20px;height:20px;border-radius:50%;border:2px solid var(--border-strong);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gopt.sel .got .ck{border-color:var(--brand);background:var(--brand);color:#fff}
+.gopt.sel .got .ck svg{width:12px;height:12px}
+.gopt.disabled .got{color:var(--muted)}
+.gopt.disabled .got .ck{border-style:dashed}
+.gopt .gsub{font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.5}
+.gopt.disabled .gsub{color:var(--text-2)}
+.gopt .blocktag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#991B1B;background:var(--tint-critical);border:1px solid #FCA5A5;padding:2px 8px;border-radius:99px;margin-top:8px}
+.gopt .blocktag svg{width:12px;height:12px}
+.rh-actions{display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)}
+.rh-note{font-size:12px;color:var(--text-2);display:flex;gap:7px;align-items:flex-start;margin-top:14px}
+.rh-note svg{width:14px;height:14px;color:var(--muted);flex-shrink:0;margin-top:1px}
+
+/* harvest progress panel */
+.progrow{padding:15px 16px;border-bottom:1px solid var(--border)}
+.progrow:last-child{border-bottom:none}
+.progrow-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.progrow-top .pname{font-size:15px;font-weight:700}
+.progrow-top .pspacer{flex:1}
+.progrow-top .pct{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--brand-dark)}
+.pbtrack{height:10px;border-radius:99px;background:var(--surface-muted);overflow:hidden;margin-top:10px;display:flex}
+.pbfill{height:100%}
+.pbfill.done{background:var(--brand)}
+.pbfill.blocked{background:repeating-linear-gradient(45deg,#FCA5A5,#FCA5A5 6px,#FECACA 6px,#FECACA 12px)}
+.prog-deriv{font-size:12px;color:var(--text-2);margin-top:9px;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.prog-deriv .seg2{display:inline-flex;align-items:center;gap:5px}
+.prog-deriv .dv{font-weight:700;color:var(--text)}
+.elig{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px}
+.elig svg{width:12px;height:12px}
+.elig-yes{background:var(--tint-ok);color:#166534}
+.elig-no{background:var(--tint-critical);color:#991B1B}
+.prog-summary{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:14px 16px;background:var(--surface-muted);border-top:2px solid var(--border-strong);font-size:13px}
+.prog-summary .ps{display:flex;flex-direction:column}
+.prog-summary .ps .pl2{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.prog-summary .ps .pv2{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:1px}
+.prog-summary .op{color:var(--muted);font-size:18px;font-weight:700}
+
+/* degraded / empty / skeleton */
+.degraded{background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--r-lg);padding:26px;display:flex;align-items:center;gap:14px;min-height:180px;justify-content:center}
+.degraded .di{width:46px;height:46px;border-radius:var(--r-pill);background:var(--tint-warning);color:var(--warning);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.degraded .di svg{width:24px;height:24px}
+.degraded .dt{font-size:14px;font-weight:700}
+.degraded .dd{font-size:13px;color:var(--text-2);margin-top:2px;max-width:520px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:52px 24px}
+.empty .ei{width:64px;height:64px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--muted);display:flex;align-items:center;justify-content:center}
+.empty .ei svg{width:32px;height:32px}
+.empty .et{font-size:17px;font-weight:700}
+.empty .ed{font-size:14px;color:var(--text-2);max-width:440px}
+.empty .eacts{display:flex;gap:10px;margin-top:6px}
+.empty .goodpill{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--brand-dark);background:var(--tint-brand);border:1px solid #A5DCE4;padding:7px 14px;border-radius:var(--r-pill);margin-top:2px}
+.empty .goodpill svg{width:15px;height:15px}
+@keyframes shimmer{100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E2E8F0 0%,#EEF3F8 50%,#E2E8F0 100%);background-size:200% 100%;background-position:200% 0;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-sm)}
+.sk-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px;min-height:150px;display:flex;flex-direction:column;gap:12px}
+.sk-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:16px;display:flex;flex-direction:column;gap:12px;min-height:210px}
+.ro-ind{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--text-2);font-size:12px;font-weight:600}
+.ro-ind svg{width:14px;height:14px}
+
+/* screen band + variant framing */
+.screenband{background:var(--brand-dark);color:#fff;border-radius:var(--r-lg);margin:24px 28px 0;padding:20px 24px;display:flex;align-items:center;gap:16px}
+.screenband .sn{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7DD3E0;background:rgba(255,255,255,.08);padding:5px 12px;border-radius:var(--r-pill);flex-shrink:0}
+.screenband h2{font-size:22px;font-weight:700}
+.screenband p{font-size:13px;color:rgba(255,255,255,.82);margin-top:2px;max-width:900px}
+.bigsep{height:10px;background:var(--surface-muted);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:40px}
+.divider{height:1px;background:var(--border);margin:36px 0 0}
+.slab{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:26px 0 0}
+.variant{margin-top:34px}
+.vhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.vhead .vtag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--text);padding:4px 10px;border-radius:var(--r-pill)}
+.vhead .vtag.red{background:var(--critical)}
+.vhead h3{font-size:16px;font-weight:700}
+.vsub{font-size:14px;color:var(--text-2);margin-bottom:16px;max-width:880px}
+.vbox{border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;background:var(--bg)}
+.rationale{background:var(--tint-brand);border:1px solid #A5DCE4;border-radius:var(--r-md);padding:12px 14px;font-size:13px;color:var(--brand-dark);margin-bottom:20px;display:flex;gap:10px}
+.rationale svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.rationale b{font-weight:700}
+
+@media(max-width:1180px){.kpirow{grid-template-columns:1fr 1fr}.pondgrid{grid-template-columns:1fr}.rh-grid{grid-template-columns:1fr}}
+@media(max-width:820px){.shell{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+
+<!-- APP BAR -->
+<div class="appbar">
+  <div class="mark"><span class="logo">FMS</span></div>
+  <button class="switcher"><span data-i="layers"></span>Meghna Gher<span data-i="chevron-down"></span></button>
+  <div class="abspacer"></div>
+  <button class="iconbtn" aria-label="Alerts"><span data-i="bell"></span><span class="cnt">2</span></button>
+  <button class="iconbtn" aria-label="Settings"><span data-i="settings"></span></button>
+  <div class="userchip"><span class="av">RK</span><div><div class="un">Rahima Khatun</div><div class="ur">Owner</div></div></div>
+</div>
+
+<!-- ═══════════════ SCREEN 1 BAND ═══════════════ -->
+<div class="screenband">
+  <span class="sn">Screen 1</span>
+  <div><h2>Ponds &amp; batches</h2><p>What is in each pond, is it stocked sensibly, and how is each batch doing? The stocking-density advisory reuses W-07’s amber “advice, not error” language — and the pond that is over-stocked is Pond A2, which explains its dawn-DO crash and mortality spike.</p></div>
+</div>
+
+<div class="shell">
+  <!-- SIDEBAR — Ponds active -->
+  <aside class="sidebar">
+    <div class="sb-proj">
+      <div class="pn"><span class="badge b-ok" style="height:auto;padding:0"><span class="dot"></span></span>Meghna Gher</div>
+      <div class="pl"><span data-i="map-pin"></span>Debidwar, Cumilla · 4 ponds</div>
+    </div>
+    <div class="navgroup"><div class="gh">Operations</div>
+      <a class="navitem"><span data-i="layout"></span>Overview</a>
+      <a class="navitem active"><span data-i="grid"></span>Ponds</a>
+      <a class="navitem"><span data-i="droplet"></span>Water<span class="nb crit">2</span></a>
+      <a class="navitem"><span data-i="utensils"></span>Feed</a>
+      <a class="navitem"><span data-i="check-square"></span>Tasks<span class="nb warn">3</span></a>
+    </div>
+    <div class="navgroup"><div class="gh">Stock &amp; Growth</div>
+      <a class="navitem"><span data-i="package"></span>Inventory</a>
+      <a class="navitem"><span data-i="heart-pulse"></span>Health</a>
+      <a class="navitem"><span data-i="trending-up"></span>Growth</a>
+      <a class="navitem"><span data-i="scale"></span>Harvest</a>
+    </div>
+    <div class="navgroup"><div class="gh">Business</div>
+      <a class="navitem"><span data-i="wallet"></span>Finance</a>
+      <a class="navitem"><span data-i="file-text"></span>Reports</a>
+    </div>
+    <div class="navgroup"><div class="gh">Monitoring</div>
+      <a class="navitem"><span data-i="camera"></span>Camera</a>
+      <a class="navitem"><span data-i="cloud"></span>Weather</a>
+    </div>
+    <div class="navgroup"><div class="gh">Admin · owner only</div>
+      <a class="navitem"><span data-i="users"></span>Members</a>
+      <a class="navitem"><span data-i="settings"></span>Settings</a>
+    </div>
+  </aside>
+
+  <!-- MAIN — Ponds -->
+  <main class="main">
+    <div class="maintag"><span data-i="grid"></span>Ponds · /projects/meghna-gher/ponds · Owner</div>
+
+    <!-- HEADER -->
+    <div class="phead">
+      <div>
+        <h1>Ponds &amp; batches</h1>
+        <div class="meta">
+          <span class="m"><span data-i="map-pin"></span>Debidwar, Cumilla · 5.7 bigha water</span>
+          <span class="m"><span data-i="user"></span>Worker: Karim Uddin</span>
+          <span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span>
+        </div>
+      </div>
+      <div class="acts">
+        <button class="btn secondary"><span data-i="download"></span>Export CSV</button>
+        <button class="btn primary"><span data-i="plus"></span>Add pond</button>
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpirow">
+      <div class="kpi">
+        <div class="top"><span class="lab">Total ponds</span><span class="ico" data-i="grid"></span></div>
+        <div class="val">4</div>
+        <div class="foot"><span class="subnote"><span class="deriv">3</span> active · <span class="deriv">1</span> harvesting</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Total water area</span><span class="ico" data-i="waves"></span></div>
+        <div class="val">5.7 <span class="u">bigha</span></div>
+        <div class="foot"><span class="subnote"><span class="deriv">1.5 + 2.0 + 1.2 + 1.0</span> bigha</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Active batches</span><span class="ico" data-i="fish"></span></div>
+        <div class="val">6</div>
+        <div class="foot"><span class="subnote">Polyculture · 2 species per pond · +1 harvesting</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Total biomass</span><span class="ico" data-i="scale"></span></div>
+        <div class="val">1,840 <span class="u">kg</span></div>
+        <div class="foot"><span class="delta up"><span class="cx">▲</span>5.8% vs last week</span></div>
+      </div>
+    </div>
+
+    <!-- STOCKING-DENSITY ADVISORY (over-stocked, Pond A2 Golda) -->
+    <div class="advisory">
+      <span class="ai" data-i="gauge"></span>
+      <div class="aw">
+        <div class="ate">
+          <span class="att">Pond A2 · SPF Golda prawn is stocked above the recommended density</span>
+          <span class="distinct"><span data-i="info"></span>Advisory · not a hard limit</span>
+        </div>
+        <div class="abd">This is guidance, not an error — the batch is valid and stays active. But at this density the pond carries more animals than its water comfortably supports. Higher density raises <b>dissolved-oxygen demand</b>, can <b>suppress growth</b>, and eases <b>disease spread</b>. It lines up with what the other screens are showing for A2.</div>
+        <div class="calcchip"><span>12,000</span><span class="eq">÷</span><span>1.5 bigha</span><span class="eq">=</span><span class="over">8,000 /bigha</span><span class="eq">·</span><span>recommended 4,000–7,000 /bigha</span></div>
+        <div class="aacts">
+          <button class="abtn primary"><span data-i="droplet"></span>Review Pond A2 water trend</button>
+          <button class="abtn ghost"><span data-i="scale"></span>Plan a partial harvest</button>
+          <button class="abtn ghost"><span data-i="x"></span>Acknowledge</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- POND CARDS -->
+    <div class="pondgrid">
+
+      <!-- POND A2 — over-stocked + withdrawal -->
+      <div class="pondcard flag">
+        <div class="pc-head">
+          <div>
+            <div class="pcn">Pond A2</div>
+            <div class="pcm">
+              <span class="mm"><span data-i="waves"></span><b>1.5</b> bigha</span>
+              <span class="mm"><span data-i="move-vertical"></span><b>1.4</b> m deep</span>
+            </div>
+          </div>
+          <div class="pc-spacer" style="flex:1"></div>
+          <div class="pc-badges">
+            <span class="badge b-ok"><span class="dot"></span>ACTIVE</span>
+            <span class="badge b-crit"><span class="dot"></span>IN WITHDRAWAL</span>
+          </div>
+        </div>
+        <div class="batchlist">
+          <!-- Golda over-stocked -->
+          <div class="batch over">
+            <div class="batch-top">
+              <span class="tbadge sp-golda">SPF Golda prawn</span>
+              <span class="bspacer"></span>
+              <span class="badge b-ok"><span class="dot"></span>ACTIVE</span>
+            </div>
+            <div class="batch-facts">
+              <div class="bf"><div class="bl">Stocked</div><div class="bv">12,000 <span class="u">pcs</span></div><div class="bv" style="font-size:11px;color:var(--text-2);font-weight:600">2026-05-02 <span class="bn">(১৯ বৈশাখ)</span></div></div>
+              <div class="bf"><div class="bl">Avg weight</div><div class="bv">28.4 <span class="u">g</span></div></div>
+              <div class="bf"><div class="bl">Biomass</div><div class="bv">320 <span class="u">kg</span></div></div>
+            </div>
+            <div class="dens">
+              <div class="dens-top">
+                <span class="dl">Density</span>
+                <span class="dcalc">12,000 <span class="eq">÷</span> 1.5 <span class="eq">=</span> 8,000 /bigha</span>
+                <span class="dens-status ds-over"><span data-i="alert-triangle"></span>Over-stocked</span>
+              </div>
+              <div class="dbar"><span class="safe" style="left:40%;width:30%"></span><span class="mk over" style="left:80%"></span></div>
+              <div class="dbar-labs"><span>0</span><span style="color:#166534;font-weight:700">safe 4,000–7,000</span><span>10,000</span></div>
+              <div class="dens-note"><span data-i="alert-triangle"></span>~1,000 /bigha above the safe ceiling for Golda prawn. Consider a partial harvest or added aeration.</div>
+            </div>
+          </div>
+          <!-- Rui in range -->
+          <div class="batch">
+            <div class="batch-top">
+              <span class="tbadge sp-rui">Rui carp</span>
+              <span class="bspacer"></span>
+              <span class="badge b-ok"><span class="dot"></span>ACTIVE</span>
+            </div>
+            <div class="batch-facts">
+              <div class="bf"><div class="bl">Stocked</div><div class="bv">3,600 <span class="u">pcs</span></div><div class="bv" style="font-size:11px;color:var(--text-2);font-weight:600">2026-05-02 <span class="bn">(১৯ বৈশাখ)</span></div></div>
+              <div class="bf"><div class="bl">Avg weight</div><div class="bv">110 <span class="u">g</span></div></div>
+              <div class="bf"><div class="bl">Biomass</div><div class="bv">350 <span class="u">kg</span></div></div>
+            </div>
+            <div class="dens">
+              <div class="dens-top">
+                <span class="dl">Density</span>
+                <span class="dcalc">3,600 <span class="eq">÷</span> 1.5 <span class="eq">=</span> 2,400 /bigha</span>
+                <span class="dens-status ds-ok"><span data-i="check"></span>In range</span>
+              </div>
+              <div class="dbar"><span class="safe" style="left:30%;width:32.5%"></span><span class="mk" style="left:60%"></span></div>
+              <div class="dbar-labs"><span>0</span><span style="color:#166534;font-weight:700">safe 1,200–2,500</span><span>4,000</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="water-foot">
+          <span data-i="droplet"></span>Water: <b style="color:#991B1B">DO 2.1 mg/L · CRITICAL</b>
+          <span class="wspacer"></span>
+          <span class="badge b-crit"><span class="dot"></span>Needs attention</span>
+        </div>
+      </div>
+
+      <!-- POND J1 — in range calm -->
+      <div class="pondcard">
+        <div class="pc-head">
+          <div>
+            <div class="pcn">Pond J1</div>
+            <div class="pcm">
+              <span class="mm"><span data-i="waves"></span><b>2.0</b> bigha</span>
+              <span class="mm"><span data-i="move-vertical"></span><b>1.6</b> m deep</span>
+            </div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="pc-badges"><span class="badge b-ok"><span class="dot"></span>ACTIVE</span></div>
+        </div>
+        <div class="batchlist">
+          <!-- Golda in range -->
+          <div class="batch">
+            <div class="batch-top">
+              <span class="tbadge sp-golda">SPF Golda prawn</span>
+              <span class="bspacer"></span>
+              <span class="badge b-ok"><span class="dot"></span>ACTIVE</span>
+            </div>
+            <div class="batch-facts">
+              <div class="bf"><div class="bl">Stocked</div><div class="bv">12,000 <span class="u">pcs</span></div><div class="bv" style="font-size:11px;color:var(--text-2);font-weight:600">2026-05-10 <span class="bn">(২৭ বৈশাখ)</span></div></div>
+              <div class="bf"><div class="bl">Avg weight</div><div class="bv">30.0 <span class="u">g</span></div></div>
+              <div class="bf"><div class="bl">Biomass</div><div class="bv">350 <span class="u">kg</span></div></div>
+            </div>
+            <div class="dens">
+              <div class="dens-top">
+                <span class="dl">Density</span>
+                <span class="dcalc">12,000 <span class="eq">÷</span> 2.0 <span class="eq">=</span> 6,000 /bigha</span>
+                <span class="dens-status ds-ok"><span data-i="check"></span>In range</span>
+              </div>
+              <div class="dbar"><span class="safe" style="left:40%;width:30%"></span><span class="mk" style="left:60%"></span></div>
+              <div class="dbar-labs"><span>0</span><span style="color:#166534;font-weight:700">safe 4,000–7,000</span><span>10,000</span></div>
+            </div>
+          </div>
+          <!-- Parse — no reference range -->
+          <div class="batch">
+            <div class="batch-top">
+              <span class="tbadge sp-parse">Parse mullet</span>
+              <span class="bspacer"></span>
+              <span class="badge b-ok"><span class="dot"></span>ACTIVE</span>
+            </div>
+            <div class="batch-facts">
+              <div class="bf"><div class="bl">Stocked</div><div class="bv">4,000 <span class="u">pcs</span></div><div class="bv" style="font-size:11px;color:var(--text-2);font-weight:600">2026-05-10 <span class="bn">(২৭ বৈশাখ)</span></div></div>
+              <div class="bf"><div class="bl">Avg weight</div><div class="bv">90.0 <span class="u">g</span></div></div>
+              <div class="bf"><div class="bl">Biomass</div><div class="bv">340 <span class="u">kg</span></div></div>
+            </div>
+            <div class="dens">
+              <div class="dens-top">
+                <span class="dl">Density</span>
+                <span class="dcalc">4,000 <span class="eq">÷</span> 2.0 <span class="eq">=</span> 2,000 /bigha</span>
+                <span class="dens-status ds-none"><span data-i="help-circle"></span>No range</span>
+              </div>
+              <div class="dbar"><span class="mk none" style="left:38%"></span></div>
+              <div class="dbar-labs"><span>0</span><span>—</span><span>—</span></div>
+              <div class="dens-note none"><span data-i="help-circle"></span>No reference range configured for Parse mullet — density is recorded but not assessed. Add one in Settings to enable the advisory.</div>
+            </div>
+          </div>
+        </div>
+        <div class="water-foot">
+          <span data-i="droplet"></span>Water: <b>DO 5.6 mg/L</b>
+          <span class="wspacer"></span>
+          <span class="badge b-ok"><span class="dot"></span>OK</span>
+        </div>
+      </div>
+
+      <!-- POND B3 -->
+      <div class="pondcard">
+        <div class="pc-head">
+          <div>
+            <div class="pcn">Pond B3</div>
+            <div class="pcm">
+              <span class="mm"><span data-i="waves"></span><b>1.2</b> bigha</span>
+              <span class="mm"><span data-i="move-vertical"></span><b>1.3</b> m deep</span>
+            </div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="pc-badges"><span class="badge b-ok"><span class="dot"></span>ACTIVE</span></div>
+        </div>
+        <div class="batchlist">
+          <div class="batch">
+            <div class="batch-top">
+              <span class="tbadge sp-rui">Rui / Catla carp</span>
+              <span class="bspacer"></span>
+              <span class="badge b-ok"><span class="dot"></span>ACTIVE</span>
+            </div>
+            <div class="batch-facts">
+              <div class="bf"><div class="bl">Stocked</div><div class="bv">2,400 <span class="u">pcs</span></div><div class="bv" style="font-size:11px;color:var(--text-2);font-weight:600">2026-05-18 <span class="bn">(৪ জ্যৈষ্ঠ)</span></div></div>
+              <div class="bf"><div class="bl">Avg weight</div><div class="bv">180 <span class="u">g</span></div></div>
+              <div class="bf"><div class="bl">Biomass</div><div class="bv">225 <span class="u">kg</span></div></div>
+            </div>
+            <div class="dens">
+              <div class="dens-top">
+                <span class="dl">Density</span>
+                <span class="dcalc">2,400 <span class="eq">÷</span> 1.2 <span class="eq">=</span> 2,000 /bigha</span>
+                <span class="dens-status ds-ok"><span data-i="check"></span>In range</span>
+              </div>
+              <div class="dbar"><span class="safe" style="left:30%;width:32.5%"></span><span class="mk" style="left:50%"></span></div>
+              <div class="dbar-labs"><span>0</span><span style="color:#166534;font-weight:700">safe 1,200–2,500</span><span>4,000</span></div>
+            </div>
+          </div>
+          <div class="batch">
+            <div class="batch-top">
+              <span class="tbadge sp-parse">Parse mullet</span>
+              <span class="bspacer"></span>
+              <span class="badge b-ok"><span class="dot"></span>ACTIVE</span>
+            </div>
+            <div class="batch-facts">
+              <div class="bf"><div class="bl">Stocked</div><div class="bv">3,000 <span class="u">pcs</span></div><div class="bv" style="font-size:11px;color:var(--text-2);font-weight:600">2026-05-18 <span class="bn">(৪ জ্যৈষ্ঠ)</span></div></div>
+              <div class="bf"><div class="bl">Avg weight</div><div class="bv">65.0 <span class="u">g</span></div></div>
+              <div class="bf"><div class="bl">Biomass</div><div class="bv">187 <span class="u">kg</span></div></div>
+            </div>
+            <div class="dens">
+              <div class="dens-top">
+                <span class="dl">Density</span>
+                <span class="dcalc">3,000 <span class="eq">÷</span> 1.2 <span class="eq">=</span> 2,500 /bigha</span>
+                <span class="dens-status ds-none"><span data-i="help-circle"></span>No range</span>
+              </div>
+              <div class="dbar"><span class="mk none" style="left:44%"></span></div>
+              <div class="dbar-labs"><span>0</span><span>—</span><span>—</span></div>
+              <div class="dens-note none"><span data-i="help-circle"></span>No reference range configured for Parse mullet.</div>
+            </div>
+          </div>
+        </div>
+        <div class="water-foot">
+          <span data-i="shield-check"></span>Export-eligible on health grounds since 2026-07-10 <span class="bn">(২৬ আষাঢ়)</span>
+          <span class="wspacer"></span>
+          <span class="badge b-ok"><span class="dot"></span>DO 6.4</span>
+        </div>
+      </div>
+
+      <!-- POND C1 — harvesting -->
+      <div class="pondcard">
+        <div class="pc-head">
+          <div>
+            <div class="pcn">Pond C1</div>
+            <div class="pcm">
+              <span class="mm"><span data-i="waves"></span><b>1.0</b> bigha</span>
+              <span class="mm"><span data-i="move-vertical"></span><b>1.2</b> m deep</span>
+            </div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="pc-badges"><span class="badge b-info"><span class="dot"></span>HARVESTING</span></div>
+        </div>
+        <div class="batchlist">
+          <div class="batch">
+            <div class="batch-top">
+              <span class="tbadge sp-golda">SPF Golda prawn</span>
+              <span class="bspacer"></span>
+              <span class="badge b-info"><span class="dot"></span>HARVESTING</span>
+            </div>
+            <div class="batch-facts">
+              <div class="bf"><div class="bl">Stocked</div><div class="bv">5,000 <span class="u">pcs</span></div><div class="bv" style="font-size:11px;color:var(--text-2);font-weight:600">2026-04-20 <span class="bn">(৭ বৈশাখ)</span></div></div>
+              <div class="bf"><div class="bl">Avg weight</div><div class="bv">34.0 <span class="u">g</span></div></div>
+              <div class="bf"><div class="bl">Biomass</div><div class="bv">68 <span class="u">kg</span></div></div>
+            </div>
+            <div class="dens">
+              <div class="dens-top">
+                <span class="dl">Density at stocking</span>
+                <span class="dcalc">5,000 <span class="eq">÷</span> 1.0 <span class="eq">=</span> 5,000 /bigha</span>
+                <span class="dens-status ds-ok"><span data-i="check"></span>In range</span>
+              </div>
+              <div class="dbar"><span class="safe" style="left:40%;width:30%"></span><span class="mk" style="left:50%"></span></div>
+              <div class="dbar-labs"><span>0</span><span style="color:#166534;font-weight:700">safe 4,000–7,000</span><span>10,000</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="water-foot">
+          <span data-i="scale"></span>Partial harvest under way — 100 kg landed, export-eligible
+          <span class="wspacer"></span>
+          <span class="badge b-ok"><span class="dot"></span>DO 6.1</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STOCKING HISTORY -->
+    <div class="panel">
+      <div class="ph"><span data-i="list"></span>Stocking history<span class="cnt">7 events · this cycle · latest first</span></div>
+      <table class="dtable">
+        <thead><tr>
+          <th><span class="sortable">Date <span data-i="chevron-down"></span></span></th>
+          <th>Pond</th><th>Species</th><th class="num">Count</th><th>Source / hatchery</th><th class="num">Cost</th><th>Recorded by</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="ts">2026-05-18</div><div class="tsb">৪ জ্যৈষ্ঠ ১৪৩৩</div></td>
+            <td class="strong">B3</td><td><span class="tbadge sp-rui">Rui / Catla</span></td>
+            <td class="num">2,400</td>
+            <td><span class="hatch"><span data-i="building"></span>BFRI, Cumilla</span></td>
+            <td class="money">৳৭,২০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-05-18</div><div class="tsb">৪ জ্যৈষ্ঠ ১৪৩৩</div></td>
+            <td class="strong">B3</td><td><span class="tbadge sp-parse">Parse mullet</span></td>
+            <td class="num">3,000</td>
+            <td><span class="hatch"><span data-i="fish"></span><span class="wild">Wild-collected · local</span></span></td>
+            <td class="money">৳৬,০০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-05-10</div><div class="tsb">২৭ বৈশাখ ১৪৩৩</div></td>
+            <td class="strong">J1</td><td><span class="tbadge sp-golda">SPF Golda</span></td>
+            <td class="num">12,000</td>
+            <td><span class="hatch"><span data-i="building"></span>Nabinagar Hatchery</span></td>
+            <td class="money">৳৩৬,০০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-05-10</div><div class="tsb">২৭ বৈশাখ ১৪৩৩</div></td>
+            <td class="strong">J1</td><td><span class="tbadge sp-parse">Parse mullet</span></td>
+            <td class="num">4,000</td>
+            <td><span class="hatch"><span data-i="fish"></span><span class="wild">Wild-collected · local</span></span></td>
+            <td class="money">৳৮,০০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-05-02</div><div class="tsb">১৯ বৈশাখ ১৪৩৩</div></td>
+            <td class="strong">A2</td><td><span class="tbadge sp-golda">SPF Golda</span></td>
+            <td class="num">12,000</td>
+            <td><span class="hatch"><span data-i="building"></span>Nabinagar Hatchery</span></td>
+            <td class="money">৳৩৬,০০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-05-02</div><div class="tsb">১৯ বৈশাখ ১৪৩৩</div></td>
+            <td class="strong">A2</td><td><span class="tbadge sp-rui">Rui carp</span></td>
+            <td class="num">3,600</td>
+            <td><span class="hatch"><span data-i="building"></span>BFRI, Cumilla</span></td>
+            <td class="money">৳১০,৮০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-04-20</div><div class="tsb">৭ বৈশাখ ১৪৩৩</div></td>
+            <td class="strong">C1</td><td><span class="tbadge sp-golda">SPF Golda</span></td>
+            <td class="num">5,000</td>
+            <td><span class="hatch"><span data-i="building"></span>Nabinagar Hatchery</span></td>
+            <td class="money">৳১৫,০০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+        </tbody>
+        <tfoot><tr>
+          <td colspan="3">Total stocked this cycle</td>
+          <td class="num">42,000</td>
+          <td>4 sources</td>
+          <td class="money">৳১,১৯,০০০</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div>
+
+    <!-- ============ SCREEN-1 VARIANTS ============ -->
+    <div class="divider"></div>
+    <p class="slab">Ponds · documented variants</p>
+
+    <!-- EMPTY -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Empty</span><h3>A pond exists, but nothing is stocked</h3></div>
+      <p class="vsub">Creating a pond and stocking it are two separate steps. An unstocked pond isn’t an error — it just has no batch lifecycle yet. The empty state explains that stocking is what starts the clock on growth, health and harvest.</p>
+      <div class="vbox">
+        <div class="pondcard" style="max-width:520px">
+          <div class="pc-head">
+            <div>
+              <div class="pcn">Pond D4</div>
+              <div class="pcm">
+                <span class="mm"><span data-i="waves"></span><b>1.4</b> bigha</span>
+                <span class="mm"><span data-i="move-vertical"></span><b>1.5</b> m deep</span>
+              </div>
+            </div>
+            <div style="flex:1"></div>
+            <div class="pc-badges"><span class="badge b-muted"><span class="dot"></span>NOT STOCKED</span></div>
+          </div>
+          <div class="empty" style="padding:36px 24px">
+            <span class="ei" data-i="fish"></span>
+            <div class="et">No batches yet</div>
+            <div class="ed">Pond D4 was added on 2026-07-19 (৩ শ্রাবণ ১৪৩৩) but hasn’t been stocked. Recording a stocking event creates the first batch — and from that point growth, health and harvest data begin for it.</div>
+            <div class="eacts"><button class="btn primary"><span data-i="plus"></span>Record stocking</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEGRADED -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Degraded</span><h3>Biomass / density service down</h3></div>
+      <p class="vsub">The estimator that computes live biomass and density is unreachable. Stocked counts, dates and areas are stored records and still render — only the derived density assessment falls back to the degraded widget. The advisory can’t fire without it, so it says so plainly rather than showing a false “all clear”.</p>
+      <div class="vbox">
+        <div class="pondcard" style="max-width:520px">
+          <div class="pc-head">
+            <div>
+              <div class="pcn">Pond A2</div>
+              <div class="pcm"><span class="mm"><span data-i="waves"></span><b>1.5</b> bigha</span><span class="mm"><span data-i="move-vertical"></span><b>1.4</b> m deep</span></div>
+            </div>
+            <div style="flex:1"></div>
+            <div class="pc-badges"><span class="badge b-ok"><span class="dot"></span>ACTIVE</span></div>
+          </div>
+          <div class="batchlist">
+            <div class="batch">
+              <div class="batch-top"><span class="tbadge sp-golda">SPF Golda prawn</span><span class="bspacer"></span><span class="badge b-ok"><span class="dot"></span>ACTIVE</span></div>
+              <div class="batch-facts">
+                <div class="bf"><div class="bl">Stocked</div><div class="bv">12,000 <span class="u">pcs</span></div></div>
+                <div class="bf"><div class="bl">Stocked date</div><div class="bv" style="font-size:13px">2026-05-02</div></div>
+                <div class="bf"><div class="bl">Biomass</div><div class="bv metric-na" style="color:var(--muted)">—</div></div>
+              </div>
+              <div class="degraded" style="min-height:96px;margin-top:12px;padding:16px">
+                <span class="di" data-i="alert-triangle"></span>
+                <div><div class="dt">Density assessment unavailable</div><div class="dd">Stocked count and date are shown from records. The density advisory needs the estimator service, which is temporarily down.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Loading</span><h3>Skeleton state</h3></div>
+      <p class="vsub">Shimmer skeletons for the KPI row and pond cards — never spinners.</p>
+      <div class="vbox">
+        <div class="kpirow" style="margin-bottom:20px">
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:45%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:45%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:45%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:45%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+        </div>
+        <div class="pondgrid" style="margin-bottom:0">
+          <div class="sk-card"><div class="sk" style="height:18px;width:40%"></div><div class="sk" style="height:70px;width:100%"></div><div class="sk" style="height:70px;width:100%"></div></div>
+          <div class="sk-card"><div class="sk" style="height:18px;width:40%"></div><div class="sk" style="height:70px;width:100%"></div><div class="sk" style="height:70px;width:100%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTNER -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Partner</span><h3>Read-only partner</h3></div>
+      <p class="vsub">A partner sees every pond, batch, density and the advisory (they need to understand the stock they’re buying into) — but there is no “Add pond” button and no “Record stocking” affordance anywhere. A discreet read-only indicator sits in the header.</p>
+      <div class="vbox">
+        <div class="phead" style="margin-bottom:18px;padding-bottom:16px">
+          <div><h1 style="font-size:20px">Ponds &amp; batches</h1>
+            <div class="meta"><span class="m"><span data-i="map-pin"></span>5.7 bigha · 4 ponds</span><span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span></div></div>
+          <span class="ro-ind"><span data-i="eye"></span>Read-only view</span>
+        </div>
+        <div class="advisory" style="margin-bottom:0">
+          <span class="ai" data-i="gauge"></span>
+          <div class="aw">
+            <div class="ate"><span class="att">Pond A2 · SPF Golda prawn is stocked above recommended density</span><span class="distinct"><span data-i="info"></span>Advisory</span></div>
+            <div class="abd">At 8,000 /bigha the batch is above the recommended 4,000–7,000 /bigha for Golda prawn. The owner has been notified. Partner accounts can see the advisory but cannot change stocking.</div>
+            <div class="calcchip"><span>12,000</span><span class="eq">÷</span><span>1.5 bigha</span><span class="eq">=</span><span class="over">8,000 /bigha</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════ SCREEN 2 BAND ═══════════════ -->
+<div class="bigsep"></div>
+<div class="screenband">
+  <span class="sn">Screen 2</span>
+  <div><h2>Harvest</h2><p>What has been harvested, at what grade and value, and what is left? The withdrawal gate blocks EXPORT-grade harvest from Pond A2 until 2026-08-09 — the exact date the Health screen carries. Same rule, same date, one source of truth.</p></div>
+</div>
+
+<div class="shell">
+  <!-- SIDEBAR — Harvest active -->
+  <aside class="sidebar">
+    <div class="sb-proj">
+      <div class="pn"><span class="badge b-ok" style="height:auto;padding:0"><span class="dot"></span></span>Meghna Gher</div>
+      <div class="pl"><span data-i="map-pin"></span>Debidwar, Cumilla · 4 ponds</div>
+    </div>
+    <div class="navgroup"><div class="gh">Operations</div>
+      <a class="navitem"><span data-i="layout"></span>Overview</a>
+      <a class="navitem"><span data-i="grid"></span>Ponds</a>
+      <a class="navitem"><span data-i="droplet"></span>Water<span class="nb crit">2</span></a>
+      <a class="navitem"><span data-i="utensils"></span>Feed</a>
+      <a class="navitem"><span data-i="check-square"></span>Tasks<span class="nb warn">3</span></a>
+    </div>
+    <div class="navgroup"><div class="gh">Stock &amp; Growth</div>
+      <a class="navitem"><span data-i="package"></span>Inventory</a>
+      <a class="navitem"><span data-i="heart-pulse"></span>Health</a>
+      <a class="navitem"><span data-i="trending-up"></span>Growth</a>
+      <a class="navitem active"><span data-i="scale"></span>Harvest</a>
+    </div>
+    <div class="navgroup"><div class="gh">Business</div>
+      <a class="navitem"><span data-i="wallet"></span>Finance</a>
+      <a class="navitem"><span data-i="file-text"></span>Reports</a>
+    </div>
+    <div class="navgroup"><div class="gh">Monitoring</div>
+      <a class="navitem"><span data-i="camera"></span>Camera</a>
+      <a class="navitem"><span data-i="cloud"></span>Weather</a>
+    </div>
+    <div class="navgroup"><div class="gh">Admin · owner only</div>
+      <a class="navitem"><span data-i="users"></span>Members</a>
+      <a class="navitem"><span data-i="settings"></span>Settings</a>
+    </div>
+  </aside>
+
+  <!-- MAIN — Harvest -->
+  <main class="main">
+    <div class="maintag"><span data-i="scale"></span>Harvest · /projects/meghna-gher/harvest · Owner</div>
+
+    <!-- HEADER -->
+    <div class="phead">
+      <div>
+        <h1>Harvest <span class="badge b-crit"><span class="dot"></span>A2 EXPORT BLOCKED</span></h1>
+        <div class="meta">
+          <span class="m"><span data-i="scale"></span>260 kg landed this cycle</span>
+          <span class="m"><span data-i="user"></span>Worker: Karim Uddin</span>
+          <span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span>
+        </div>
+      </div>
+      <div class="acts">
+        <button class="btn secondary"><span data-i="download"></span>Export CSV</button>
+        <button class="btn primary"><span data-i="plus"></span>Record harvest</button>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <div class="fgroup"><span class="fglab">Pond</span>
+        <button class="selctl"><span data-i="grid"></span>All ponds<span data-i="chevron-down"></span></button>
+      </div>
+      <div class="fgroup"><span class="fglab">Grade</span>
+        <button class="selctl">All grades<span data-i="chevron-down"></span></button>
+      </div>
+      <div class="fspacer"></div>
+      <div class="fgroup"><span class="fglab">Window</span>
+        <div class="seg"><button>30d</button><button class="on">Cycle</button></div>
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpirow">
+      <div class="kpi">
+        <div class="top"><span class="lab">Harvested to date</span><span class="ico" data-i="scale"></span></div>
+        <div class="val">260 <span class="u">kg</span></div>
+        <div class="foot"><span class="delta up"><span class="cx">▲</span>100 kg this week</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Revenue to date</span><span class="ico" data-i="wallet"></span></div>
+        <div class="val bn">৳১,৫৬,৬০০</div>
+        <div class="foot"><span class="subnote">4 harvests · export + local</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Remaining to harvest</span><span class="ico" data-i="fish"></span></div>
+        <div class="val">1,200 <span class="u">kg</span></div>
+        <div class="foot"><span class="subnote"><span class="deriv">1,200</span> of <span class="deriv">1,840</span> kg standing biomass</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Harvest progress</span><span class="ico" data-i="gauge"></span></div>
+        <div class="val">18<span class="u">%</span></div>
+        <div class="foot" style="flex-direction:column;align-items:stretch;gap:6px">
+          <div class="progtrack"><div class="progfill" style="width:18%"></div></div>
+          <span class="subnote"><span class="deriv">260</span> landed ÷ (<span class="deriv">260</span> + <span class="deriv">1,200</span>) = 18%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WITHDRAWAL GATE — Pond A2 -->
+    <div class="withdraw" style="margin-bottom:22px">
+      <span data-i="ban"></span>
+      <div><div class="wt">Pond A2 · EXPORT-grade harvest is blocked until 2026-08-09 (২৪ শ্রাবণ ১৪৩৩)</div><div class="wd">Active oxytetracycline withdrawal — fish from A2 must not enter the export chain until the window closes. This is a food-safety rule, not a dismissible hint. LOCAL-market harvest may still be allowed; local rules can differ.</div></div>
+      <div class="wdays"><div class="n">19</div><div class="l">days left</div></div>
+    </div>
+
+    <!-- RECORD HARVEST PANEL — Pond A2 (gate demonstrated) -->
+    <div class="panel">
+      <div class="ph"><span data-i="plus"></span>Record harvest — Pond A2<span class="cnt">SPF Golda + Rui carp</span></div>
+      <div class="rh">
+        <div class="rh-grid">
+          <div class="field"><span class="fl">Pond</span><div class="inp"><span data-i="grid"></span>Pond A2 · SPF Golda + Rui carp</div></div>
+          <div class="field"><span class="fl">Harvest date</span><div class="inp"><span data-i="calendar"></span>2026-07-21 <span class="bn" style="color:var(--text-2)">(৫ শ্রাবণ ১৪৩৩)</span></div></div>
+          <div class="field"><span class="fl">Quantity (pieces)</span><div class="inp"><span class="ph2">e.g. 1,500</span></div></div>
+          <div class="field"><span class="fl">Total weight (kg)</span><div class="inp"><span class="ph2">e.g. 85</span></div></div>
+        </div>
+        <div class="field" style="margin-top:16px">
+          <span class="fl">Grade</span>
+          <div class="gradepick">
+            <div class="gopt sel">
+              <div class="got"><span class="ck"><span data-i="check"></span></span>Local market</div>
+              <div class="gsub">Sold within Bangladesh. Permitted during the withdrawal window — but confirm local-market rules before selling treated fish.</div>
+            </div>
+            <div class="gopt disabled">
+              <div class="got"><span class="ck"></span>Export</div>
+              <div class="gsub">Unavailable for Pond A2 right now.</div>
+              <span class="blocktag"><span data-i="ban"></span>Export blocked until 2026-08-09 — 19 days of withdrawal remain</span>
+            </div>
+          </div>
+        </div>
+        <div class="rh-note"><span data-i="shield-check"></span>The export option unlocks automatically on 2026-08-09 (২৪ শ্রাবণ ১৪৩৩) — the same export-safe date shown on the Health screen for A2’s oxytetracycline treatment.</div>
+        <div class="rh-actions">
+          <button class="btn primary"><span data-i="check"></span>Save local harvest</button>
+          <button class="btn secondary"><span data-i="x"></span>Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HARVEST RECORDS -->
+    <div class="panel">
+      <div class="ph"><span data-i="list"></span>Harvest records<span class="cnt">This cycle · latest first</span></div>
+      <table class="dtable">
+        <thead><tr>
+          <th><span class="sortable">Date <span data-i="chevron-down"></span></span></th>
+          <th>Pond</th><th>Species</th><th class="num">Pieces</th><th class="num">Weight</th>
+          <th>Grade</th><th class="num">Price/kg</th><th class="num">Revenue</th><th>By</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="ts">2026-07-20</div><div class="tsb">৪ শ্রাবণ ১৪৩৩</div></td>
+            <td class="strong">C1</td><td><span class="tbadge sp-golda">SPF Golda</span></td>
+            <td class="num">725</td><td class="num">25 kg</td>
+            <td><span class="grade grade-local"><span data-i="store"></span>LOCAL</span></td>
+            <td class="money">৳৬৮০</td><td class="money">৳১৭,০০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>KU</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-18</div><div class="tsb">২ শ্রাবণ ১৪৩৩</div></td>
+            <td class="strong">C1</td><td><span class="tbadge sp-golda">SPF Golda</span></td>
+            <td class="num">1,015</td><td class="num">35 kg</td>
+            <td><span class="grade grade-export"><span data-i="globe"></span>EXPORT</span></td>
+            <td class="money">৳১,১২০</td><td class="money">৳৩৯,২০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>KU</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-15</div><div class="tsb">৩১ আষাঢ় ১৪৩৩</div></td>
+            <td class="strong">C1</td><td><span class="tbadge sp-golda">SPF Golda</span></td>
+            <td class="num">1,160</td><td class="num">40 kg</td>
+            <td><span class="grade grade-export"><span data-i="globe"></span>EXPORT</span></td>
+            <td class="money">৳১,১৫০</td><td class="money">৳৪৬,০০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>KU</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-12</div><div class="tsb">২৮ আষাঢ় ১৪৩৩</div></td>
+            <td class="strong">B3</td><td><span class="tbadge sp-rui">Rui / Catla</span></td>
+            <td class="num">1,150</td><td class="num">160 kg</td>
+            <td><span class="grade grade-local"><span data-i="store"></span>LOCAL</span></td>
+            <td class="money">৳৩৪০</td><td class="money">৳৫৪,৪০০</td>
+            <td><span class="src"><span class="sa worker">KU</span>KU</span></td>
+          </tr>
+        </tbody>
+        <tfoot><tr>
+          <td colspan="4">Total · 4 harvests</td>
+          <td class="num">260 kg</td>
+          <td colspan="2"></td>
+          <td class="money">৳১,৫৬,৬০০</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div>
+
+    <!-- HARVEST PROGRESS PANEL -->
+    <div class="panel">
+      <div class="ph"><span data-i="gauge"></span>Harvest progress by pond<span class="cnt">Landed vs projected cycle yield</span></div>
+      <div class="progrow">
+        <div class="progrow-top">
+          <span class="pname">Pond C1 · SPF Golda</span>
+          <span class="elig elig-yes"><span data-i="shield-check"></span>Export-eligible</span>
+          <span class="pspacer"></span>
+          <span class="pct">80%</span>
+        </div>
+        <div class="pbtrack"><div class="pbfill done" style="width:80%"></div></div>
+        <div class="prog-deriv"><span class="seg2">Landed <span class="dv">100 kg</span></span><span>÷</span><span class="seg2">projected <span class="dv">125 kg</span></span><span>= 80%</span><span>· remaining <span class="dv">25 kg</span></span></div>
+      </div>
+      <div class="progrow">
+        <div class="progrow-top">
+          <span class="pname">Pond B3 · Rui/Catla + Parse</span>
+          <span class="elig elig-yes"><span data-i="shield-check"></span>Export-eligible since 07-10</span>
+          <span class="pspacer"></span>
+          <span class="pct">40%</span>
+        </div>
+        <div class="pbtrack"><div class="pbfill done" style="width:40%"></div></div>
+        <div class="prog-deriv"><span class="seg2">Landed <span class="dv">160 kg</span></span><span>÷</span><span class="seg2">projected <span class="dv">400 kg</span></span><span>= 40%</span><span>· remaining <span class="dv">240 kg</span></span></div>
+      </div>
+      <div class="progrow">
+        <div class="progrow-top">
+          <span class="pname">Pond A2 · SPF Golda + Rui</span>
+          <span class="elig elig-no"><span data-i="ban"></span>Export blocked · 19 days</span>
+          <span class="pspacer"></span>
+          <span class="pct">0%</span>
+        </div>
+        <div class="pbtrack"><div class="pbfill blocked" style="width:100%"></div></div>
+        <div class="prog-deriv"><span class="seg2">Landed <span class="dv">0 kg</span></span><span>÷</span><span class="seg2">projected <span class="dv">535 kg</span></span><span>= 0%</span><span>· LOCAL only until 2026-08-09 <span class="bn">(২৪ শ্রাবণ)</span></span></div>
+      </div>
+      <div class="progrow">
+        <div class="progrow-top">
+          <span class="pname">Pond J1 · SPF Golda + Parse</span>
+          <span class="elig elig-yes"><span data-i="shield-check"></span>Export-eligible</span>
+          <span class="pspacer"></span>
+          <span class="pct">0%</span>
+        </div>
+        <div class="pbtrack"><div class="pbfill done" style="width:0%"></div></div>
+        <div class="prog-deriv"><span class="seg2">Landed <span class="dv">0 kg</span></span><span>÷</span><span class="seg2">projected <span class="dv">400 kg</span></span><span>= 0%</span><span>· not yet at harvest weight</span></div>
+      </div>
+      <div class="prog-summary">
+        <div class="ps"><span class="pl2">Landed</span><span class="pv2">260 kg</span></div>
+        <span class="op">+</span>
+        <div class="ps"><span class="pl2">Remaining</span><span class="pv2">1,200 kg</span></div>
+        <span class="op">=</span>
+        <div class="ps"><span class="pl2">Projected cycle yield</span><span class="pv2">1,460 kg</span></div>
+        <span class="op">→</span>
+        <div class="ps"><span class="pl2">Progress</span><span class="pv2">260 ÷ 1,460 = 18%</span></div>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN-2 VARIANTS ============ -->
+    <div class="divider"></div>
+    <p class="slab">Harvest · documented variants</p>
+
+    <!-- WITHDRAWAL-BLOCKED (labelled) -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag red">Withdrawal-blocked</span><h3>The food-safety gate, isolated</h3></div>
+      <p class="vsub">The critical interaction, shown on its own so the rule is unmistakable: opening “Record harvest” for Pond A2, the EXPORT grade is unavailable with an explicit reason and countdown, while LOCAL stays selectable. The gate reads as a firm constraint, not a dismissible hint — and its date is the same 2026-08-09 the Health screen carries.</p>
+      <div class="vbox">
+        <div class="withdraw" style="margin-bottom:16px">
+          <span data-i="ban"></span>
+          <div><div class="wt">EXPORT-grade harvest blocked · Pond A2 · until 2026-08-09 (২৪ শ্রাবণ ১৪৩৩)</div><div class="wd">Oxytetracycline withdrawal active. Source of truth: Health → Treatments.</div></div>
+          <div class="wdays"><div class="n">19</div><div class="l">days left</div></div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="plus"></span>Record harvest — Pond A2</div>
+          <div class="rh">
+            <div class="field"><span class="fl">Grade</span>
+              <div class="gradepick">
+                <div class="gopt sel">
+                  <div class="got"><span class="ck"><span data-i="check"></span></span>Local market</div>
+                  <div class="gsub">Available. Sold within Bangladesh; confirm local-market rules for treated fish.</div>
+                </div>
+                <div class="gopt disabled">
+                  <div class="got"><span class="ck"></span>Export</div>
+                  <div class="gsub">Cannot be selected during the withdrawal window.</div>
+                  <span class="blocktag"><span data-i="ban"></span>Export blocked until 2026-08-09 — 19 days of withdrawal remain</span>
+                </div>
+              </div>
+            </div>
+            <div class="rh-note"><span data-i="lock"></span>This constraint cannot be overridden from the harvest form. It clears only when the withdrawal period ends, or if the treatment record is corrected on the Health screen.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPTY -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Empty</span><h3>Nothing harvested yet</h3></div>
+      <p class="vsub">A cycle where no harvest has been recorded. Rather than an empty grid, it explains when harvesting typically begins for this crop, so the owner knows nothing is wrong.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="list"></span>Harvest records<span class="cnt">This cycle</span></div>
+          <div class="empty">
+            <span class="ei" data-i="scale"></span>
+            <div class="et">No harvests recorded yet</div>
+            <div class="ed">Golda prawn is usually harvested from around 25–35 g, roughly 4–5 months after stocking. Your earliest batch (Pond C1, stocked 2026-04-20) is nearing that window — the first harvest will appear here once it’s recorded.</div>
+            <span class="goodpill"><span data-i="calendar"></span>Projected first harvest · early শ্রাবণ ১৪৩৩</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEGRADED -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Degraded</span><h3>Progress/pricing service down</h3></div>
+      <p class="vsub">The service that computes projected yield and progress is unreachable; that panel falls back to the degraded widget. Harvest records — the money and the grades — are stored data and still render. Crucially, the withdrawal gate is enforced independently, so it is never disabled by an analytics outage.</p>
+      <div class="vbox">
+        <div class="withdraw" style="margin-bottom:16px">
+          <span data-i="ban"></span>
+          <div><div class="wt">Pond A2 · EXPORT blocked until 2026-08-09 (২৪ শ্রাবণ ১৪৩৩)</div><div class="wd">Enforced from the treatment record — shown even while analytics are down.</div></div>
+          <div class="wdays"><div class="n">19</div><div class="l">days left</div></div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="gauge"></span>Harvest progress by pond<span class="cnt">Projection service</span></div>
+          <div class="degraded"><span class="di" data-i="alert-triangle"></span><div><div class="dt">Progress &amp; projection are temporarily unavailable.</div><div class="dd">Recorded harvests, weights, grades and revenue below are live and unaffected — and the export withdrawal gate stays enforced.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Loading</span><h3>Skeleton state</h3></div>
+      <p class="vsub">Shimmer skeletons for the KPI row and records table.</p>
+      <div class="vbox">
+        <div class="kpirow" style="margin-bottom:20px">
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:50%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:60%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:50%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:35%;margin-top:auto"></div><div class="sk" style="height:16px;width:100%"></div></div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div style="padding:14px 16px;display:flex;flex-direction:column;gap:16px">
+            <div class="sk" style="height:14px;width:30%"></div>
+            <div class="sk" style="height:34px;width:100%"></div>
+            <div class="sk" style="height:34px;width:100%"></div>
+            <div class="sk" style="height:34px;width:100%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTNER -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Partner</span><h3>Read-only partner</h3></div>
+      <p class="vsub">A partner sees harvests, grades, revenue and — importantly — the withdrawal status, since it affects when the crop can be sold for export. But there is no “Record harvest” button and no harvest form. The gate is shown as information, not an interaction.</p>
+      <div class="vbox">
+        <div class="phead" style="margin-bottom:18px;padding-bottom:16px">
+          <div><h1 style="font-size:20px">Harvest <span class="badge b-crit"><span class="dot"></span>A2 EXPORT BLOCKED</span></h1>
+            <div class="meta"><span class="m"><span data-i="scale"></span>260 kg landed</span><span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span></div></div>
+          <span class="ro-ind"><span data-i="eye"></span>Read-only view</span>
+        </div>
+        <div class="withdraw" style="margin-bottom:16px">
+          <span data-i="ban"></span>
+          <div><div class="wt">Pond A2 · EXPORT-grade harvest blocked until 2026-08-09 (২৪ শ্রাবণ ১৪৩৩)</div><div class="wd">Oxytetracycline withdrawal active — relevant to any export purchase agreement.</div></div>
+          <div class="wdays"><div class="n">19</div><div class="l">days left</div></div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="list"></span>Harvest records<span class="cnt">View only</span></div>
+          <table class="dtable">
+            <thead><tr><th>Date</th><th>Pond</th><th>Grade</th><th class="num">Weight</th><th class="num">Revenue</th></tr></thead>
+            <tbody>
+              <tr><td><div class="ts">2026-07-18</div><div class="tsb">২ শ্রাবণ ১৪৩৩</div></td><td class="strong">C1</td><td><span class="grade grade-export"><span data-i="globe"></span>EXPORT</span></td><td class="num">35 kg</td><td class="money">৳৩৯,২০০</td></tr>
+              <tr><td><div class="ts">2026-07-15</div><div class="tsb">৩১ আষাঢ় ১৪৩৩</div></td><td class="strong">C1</td><td><span class="grade grade-export"><span data-i="globe"></span>EXPORT</span></td><td class="num">40 kg</td><td class="money">৳৪৬,০০০</td></tr>
+              <tr><td><div class="ts">2026-07-12</div><div class="tsb">২৮ আষাঢ় ১৪৩৩</div></td><td class="strong">B3</td><td><span class="grade grade-local"><span data-i="store"></span>LOCAL</span></td><td class="num">160 kg</td><td class="money">৳৫৪,৪০০</td></tr>
+            </tbody>
+          </table>
+          <div class="water-foot"><span data-i="lock"></span>Harvests are recorded by the project owner. Partner accounts can view records, grades, revenue and withdrawal status but cannot record a harvest.</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const ICONS={
+ "layers":"M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+ "chevron-down":"M6 9l6 6 6-6","chevron-left":"M15 18l-6-6 6-6","chevron-right":"M9 18l6-6-6-6",
+ "bell":"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",
+ "settings":"M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z",
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "layout":"M3 3h18v18H3zM3 9h18M9 21V9",
+ "grid":"M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "utensils":"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ "check-square":"M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11",
+ "package":"M16.5 9.4 7.5 4.21M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12",
+ "heart-pulse":"M20.42 4.58a5.4 5.4 0 0 0-7.65 0L12 5.36l-.77-.78a5.4 5.4 0 0 0-7.65 7.65l.78.78L12 21l7.64-7.99.78-.78a5.4 5.4 0 0 0 0-7.65zM3.5 12h4l1.5-3 3 6 1.5-3h4",
+ "trending-up":"M22 7l-8.5 8.5-5-5L2 17M16 7h6v6",
+ "scale":"M12 3v18M7 21h10M6.5 7 3 14a3.5 3.5 0 0 0 7 0L6.5 7zM17.5 7 14 14a3.5 3.5 0 0 0 7 0l-3.5-7zM3 7h18",
+ "wallet":"M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4z",
+ "file-text":"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8",
+ "camera":"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "cloud":"M17.5 19a4.5 4.5 0 1 0 0-9h-1.26A8 8 0 1 0 4 15.25",
+ "users":"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+ "user":"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "activity":"M22 12h-4l-3 9L9 3l-3 9H2",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "check":"M20 6 9 17l-5-5",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "x":"M18 6 6 18M6 6l12 12",
+ "fish":"M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6zM18 12v.5M16 17.93a9.77 9.77 0 0 0 0-11.86M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 1.5-1 5 .23 6.5-1.24 1.5-1.24 5-.23 6.5C5.58 18.03 7 16 7 13.33",
+ "waves":"M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1",
+ "move-vertical":"M12 2v20M8 6l4-4 4 4M8 18l4 4 4-4",
+ "gauge":"M12 15l3.5-3.5M6.34 18a9 9 0 1 1 11.32 0z",
+ "ban":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM4.93 4.93l14.14 14.14",
+ "globe":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z",
+ "store":"M2 7l1.5-4h17L22 7M4 7v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7M2 7h20M9 21v-6h6v6",
+ "building":"M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18ZM9 6h.01M15 6h.01M9 10h.01M15 10h.01M9 14h.01M15 14h.01M10 22v-4h4v4",
+ "help-circle":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01",
+ "list":"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
+ "download":"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
+ "plus":"M12 5v14M5 12h14",
+ "shield-check":"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4",
+ "eye":"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "lock":"M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4",
+ "info":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · F-01 Design Language & Component Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;
+  --focus:#0891B2;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-modal:0 10px 30px rgba(15,23,42,.18);
+  --font:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.bn{font-family:var(--bn)}
+h1,h2,h3,p{margin:0}
+a{color:var(--brand);text-decoration:none}
+a:hover{color:var(--brand-dark)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+button{font-family:inherit}
+.num{font-variant-numeric:tabular-nums}
+
+/* layout */
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+.page-head{padding:56px 0 40px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.page-head h1{font-size:32px;font-weight:700;letter-spacing:-.5px;margin-top:10px}
+.page-head p{color:var(--text-2);margin-top:12px;max-width:640px;text-wrap:pretty}
+section{padding:36px 0;border-top:1px solid var(--border)}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:24px}
+.sec-num{font-family:var(--mono);font-size:13px;color:var(--muted);flex-shrink:0}
+.sec-head h2{font-size:20px;font-weight:700}
+.sec-head .sub{font-size:14px;color:var(--text-2)}
+.grid{display:grid;gap:16px}
+.note{font-size:13px;color:var(--text-2)}
+
+/* generic card */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:20px}
+.subcap{font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+
+/* swatches */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.sw{display:flex;flex-direction:column;gap:8px}
+.sw .chip{height:64px;border-radius:var(--r-md);border:1px solid rgba(15,23,42,.06)}
+.sw .nm{font-size:13px;font-weight:600}
+.sw .hex{font-family:var(--mono);font-size:12px;color:var(--text-2)}
+
+/* type scale */
+.trow{display:flex;align-items:baseline;gap:20px;padding:12px 0;border-bottom:1px solid var(--border)}
+.trow:last-child{border-bottom:0}
+.ttag{font-family:var(--mono);font-size:12px;color:var(--text-2);width:150px;flex-shrink:0}
+
+/* money */
+.money{font-weight:700;font-variant-numeric:tabular-nums}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-md);font-weight:500;cursor:pointer;border:1px solid transparent;transition:background .15s,box-shadow .15s,border-color .15s;line-height:1;white-space:nowrap}
+.btn svg{width:20px;height:20px}
+.btn.sm{height:36px;padding:0 12px;font-size:14px}.btn.sm svg{width:16px;height:16px}
+.btn.md{height:44px;padding:0 16px;font-size:16px}
+.btn.lg{height:52px;padding:0 24px;font-size:16px}.btn.lg svg{width:24px;height:24px}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn.primary:hover{background:var(--brand-dark);border-color:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.btn.secondary:hover{background:var(--surface-muted)}
+.btn.ghost{background:transparent;color:var(--brand)}
+.btn.ghost:hover{background:var(--tint-brand)}
+.btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn.danger:hover{background:#B91C1C;border-color:#B91C1C}
+.btn.is-focus{outline:2px solid var(--focus);outline-offset:2px}
+.btn:disabled,.btn.is-disabled{opacity:.5;cursor:not-allowed}
+.btn-matrix{display:grid;grid-template-columns:auto repeat(4,1fr);gap:14px 16px;align-items:center}
+.btn-matrix .rh{font-size:12px;color:var(--text-2);font-family:var(--mono)}
+.btn-matrix .ch{font-size:12px;font-weight:600;text-align:center;color:var(--text-2)}
+
+/* forms */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;font-weight:500}
+.control{position:relative;display:flex;align-items:center}
+.control .ic{position:absolute;left:12px;display:flex;color:var(--text-2)}
+.control .suffix{position:absolute;right:12px;font-size:14px;color:var(--text-2)}
+.inp{width:100%;height:44px;border:1px solid var(--border-strong);border-radius:var(--r-md);padding:0 12px;font-family:inherit;font-size:16px;color:var(--text);background:var(--surface);outline:none}
+.inp:focus{border-color:var(--focus);box-shadow:0 0 0 3px rgba(8,145,178,.15)}
+.inp.has-ic{padding-left:38px}.inp.has-suffix{padding-right:52px}
+.inp::placeholder{color:var(--muted)}
+select.inp{appearance:none;padding-right:38px;cursor:pointer}
+.chev{position:absolute;right:12px;pointer-events:none;color:var(--text-2);display:flex}
+.help{font-size:12px;color:var(--text-2)}
+.err .inp{border-color:var(--danger)}
+.err .help{color:var(--danger)}
+
+/* KPI */
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:16px;display:flex;flex-direction:column;gap:10px}
+.kpi .top{display:flex;align-items:center;justify-content:space-between}
+.kpi .lab{font-size:14px;color:var(--text-2)}
+.kpi .ico{width:32px;height:32px;border-radius:var(--r-md);background:var(--tint-brand);display:flex;align-items:center;justify-content:center;color:var(--brand)}
+.kpi .val{font-size:32px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.delta{display:inline-flex;align-items:center;gap:4px;width:fit-content;font-size:13px;font-weight:600;padding:3px 9px;border-radius:var(--r-pill);font-variant-numeric:tabular-nums}
+.delta.up{color:var(--ok);background:var(--tint-ok)}
+.delta.down{color:var(--danger);background:var(--tint-critical)}
+.delta.flat{color:var(--text-2);background:var(--surface-muted)}
+.spark{color:var(--muted);flex-shrink:0}
+/* loading skeletons */
+@keyframes shimmer{100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E2E8F0 0%,#EEF3F8 50%,#E2E8F0 100%);background-size:200% 100%;background-position:200% 0;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-sm)}
+.sk-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:16px;display:flex;flex-direction:column;gap:14px}
+.sk-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;display:flex;align-items:center;gap:16px}
+.a-closed{background:var(--surface-muted);border-color:var(--border-strong)}.a-closed svg{color:var(--text-2)}.a-closed .bt{color:var(--text)}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:12px;font-weight:500;white-space:nowrap}
+.badge svg{width:13px;height:13px}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.b-neutral{background:var(--surface-muted);color:var(--text-2)}.b-neutral .dot{background:var(--muted)}
+.b-brand{background:var(--tint-brand);color:var(--brand-dark)}.b-brand .dot{background:var(--brand)}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-info{background:var(--tint-info);color:#075985}.b-info .dot{background:var(--info)}
+.b-warning{background:var(--tint-warning);color:#92400E}.b-warning .dot{background:var(--warning)}
+.b-critical{background:var(--tint-critical);color:#991B1B}.b-critical .dot{background:var(--critical)}
+.badge-group{display:flex;flex-direction:column;gap:10px}
+.badge-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge-row .gl{font-size:12px;color:var(--text-2);width:130px;flex-shrink:0;font-weight:600}
+
+/* alert banners */
+.banner{display:flex;gap:12px;padding:14px;border-radius:var(--r-md);border:1px solid}
+.banner svg{width:20px;height:20px;flex-shrink:0;margin-top:1px}
+.banner .bt{font-size:14px;font-weight:700;line-height:1.25}
+.banner .bb{font-size:14px;color:var(--text-2);margin-top:2px}
+.banner .act{margin-left:auto;flex-shrink:0}
+.a-info{background:var(--tint-info);border-color:#BAE6FD}.a-info svg{color:var(--info)}.a-info .bt{color:#075985}
+.a-warning{background:var(--tint-warning);border-color:#FDE68A}.a-warning svg{color:var(--warning)}.a-warning .bt{color:#92400E}
+.a-critical{background:var(--tint-critical);border-color:#FECACA}.a-critical svg{color:var(--critical)}.a-critical .bt{color:#991B1B}
+
+/* degraded + empty */
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:32px 24px;border-radius:var(--r-lg)}
+.state .si{width:44px;height:44px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.state .st{font-size:16px;font-weight:700}
+.state .sd{font-size:14px;color:var(--text-2);max-width:340px}
+.state.degraded{background:var(--surface-muted);border:1px solid var(--border)}
+.state.empty{background:transparent;border:1px dashed var(--border-strong)}
+
+/* nav chrome */
+.appbar{display:flex;align-items:center;gap:16px;padding:12px 20px;background:var(--brand-dark);color:#fff;border-radius:var(--r-lg) var(--r-lg) 0 0}
+.appbar .mark{font-size:22px;font-weight:700;letter-spacing:-1px}
+.switcher{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);color:#fff;height:38px;padding:0 12px;border-radius:var(--r-md);cursor:pointer;font-size:14px;font-weight:500}
+.switcher svg{width:16px;height:16px;opacity:.8}
+.appbar .spacer{flex:1}
+.appbar .ib{width:38px;height:38px;border-radius:var(--r-md);border:1px solid rgba(255,255,255,.18);background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.appbar .ib svg{width:20px;height:20px}
+.userchip{display:flex;align-items:center;gap:8px}
+.userchip .av{width:34px;height:34px;border-radius:var(--r-pill);background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.userchip .un{font-size:13px;font-weight:500}.userchip .ur{font-size:11px;opacity:.7}
+.tabbar{display:flex;gap:2px;overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-top:0;border-radius:0 0 var(--r-lg) var(--r-lg);padding:6px 10px}
+.tab{display:flex;align-items:center;gap:7px;padding:9px 12px;border-radius:var(--r-md);font-size:14px;font-weight:500;color:var(--text-2);white-space:nowrap;cursor:pointer;border:none;background:transparent}
+.tab svg{width:16px;height:16px}
+.tab:hover{background:var(--surface-muted);color:var(--text)}
+.tab.active{background:var(--tint-brand);color:var(--brand-dark);font-weight:600}
+.crumb{font-size:13px;color:var(--text-2);margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+.foot{padding:48px 0 64px;color:var(--muted);font-size:13px}
+@media(max-width:720px){.wrap{padding:0 20px}.btn-matrix{grid-template-columns:1fr;gap:20px}.appbar{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="eyebrow">FMS · Reference F-01</div>
+    <h1>Design language &amp; component gallery</h1>
+    <p>The web visual system for the Fish Farm Management System — proven on one page so every
+      subsequent screen inherits it. Water-calm, high-contrast, bilingual (English + Bangla), and
+      accessible to WCAG&nbsp;2.1&nbsp;AA. All values are shipped design tokens.</p>
+  </header>
+</div>
+
+<!-- 1 BRAND & COLOR -->
+<section id="color"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Brand &amp; color</h2><span class="sub">Single teal identity · calm tinted status</span></div>
+
+  <div class="subcap">Brand — teal / water</div>
+  <div class="swatches" style="margin-bottom:24px">
+    <div class="sw"><div class="chip" style="background:#0E7490"></div><span class="nm">primary</span><span class="hex">#0E7490</span></div>
+    <div class="sw"><div class="chip" style="background:#155E75"></div><span class="nm">primaryDark</span><span class="hex">#155E75</span></div>
+    <div class="sw"><div class="chip" style="background:#0891B2"></div><span class="nm">accent</span><span class="hex">#0891B2</span></div>
+  </div>
+
+  <div class="subcap">Neutrals</div>
+  <div class="swatches" style="margin-bottom:24px">
+    <div class="sw"><div class="chip" style="background:#F8FAFC"></div><span class="nm">bg</span><span class="hex">#F8FAFC</span></div>
+    <div class="sw"><div class="chip" style="background:#FFFFFF"></div><span class="nm">surface</span><span class="hex">#FFFFFF</span></div>
+    <div class="sw"><div class="chip" style="background:#E2E8F0"></div><span class="nm">border</span><span class="hex">#E2E8F0</span></div>
+    <div class="sw"><div class="chip" style="background:#0F172A"></div><span class="nm">textPrimary</span><span class="hex">#0F172A</span></div>
+    <div class="sw"><div class="chip" style="background:#475569"></div><span class="nm">textSecondary</span><span class="hex">#475569</span></div>
+    <div class="sw"><div class="chip" style="background:#FFFFFF;border:1px solid var(--border-strong)"></div><span class="nm">textInverse</span><span class="hex">#FFFFFF</span></div>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div>
+      <div class="subcap">Alert severity</div>
+      <div class="swatches">
+        <div class="sw"><div class="chip" style="background:#0284C7"></div><span class="nm">info</span><span class="hex">#0284C7</span></div>
+        <div class="sw"><div class="chip" style="background:#D97706"></div><span class="nm">warning</span><span class="hex">#D97706</span></div>
+        <div class="sw"><div class="chip" style="background:#DC2626"></div><span class="nm">critical</span><span class="hex">#DC2626</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="subcap">Status</div>
+      <div class="swatches">
+        <div class="sw"><div class="chip" style="background:#16A34A"></div><span class="nm">ok / positive</span><span class="hex">#16A34A</span></div>
+        <div class="sw"><div class="chip" style="background:#94A3B8"></div><span class="nm">muted</span><span class="hex">#94A3B8</span></div>
+        <div class="sw"><div class="chip" style="background:#DC2626"></div><span class="nm">danger</span><span class="hex">#DC2626</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 2 TYPOGRAPHY -->
+<section id="type"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Typography</h2><span class="sub">Inter · Noto Sans Bengali · JetBrains Mono</span></div>
+  <div class="grid" style="grid-template-columns:1.3fr 1fr;align-items:start">
+    <div class="card">
+      <div class="subcap">Inter scale</div>
+      <div class="trow"><span class="ttag">2xl · 32 · 700</span><span style="font-size:32px;font-weight:700;letter-spacing:-.5px">Meghna Gher portfolio</span></div>
+      <div class="trow"><span class="ttag">xl · 24 · 700</span><span style="font-size:24px;font-weight:700">Pond A2 · SPF Golda</span></div>
+      <div class="trow"><span class="ttag">lg · 20 · 500</span><span style="font-size:20px;font-weight:500">Water quality &amp; feed</span></div>
+      <div class="trow"><span class="ttag">md · 16 · 400</span><span style="font-size:16px">Base body — dissolved oxygen 6.2&nbsp;mg/L at dawn.</span></div>
+      <div class="trow"><span class="ttag">sm · 14 · 400</span><span style="font-size:14px;color:var(--text-2)">Secondary / meta — stocked 100 days ago</span></div>
+      <div class="trow"><span class="ttag">xs · 12 · 500</span><span style="font-size:12px;font-weight:500;color:var(--text-2);letter-spacing:.04em">CAPTION · BADGE LABEL</span></div>
+    </div>
+    <div class="card bn">
+      <div class="subcap" style="font-family:var(--font)">Bangla specimen — Noto Sans Bengali</div>
+      <div style="font-size:24px;font-weight:700">আজকের কাজ ও সতর্কতা</div>
+      <div style="font-size:16px;margin-top:8px">খাবার দিন · পানি পরীক্ষা · মৃত্যু লিপিবদ্ধ করুন</div>
+      <div style="margin-top:16px">
+        <div class="subcap" style="font-family:var(--font)">Bengali numerals</div>
+        <div style="font-size:28px;font-weight:700;letter-spacing:2px">০ ১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯</div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="subcap" style="font-family:var(--font)">Dual date (web)</div>
+        <div style="font-size:18px"><span style="font-family:var(--font)" class="num">2026-07-21</span> <span style="color:var(--text-2)">(৫ শ্রাবণ ১৪৩৩)</span></div>
+        <div class="note" style="font-family:var(--font);margin-top:6px">Bangla date + season come from the app calendar package — never <code style="font-family:var(--mono)">Intl</code>.</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 3 MONEY -->
+<section id="money"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Money</h2><span class="sub">BDT · ৳ + Bengali numerals · lakh/crore grouping · whole taka</span></div>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="card"><div class="subcap">Profit</div><div class="money" style="font-size:32px;color:var(--ok)">৳৬,৫০০</div><div class="note" style="margin-top:8px">Positive · daily feed-cost saving</div></div>
+    <div class="card"><div class="subcap">Loss</div><div class="money" style="font-size:32px;color:var(--danger)">-৳৮০০</div><div class="note" style="margin-top:8px">Negative renders in danger red</div></div>
+    <div class="card"><div class="subcap">Large figure</div><div class="money" style="font-size:32px">৳১,২৩,৪৫৬</div><div class="note" style="margin-top:8px">South-Asian lakh grouping (1,23,456)</div></div>
+  </div>
+  <p class="note" style="margin-top:14px">Never Western formatting (“1,234.00”). No decimals; whole taka only. Money is always Bengali numerals on web and mobile.</p>
+</div></section>
+
+<!-- 4 BUTTONS -->
+<section id="buttons"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Buttons</h2><span class="sub">primary / secondary / ghost / danger · states · 3 sizes</span></div>
+  <div class="card">
+    <div class="btn-matrix" style="margin-bottom:8px">
+      <span></span><span class="ch">Default</span><span class="ch">Hover</span><span class="ch">Focus</span><span class="ch">Disabled</span>
+
+      <span class="rh">primary</span>
+      <button class="btn md primary">New batch</button>
+      <button class="btn md primary" style="background:var(--brand-dark);border-color:var(--brand-dark)">New batch</button>
+      <button class="btn md primary is-focus">New batch</button>
+      <button class="btn md primary is-disabled" disabled>New batch</button>
+
+      <span class="rh">secondary</span>
+      <button class="btn md secondary">Export</button>
+      <button class="btn md secondary" style="background:var(--surface-muted)">Export</button>
+      <button class="btn md secondary is-focus">Export</button>
+      <button class="btn md secondary is-disabled" disabled>Export</button>
+
+      <span class="rh">ghost</span>
+      <button class="btn md ghost">View pond</button>
+      <button class="btn md ghost" style="background:var(--tint-brand)">View pond</button>
+      <button class="btn md ghost is-focus">View pond</button>
+      <button class="btn md ghost is-disabled" disabled>View pond</button>
+
+      <span class="rh">danger</span>
+      <button class="btn md danger">Close batch</button>
+      <button class="btn md danger" style="background:#B91C1C;border-color:#B91C1C">Close batch</button>
+      <button class="btn md danger is-focus">Close batch</button>
+      <button class="btn md danger is-disabled" disabled>Close batch</button>
+    </div>
+    <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:16px">
+      <div class="subcap">Sizes</div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <button class="btn sm primary" data-i="plus">Small · 36</button>
+        <button class="btn md primary" data-i="plus">Medium · 44</button>
+        <button class="btn lg primary" data-i="plus">Large · 52</button>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 5 INPUTS -->
+<section id="inputs"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Inputs</h2><span class="sub">text · number+unit · select · dual date · states</span></div>
+  <div class="card"><div class="grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="field"><label for="f1">Pond name</label>
+      <div class="control"><span class="ic" data-i="map-pin"></span><input id="f1" class="inp has-ic" value="Pond A2" /></div>
+      <span class="help">Unique within this project.</span></div>
+
+    <div class="field"><label for="f2">Feed weight</label>
+      <div class="control"><input id="f2" class="inp has-suffix num" type="number" value="12" /><span class="suffix">kg</span></div>
+      <span class="help">Per feeding round.</span></div>
+
+    <div class="field"><label for="f3">Pond area</label>
+      <div class="control"><input id="f3" class="inp has-suffix num" type="number" value="48" /><span class="suffix">bigha</span></div>
+      <span class="help">Local unit.</span></div>
+
+    <div class="field"><label for="f4">Species</label>
+      <div class="control"><select id="f4" class="inp"><option>SPF Golda (prawn)</option><option>Parse (mullet)</option><option>Carp — Rui</option><option>Carp — Katla</option></select><span class="chev" data-i="chevron-down"></span></div>
+      <span class="help">Polyculture supported.</span></div>
+
+    <div class="field"><label for="f5">Stocking date</label>
+      <div class="control"><span class="ic" data-i="calendar"></span><input id="f5" class="inp has-ic" value="2026-07-21  (৫ শ্রাবণ ১৪৩৩)" /></div>
+      <span class="help">Dual date — Gregorian + Bangla shown together.</span></div>
+
+    <div class="field err"><label for="f6">Piece count</label>
+      <div class="control"><input id="f6" class="inp num" value="-" aria-invalid="true" /></div>
+      <span class="help" data-i-inline="alert-circle">Enter a positive number of stocked pieces.</span></div>
+  </div></div>
+</div></section>
+
+<!-- 6 CARDS -->
+<section id="cards"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Cards</h2><span class="sub">base surface · KPI stat</span></div>
+  <div class="grid" style="grid-template-columns:1.4fr 1fr 1fr;align-items:start">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px">
+        <div><div style="font-size:16px;font-weight:700">Pond A2 · Water quality</div><div class="note">SPF Golda · Active batch · Day 100</div></div>
+        <span class="badge b-ok"><span class="dot"></span>Normal</span>
+      </div>
+      <div style="display:flex;gap:24px">
+        <div><div class="note">Dissolved O₂</div><div style="font-size:20px;font-weight:600" class="num">6.2 <span style="font-size:13px;color:var(--text-2)">mg/L</span></div></div>
+        <div><div class="note">pH</div><div style="font-size:20px;font-weight:600" class="num">7.4</div></div>
+        <div><div class="note">Temp</div><div style="font-size:20px;font-weight:600" class="num">29.5°C</div></div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="top"><span class="lab">Biomass</span><span class="ico" data-i="fish"></span></div>
+      <div class="val num">1,840 <span style="font-size:16px;color:var(--text-2);font-weight:500">kg</span></div>
+      <div class="foot">
+        <span class="delta up">▲ 8.4% this week</span>
+        <svg class="spark" width="76" height="24" viewBox="0 0 76 24" fill="none" aria-hidden="true"><polyline points="0,18 13,16 26,17 38,12 51,13 64,7 76,4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="top"><span class="lab">Net profit</span><span class="ico" data-i="dollar-sign"></span></div>
+      <div class="val money">৳৪,২১,০০০</div>
+      <span class="delta down">▼ 3.2% vs last month</span>
+    </div>
+  </div>
+</div></section>
+
+<!-- LOADING -->
+<section id="loading"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Loading</h2><span class="sub">skeleton placeholders · soft shimmer · never a spinner</span></div>
+  <div class="grid" style="grid-template-columns:1fr 1.7fr;align-items:start">
+    <div class="sk-kpi">
+      <div class="sk" style="height:12px;width:42%"></div>
+      <div class="sk" style="height:30px;width:72%"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="sk-row"><div class="sk" style="width:40px;height:40px;border-radius:var(--r-md)"></div><div class="sk" style="height:12px;flex:1"></div><div class="sk" style="height:12px;width:64px"></div></div>
+      <div class="sk-row"><div class="sk" style="width:40px;height:40px;border-radius:var(--r-md)"></div><div class="sk" style="height:12px;flex:1"></div><div class="sk" style="height:12px;width:64px"></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 8 BADGES -->
+<section id="badges"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Badges</h2><span class="sub">the full status vocabulary</span></div>
+  <div class="card"><div class="badge-group">
+    <div class="badge-row"><span class="gl">Batch</span>
+      <span class="badge b-brand"><span class="dot"></span>ACTIVE</span>
+      <span class="badge b-info"><span class="dot"></span>HARVESTING</span>
+      <span class="badge b-neutral"><span class="dot"></span>CLOSED</span></div>
+    <div class="badge-row"><span class="gl">Task</span>
+      <span class="badge b-neutral"><span class="dot"></span>SCHEDULED</span>
+      <span class="badge b-warning"><span class="dot"></span>DUE</span>
+      <span class="badge b-ok" data-i="check">DONE</span>
+      <span class="badge b-critical"><span class="dot"></span>MISSED</span></div>
+    <div class="badge-row"><span class="gl">Alert severity</span>
+      <span class="badge b-info" data-i="info">INFO</span>
+      <span class="badge b-warning" data-i="alert-triangle">WARNING</span>
+      <span class="badge b-critical" data-i="alert-circle">CRITICAL</span></div>
+    <div class="badge-row"><span class="gl">Alert state</span>
+      <span class="badge b-critical"><span class="dot"></span>RAISED</span>
+      <span class="badge b-warning"><span class="dot"></span>SENT</span>
+      <span class="badge b-info"><span class="dot"></span>ACKNOWLEDGED</span>
+      <span class="badge b-ok" data-i="check">RESOLVED</span></div>
+    <div class="badge-row"><span class="gl">Feed observation</span>
+      <span class="badge b-ok"><span class="dot"></span>NORMAL</span>
+      <span class="badge b-warning"><span class="dot"></span>LEFTOVER</span>
+      <span class="badge b-info"><span class="dot"></span>EMPTY</span></div>
+    <div class="badge-row"><span class="gl">Harvest grade</span>
+      <span class="badge b-brand"><span class="dot"></span>EXPORT</span>
+      <span class="badge b-neutral"><span class="dot"></span>LOCAL</span></div>
+    <div class="badge-row"><span class="gl">Sync state</span>
+      <span class="badge b-warning" data-i="clock">PENDING</span>
+      <span class="badge b-ok" data-i="check-circle">SYNCED</span>
+      <span class="badge b-warning" data-i="alert-triangle">CONFLICT</span>
+      <span class="badge b-critical" data-i="refresh-cw">FAILED</span></div>
+  </div></div>
+</div></section>
+
+<!-- 8 ALERT BANNERS -->
+<section id="banners"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Alert banners</h2><span class="sub">inline · icon + message + optional action</span></div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="banner a-info"><span data-i="info"></span><div><div class="bt">Feed delivery logged</div><div class="bb">1,200 kg grower feed added to Meghna Gher inventory.</div></div><button class="btn sm ghost act">View</button></div>
+    <div class="banner a-warning"><span data-i="alert-triangle"></span><div><div class="bt">Dissolved oxygen dropping — Pond A2</div><div class="bb">DO 4.1 mg/L before dawn. Worker notified to run the aerator.</div></div><button class="btn sm secondary act">Acknowledge</button></div>
+    <div class="banner a-critical"><span data-i="alert-circle"></span><div><div class="bt">Emergency raised — Pond J1</div><div class="bb">Fish surfacing / gasping. Immediate aeration &amp; partial water exchange requested.</div></div><button class="btn sm danger act">Respond</button></div>
+  </div>
+</div></section>
+
+<!-- 9 DEGRADED + 10 EMPTY -->
+<section id="states"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">10 · 11</span><h2>Degraded, empty &amp; closed</h2><span class="sub">never a crash or blank</span></div>
+  <div class="banner a-closed" style="margin-bottom:20px"><span data-i="archive"></span><div><div class="bt">This project is closed and read-only.</div><div class="bb">All data stays visible for reference. Write actions — logging, editing and starting new batches — are hidden while the project is archived.</div></div></div>
+  <div class="grid" style="grid-template-columns:1fr 1fr 1fr">
+    <div>
+      <div class="subcap">Degraded — service down</div>
+      <div class="state degraded"><span class="si" style="color:var(--warning)" data-i="alert-triangle"></span><div class="st">Camera is temporarily unavailable</div><div class="sd">The rest of this page is unaffected. We’ll reconnect automatically.</div><button class="btn sm secondary" data-i="refresh-cw" style="margin-top:8px">Retry</button></div>
+    </div>
+    <div>
+      <div class="subcap">Degraded — stale cache</div>
+      <div class="state degraded"><span class="si" style="color:var(--warning)" data-i="clock"></span><div class="st">Weather is out of date</div><div class="sd">Showing cached data from 6h ago — network unreachable. Values may have changed.</div><button class="btn sm secondary" data-i="refresh-cw" style="margin-top:8px">Refresh</button></div>
+    </div>
+    <div>
+      <div class="subcap">Empty state</div>
+      <div class="state empty"><span class="si" style="color:var(--muted)" data-i="clipboard-list"></span><div class="st">No batches yet</div><div class="sd">Start a batch to begin tracking stock, feed and water for this pond.</div><button class="btn sm primary" data-i="plus" style="margin-top:8px">New batch</button></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 11 NAV CHROME -->
+<section id="nav"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">12</span><h2>Navigation chrome</h2><span class="sub">top app bar + per-project domain tab bar</span></div>
+  <div style="box-shadow:var(--sh-card);border-radius:var(--r-lg)">
+    <div class="appbar">
+      <span class="mark">FMS</span>
+      <button class="switcher">Meghna Gher <span data-i="chevron-down"></span></button>
+      <span class="spacer"></span>
+      <button class="ib" aria-label="Alerts" data-i="bell"></button>
+      <button class="ib" aria-label="Settings" data-i="settings"></button>
+      <div class="userchip"><div class="av">RK</div><div><div class="un">Rahima Khatun</div><div class="ur">Owner · 3 projects</div></div></div>
+    </div>
+    <div class="tabbar">
+      <button class="tab active" data-i="layout-dashboard">Overview</button>
+      <button class="tab" data-i="droplet">Ponds</button>
+      <button class="tab" data-i="thermometer">Water</button>
+      <button class="tab" data-i="utensils">Feed</button>
+      <button class="tab" data-i="life-buoy">Health</button>
+      <button class="tab" data-i="trending-up">Growth</button>
+      <button class="tab" data-i="scale">Harvest</button>
+      <button class="tab" data-i="dollar-sign">Finance</button>
+      <button class="tab" data-i="clipboard-list">Tasks</button>
+      <button class="tab" data-i="camera">Camera</button>
+      <button class="tab" data-i="cloud">Weather</button>
+      <button class="tab" data-i="clipboard-list">Reports</button>
+      <button class="tab" data-i="users">Members</button>
+      <button class="tab" data-i="settings">Settings</button>
+    </div>
+  </div>
+  <div class="crumb"><span data-i="map-pin" style="display:inline-flex;color:var(--text-2)"></span> Debidwar, Cumilla · 4 ponds · Worker: Jamal Uddin · <span class="badge b-brand" style="height:20px"><span class="dot"></span>ACTIVE</span> · <span class="num">2026-07-21</span> <span style="color:var(--text-2)">(৫ শ্রাবণ ১৪৩৩)</span></div>
+</div></section>
+
+<div class="wrap"><div class="foot">FMS · Fish Farm Management System — F-01 web design language. All colors, type, spacing and status vocabulary are shipped tokens. Icons: Lucide (inline SVG).</div></div>
+
+<script>
+// Inline lucide-style icon paths (24x24, stroke, currentColor)
+const ICONS={
+ "plus":"M12 5v14M5 12h14",
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "chevron-down":"M6 9l6 6 6-6",
+ "alert-circle":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v4M12 16h.01",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "info":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01",
+ "check":"M20 6 9 17l-5-5",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "refresh-cw":"M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6",
+ "archive":"M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8M2 4h20v4H2zM10 12h4",
+ "lock":"M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4",
+ "fish":"M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6zM18 12v.5M16 17.93a9.77 9.77 0 0 1 0-11.86M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 1.5-1 5 .23 6.5-1.24 1.5-1.24 5-.23 6.5C5.58 18.03 7 16 7 13.33",
+ "dollar-sign":"M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+ "trending-up":"M22 7 13.5 15.5 8.5 10.5 2 17M16 7h6v6",
+ "clipboard-list":"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM12 11h4M12 16h4M8 11h.01M8 16h.01",
+ "bell":"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0",
+ "settings":"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "layout-dashboard":"M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "thermometer":"M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z",
+ "utensils":"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ "life-buoy":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M14.83 9.17l3.53-3.53M4.93 19.07l4.24-4.24",
+ "scale":"M12 3v18M8 21h8M7 7l-4 6a3 3 0 0 0 6 0L5 7zM17 7l-4 6a3 3 0 0 0 6 0l-2-6zM3 7h4l5-2 5 2h4",
+ "camera":"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "cloud":"M17.5 19a4.5 4.5 0 1 0 0-9h-1.8A7 7 0 1 0 4 15.7",
+ "users":"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+};
+function svg(name,cls){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+// icon before text (data-i)
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+// inline icon inside help text (data-i-inline)
+document.querySelectorAll("[data-i-inline]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i-inline"))+" ");el.querySelector("svg").style.cssText="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:3px";});
+</script>
+</body>
+</html>

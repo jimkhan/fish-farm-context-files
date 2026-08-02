@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · M-06 Mortality / Sampling · M-07 Tasks (Worker)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;--tint-muted:#F1F5F9;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --ui:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ui);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+a{color:var(--brand);text-decoration:none}a:hover{color:var(--brand-dark)}
+.bn{font-family:var(--bn)}
+
+.page{max-width:1920px;margin:0 auto;padding:0 32px}
+.masthead{padding:52px 0 6px;border-bottom:1px solid var(--border)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--brand)}
+.masthead h1{font-size:34px;font-weight:700;letter-spacing:-.5px;margin-top:10px;line-height:1.1}
+.masthead p{font-size:16px;color:var(--text-2);max-width:900px;margin-top:14px}
+.masthead .meta{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 32px}
+.tag{font-size:12px;font-weight:500;color:var(--text-2);background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:var(--r-pill)}
+
+.screenblock{padding:44px 0 8px}
+.sb-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.sb-num{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);background:var(--tint-brand);padding:5px 11px;border-radius:var(--r-pill)}
+.sb-head h2{font-size:26px;font-weight:700;letter-spacing:-.4px}
+.sb-head h2 .en{color:var(--muted);font-weight:600;font-size:19px}
+.sb-desc{font-size:15px;color:var(--text-2);max-width:960px;margin-top:6px}
+
+.frames{display:flex;gap:44px;flex-wrap:wrap;padding:30px 0 40px;align-items:flex-start}
+.framecol{display:flex;flex-direction:column;gap:14px;width:412px}
+.flabel{display:flex;align-items:center;gap:10px}
+.flabel .ft{font-size:16px;font-weight:700}
+.state-pill{display:inline-flex;align-items:center;height:24px;padding:0 11px;border-radius:var(--r-pill);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.sp-ready{background:var(--tint-brand);color:var(--brand-dark)}
+.sp-filled{background:var(--tint-info);color:#075985}
+.sp-offline{background:var(--tint-warning);color:#92400E}
+.sp-done{background:var(--tint-ok);color:#166534}
+.sp-loading{background:var(--surface-muted);color:var(--text-2)}
+.sp-warn{background:var(--tint-warning);color:#92400E}
+.fnote{font-size:13px;color:var(--text-2);line-height:1.55}
+
+/* device */
+.device{width:412px;padding:11px;background:#0F172A;border-radius:46px;box-shadow:var(--sh-lift)}
+.screen{width:390px;border-radius:35px;overflow:hidden;background:var(--bg);font-family:var(--bn);position:relative;display:flex;flex-direction:column}
+.statusbar{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;background:var(--brand-dark);color:#fff;font-size:13px;font-weight:500;flex-shrink:0}
+.statusbar .sbr{display:flex;align-items:center;gap:7px}
+.statusbar svg{width:15px;height:15px}
+
+/* app header */
+.apphead{background:var(--brand);color:#fff;padding:12px 14px 14px;flex-shrink:0}
+.apphead .r1{display:flex;align-items:center;gap:10px}
+.apphead .back{width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:#fff;background:rgba(255,255,255,.14);flex-shrink:0}
+.apphead .back svg{width:22px;height:22px}
+.apphead .htitle{font-size:20px;font-weight:700;flex:1}
+.apphead .date{font-size:13px;color:rgba(255,255,255,.85);margin-top:10px;display:flex;align-items:center;gap:7px}
+.apphead .date svg{width:14px;height:14px}
+.syncpill{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-pill);font-size:13px;font-weight:600;background:rgba(255,255,255,.16);color:#fff}
+.syncpill svg{width:16px;height:16px}
+.syncpill.off{background:var(--warning);color:#fff}
+.pondbar{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.14);border-radius:var(--r-md);padding:9px 10px 9px 12px;margin-top:12px}
+.pondbar .pn{font-size:16px;font-weight:700;color:#fff;flex:1;display:flex;align-items:center;gap:8px}
+.pondbar .pn svg{width:16px;height:16px;opacity:.85}
+.pondbar .chg{font-size:13px;font-weight:600;color:#fff;background:rgba(255,255,255,.2);border-radius:var(--r-pill);padding:0 12px;min-height:34px;display:inline-flex;align-items:center;gap:5px}
+.pondbar .chg svg{width:15px;height:15px}
+.offline-banner{display:flex;align-items:center;gap:10px;background:var(--warning);color:#fff;padding:12px 16px;font-size:15px;font-weight:600;flex-shrink:0}
+.offline-banner svg{width:20px;height:20px;flex-shrink:0}
+
+/* tabs */
+.tabs{display:flex;background:var(--brand);padding:0 14px 12px;gap:8px}
+.tabs .tb{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-md);font-size:16px;font-weight:700;color:rgba(255,255,255,.8);background:rgba(255,255,255,.12)}
+.tabs .tb svg{width:20px;height:20px}
+.tabs .tb.on{background:#fff;color:var(--brand-dark)}
+
+.body{padding:14px;overflow-y:auto;flex:1}
+.fcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:16px;margin-bottom:14px}
+.fhead{display:flex;align-items:center;gap:12px}
+.fhead .fi{width:44px;height:44px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fhead .fi svg{width:26px;height:26px}
+.fi.mort{background:var(--tint-critical);color:var(--critical)}
+.fi.samp{background:var(--tint-brand);color:var(--brand)}
+.fhead .fttl{flex:1}
+.fhead .ft2{font-size:18px;font-weight:700}
+.fhead .fs{font-size:13px;color:var(--text-2);margin-top:1px}
+.sectlab{font-size:15px;font-weight:700;color:var(--text);margin:4px 2px 12px;display:flex;align-items:center;justify-content:space-between}
+.sectlab .cnt{font-size:13px;font-weight:600;color:var(--text-2)}
+.sectlab:first-child{margin-top:0}
+.flab2{font-size:14px;font-weight:600;color:var(--text-2);margin:16px 0 8px}
+.flab2:first-child{margin-top:0}
+
+/* stepper */
+.stepper{display:flex;align-items:center;gap:12px}
+.step-btn{width:60px;height:60px;border-radius:var(--r-md);background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center;border:1px solid var(--border);flex-shrink:0}
+.step-btn:active{background:var(--brand);color:#fff}
+.step-btn svg{width:30px;height:30px;stroke-width:2.4}
+.step-btn.danger{background:var(--tint-critical);color:var(--critical)}
+.step-val{flex:1;min-width:110px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);height:60px;display:flex;align-items:center;justify-content:center}
+.step-val .sv{display:flex;align-items:baseline;justify-content:center;gap:6px}
+.step-val .n{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.step-val .u{font-size:16px;color:var(--text-2);font-weight:500;line-height:1}
+
+/* chips (cause) */
+.chipwrap{display:flex;flex-wrap:wrap;gap:9px}
+.chip{min-height:52px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-md);font-size:15px;font-weight:600;background:var(--surface);border:1.5px solid var(--border-strong);color:var(--text-2);padding:0 15px}
+.chip svg{width:18px;height:18px}
+.chip.on{background:var(--tint-brand);border-color:var(--brand);color:var(--brand-dark)}
+.chip.on.crit{background:var(--tint-critical);border-color:var(--critical);color:#991B1B}
+
+/* segmented (species) */
+.seg{display:flex;background:var(--surface-muted);border-radius:var(--r-md);padding:4px;gap:4px}
+.seg .s{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:var(--r-sm);font-size:15px;font-weight:600;color:var(--text-2);padding:0 6px}
+.seg .s.on{background:var(--surface);color:var(--brand-dark);box-shadow:var(--sh-card)}
+
+/* capture */
+.capture{width:100%;min-height:96px;border:2px dashed var(--border-strong);border-radius:var(--r-lg);background:var(--surface-muted);display:flex;align-items:center;justify-content:center;gap:12px;color:var(--text-2)}
+.capture .cic{width:48px;height:48px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--brand);flex-shrink:0}
+.capture .cic svg{width:26px;height:26px}
+.capture .lab{font-size:16px;font-weight:600;color:var(--text)}
+.capture .sub{font-size:13px}
+.shot{position:relative;width:100%;border-radius:var(--r-lg);overflow:hidden;min-height:140px;background:linear-gradient(135deg,#5b8a72,#3f6b57)}
+.shot .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7)}
+.shot .ph svg{width:42px;height:42px}
+.shot .retake{position:absolute;right:10px;bottom:10px;min-height:44px;padding:0 14px;border-radius:var(--r-pill);background:rgba(15,23,42,.72);color:#fff;font-family:var(--bn);font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:7px}
+.shot .retake svg{width:18px;height:18px}
+.opt{font-size:12px;font-weight:600;color:var(--muted);background:var(--surface-muted);border-radius:var(--r-pill);padding:2px 9px;margin-left:7px}
+
+/* context note (amber, informational) */
+.ctx{display:flex;gap:11px;background:var(--tint-warning);border:1px solid #FCD34D;border-radius:var(--r-md);padding:12px;margin-top:14px}
+.ctx .ci{width:34px;height:34px;border-radius:var(--r-pill);background:var(--warning);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ctx .ci svg{width:20px;height:20px}
+.ctx .ct{font-size:15px;font-weight:700;color:#92400E}
+.ctx .cd{font-size:14px;color:#92400E;margin-top:3px;line-height:1.5}
+.ctx .cd b{color:#78350F}
+
+/* info line */
+.whybox{display:flex;gap:11px;background:var(--tint-info);border:1px solid #BAE6FD;border-radius:var(--r-md);padding:12px;margin-top:14px}
+.whybox .wi{width:34px;height:34px;border-radius:var(--r-pill);background:var(--info);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.whybox .wi svg{width:20px;height:20px}
+.whybox .wt{font-size:15px;font-weight:700;color:#075985}
+.whybox .wd{font-size:14px;color:#0C4A6E;margin-top:3px;line-height:1.5}
+
+/* log rows */
+.surf{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
+.lrow{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.lrow:last-child{border-bottom:none}
+.lrow .lic{width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lrow .lic svg{width:22px;height:22px}
+.lrow .lthumb{width:40px;height:40px;border-radius:var(--r-md);background:linear-gradient(135deg,#5b8a72,#3f6b57);flex-shrink:0;position:relative;overflow:hidden}
+.lrow .lthumb svg{width:18px;height:18px;color:rgba(255,255,255,.75);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.lrow .lm{flex:1;min-width:0}
+.lrow .lt{font-size:15px;font-weight:600}
+.lrow .lmeta{font-size:13px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lrow .lv{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.lrow .lv small{display:block;font-size:12px;font-weight:500;color:var(--text-2)}
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:var(--r-pill);font-size:12px;font-weight:600;font-family:var(--bn);white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-warning{background:var(--tint-warning);color:#92400E}.b-warning .dot{background:var(--warning)}
+.b-neutral{background:var(--surface-muted);color:var(--text-2)}.b-neutral .dot{background:var(--muted)}
+.b-critical{background:var(--tint-critical);color:#991B1B}.b-critical .dot{background:var(--critical)}
+.b-info{background:var(--tint-info);color:#075985}.b-info .dot{background:var(--info)}
+.retry{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border-strong);color:var(--danger);font-family:var(--bn);font-size:13px;font-weight:600}
+.retry svg{width:15px;height:15px}
+
+/* tasks */
+.trow{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.trow:last-child{border-bottom:none}
+.trow.done-row{background:var(--tint-ok)}
+.trow.miss-row{background:var(--tint-warning)}
+.trow .tmain{flex:1;min-width:0}
+.trow .ttitle{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.trow .tmeta{font-size:13px;color:var(--text-2);margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.trow .tmeta svg{width:14px;height:14px}
+.check{width:48px;height:48px;border-radius:var(--r-md);border:2px solid var(--border-strong);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0}
+.check svg{width:24px;height:24px}
+.check.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.check.due{border-color:var(--brand);color:var(--brand)}
+.tthumb{width:48px;height:48px;border-radius:var(--r-md);background:linear-gradient(135deg,#5b8a72,#3f6b57);flex-shrink:0;position:relative;overflow:hidden}
+.tthumb svg{width:20px;height:20px;color:rgba(255,255,255,.8);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.late-btn{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 14px;border-radius:var(--r-md);background:var(--warning);color:#fff;font-family:var(--bn);font-size:14px;font-weight:700;flex-shrink:0}
+.late-btn svg{width:17px;height:17px}
+
+/* upcoming compact */
+.upc{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border)}
+.upc:last-child{border-bottom:none}
+.upc .ud{width:44px;text-align:center;flex-shrink:0}
+.upc .ud .dd{font-size:18px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.upc .ud .dm{font-size:11px;color:var(--text-2);margin-top:2px}
+.upc .um{flex:1;min-width:0}
+.upc .ut{font-size:15px;font-weight:600}
+.upc .urep{font-size:12px;color:var(--text-2);margin-top:2px;display:flex;align-items:center;gap:5px}
+.upc .urep svg{width:13px;height:13px}
+
+/* completion sheet */
+.sheetwrap{position:relative;flex:1;overflow:hidden}
+.sheet-dim{position:absolute;inset:0;background:rgba(15,23,42,.42)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:20px 20px 0 0;padding:8px 16px 18px;box-shadow:0 -8px 30px rgba(15,23,42,.2)}
+.sheet .grab{width:40px;height:5px;border-radius:var(--r-pill);background:var(--border-strong);margin:6px auto 14px}
+.sheet .sh-h{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.sheet .sh-ic{width:46px;height:46px;border-radius:var(--r-md);background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sheet .sh-ic svg{width:26px;height:26px}
+.sheet .sh-t{font-size:19px;font-weight:700}
+.sheet .sh-s{font-size:13px;color:var(--text-2);margin-top:1px}
+.timepick{display:flex;align-items:center;gap:10px;background:var(--surface-muted);border-radius:var(--r-md);padding:10px 14px;margin-top:6px}
+.timepick .ti2{color:var(--brand);flex-shrink:0}
+.timepick .ti2 svg{width:22px;height:22px}
+.timepick .tv2{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;flex:1}
+.timepick .now{font-size:13px;font-weight:600;color:var(--brand);background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--r-pill);padding:6px 12px}
+
+/* buttons */
+.savebar{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px 14px;flex-shrink:0}
+.savebar .sm{font-size:13px;color:var(--text-2);text-align:center;margin-bottom:9px;display:flex;align-items:center;justify-content:center;gap:6px}
+.savebar .sm svg{width:15px;height:15px;color:var(--ok)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:56px;padding:0 20px;border-radius:var(--r-md);font-family:var(--bn);font-size:18px;font-weight:700;border:1px solid transparent;width:100%}
+.btn svg{width:24px;height:24px}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.primary:active{background:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--brand);border:1px solid var(--border-strong);min-height:52px;font-size:17px}
+.btn.warn{background:var(--warning);color:#fff}
+.btn.ghost{background:var(--surface-muted);color:var(--text-2)}
+
+/* toast */
+.toast{display:flex;align-items:center;gap:12px;background:var(--text);color:#fff;border-radius:var(--r-md);padding:14px 16px;box-shadow:var(--sh-lift);margin:0 14px 16px}
+.toast .ti{width:32px;height:32px;border-radius:var(--r-pill);background:var(--ok);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast .ti svg{width:19px;height:19px;color:#fff}
+.toast .tt{font-size:15px;font-weight:700}
+.toast .tb{font-size:13px;color:rgba(255,255,255,.82);margin-top:1px}
+
+/* completion / empty */
+.done{padding:34px 22px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.done .dchk{width:88px;height:88px;border-radius:50%;background:var(--tint-ok);color:var(--ok);display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.done .dchk svg{width:46px;height:46px;stroke-width:2.4}
+.done h2{font-size:26px;font-weight:700}
+.done p{font-size:15px;color:var(--text-2);max-width:290px}
+.streak{display:inline-flex;align-items:center;gap:8px;margin-top:8px;background:var(--tint-brand);color:var(--brand-dark);border-radius:var(--r-pill);padding:8px 16px;font-size:15px;font-weight:700}
+.streak svg{width:18px;height:18px}
+.doneact{display:flex;flex-direction:column;gap:10px;padding:18px 14px 6px}
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:44px 24px}
+.state .sic2{width:72px;height:72px;border-radius:var(--r-pill);background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center}
+.state .sic2 svg{width:36px;height:36px}
+.state .st{font-size:19px;font-weight:700}
+.state .sd{font-size:15px;color:var(--text-2);max-width:290px}
+
+/* skeleton */
+@keyframes shimmer{100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E2E8F0 0%,#EEF3F8 50%,#E2E8F0 100%);background-size:200% 100%;background-position:200% 0;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-sm)}
+.sk-card{border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;background:var(--surface);margin-bottom:14px}
+.sk-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.sk-row:last-child{border-bottom:none}
+
+/* bottom nav */
+.bnav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:6px 4px 8px;flex-shrink:0}
+.bnav .ni{flex:1;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text-2);border-radius:var(--r-md);font-size:12px;font-weight:500}
+.bnav .ni svg{width:26px;height:26px}
+.bnav .ni.active{color:var(--brand)}
+
+.foot{padding:34px 0 64px;color:var(--muted);font-size:13px;border-top:1px solid var(--border)}
+@media(max-width:520px){.page{padding:0 12px}.device,.framecol{width:100%;max-width:412px}}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="masthead">
+    <div class="eyebrow">FMS · ফিশ ফার্ম ম্যানেজমেন্ট সিস্টেম · Worker (mobile) · M-06 · M-07</div>
+    <h1 class="bn">মৃত্যু ও নমুনা · কাজের তালিকা</h1>
+    <p>Two more worker screens on a low-end Android, rendered as a native app. M-06 pairs mortality (near-daily) and sampling (every ~10 days) under one segmented control; M-07 is the daily task list the owner defines and the worker completes — usually with no signal, a photo as proof it happened. Keyboard-free throughout: steppers, chips and taps only, one-handed in bright sun with wet hands. 100% Bangla, Bengali numerals ০–৯, single Bangla date + ritu, fish-off mortality mark, only mg/L &amp; pH kept Latin.</p>
+    <div class="meta">
+      <span class="tag">Reuses F-02 / M-02 / M-03 verbatim</span><span class="tag">Keyboard-free</span><span class="tag">Offline-first · optimistic save</span><span class="tag">Tap target ≥48px · steppers ≥56px</span><span class="tag">Higher-than-usual = info, not blame</span><span class="tag">Late completion stays honest</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════ SCREEN 1 — MORTALITY / SAMPLING (M-06) ════════════════════ -->
+  <div class="screenblock">
+    <div class="sb-head"><span class="sb-num">Screen 1 · M-06</span><h2 class="bn">মৃত্যু ও নমুনা <span class="en">— Mortality / Sampling</span></h2></div>
+    <p class="sb-desc">Two related recording jobs on one screen, switched by a segmented control. মৃত্যু defaults to ০ so “no deaths” costs nothing; cause is single-select chips; a photo is optional proof, never a blocker. An unusually high count triggers a calm amber note — information that the owner will be told, framed without blame. নমুনা records sample size and average weight, with a plain-Bangla reason why it matters and the pond’s recent samplings for a sanity check.</p>
+
+    <div class="frames">
+
+      <!-- MORTALITY DEFAULT -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">মৃত্যু · DEFAULT</span><span class="state-pill sp-ready">০ · nothing entered</span></div>
+        <p class="fnote">The everyday case. Count sits at ০, no cause chosen, photo optional. Recording “no deaths” is a single save.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৬:৪২</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৮০%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">মৃত্যু ও নমুনা</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="tabs"><span class="tb on" data-i="fish-off">মৃত্যু</span><span class="tb" data-i="flask">নমুনা</span></div>
+          <div class="body">
+            <div class="fcard">
+              <div class="pondbar" style="background:var(--surface-muted);margin-top:0"><span class="pn" style="color:var(--text)"><span data-i="map-pin" style="opacity:.6"></span>পুকুর এ-২ · রুই · কাতলা</span><span class="chg" style="background:var(--brand);color:#fff"><span data-i="chevron-down"></span>বদলান</span></div>
+              <div class="flab2">মৃত মাছের সংখ্যা</div>
+              <div class="stepper">
+                <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+                <div class="step-val"><span class="sv"><span class="n" style="color:var(--muted)">০</span><span class="u">টি</span></span></div>
+                <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+              </div>
+              <div class="flab2">কারণ</div>
+              <div class="chipwrap">
+                <button class="chip">অক্সিজেন</button>
+                <button class="chip">রোগ</button>
+                <button class="chip">শিকার</button>
+                <button class="chip">হ্যান্ডলিং</button>
+                <button class="chip">অজানা</button>
+              </div>
+              <div class="flab2">ছবি<span class="opt">ঐচ্ছিক</span></div>
+              <button class="capture"><span class="cic" data-i="camera"></span><div><div class="lab">ছবি তুলুন</div><div class="sub bn">মালিকের জন্য প্রমাণ — বাধ্যতামূলক নয়</div></div></button>
+            </div>
+          </div>
+          <div class="savebar">
+            <div class="sm"><span data-i="check-circle"></span>এ-২ · ০ টি মৃত্যু — “কোনো মৃত্যু নেই” সংরক্ষণ হবে</div>
+            <button class="btn primary" data-i="save">সংরক্ষণ করুন</button>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- MORTALITY FILLED -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">মৃত্যু · FILLED</span><span class="state-pill sp-warn">higher than usual</span></div>
+        <p class="fnote">১২ টি entered, cause অক্সিজেন, one photo attached. Because ১২ is well above the ৩-day average of ৩, a calm amber note explains the owner will be informed — information, not an error or blame.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৬:৪৩</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৮০%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">মৃত্যু ও নমুনা</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="tabs"><span class="tb on" data-i="fish-off">মৃত্যু</span><span class="tb" data-i="flask">নমুনা</span></div>
+          <div class="body">
+            <div class="fcard">
+              <div class="pondbar" style="background:var(--surface-muted);margin-top:0"><span class="pn" style="color:var(--text)"><span data-i="map-pin" style="opacity:.6"></span>পুকুর এ-২ · রুই · কাতলা</span><span class="chg" style="background:var(--brand);color:#fff"><span data-i="chevron-down"></span>বদলান</span></div>
+              <div class="flab2">মৃত মাছের সংখ্যা</div>
+              <div class="stepper">
+                <button class="step-btn danger" data-i="minus" aria-label="কমান"></button>
+                <div class="step-val" style="border-color:var(--critical);background:var(--tint-critical)"><span class="sv"><span class="n" style="color:#991B1B">১২</span><span class="u">টি</span></span></div>
+                <button class="step-btn danger" data-i="plus" aria-label="বাড়ান"></button>
+              </div>
+              <div class="ctx">
+                <span class="ci" data-i="trending-up"></span>
+                <div><div class="ct bn">স্বাভাবিকের চেয়ে বেশি</div><div class="cd bn">গত ৩ দিনের গড় <b>৩ টি</b> — আজ <b>১২ টি</b>। এটি স্বয়ংক্রিয়ভাবে মালিককে জানানো হবে। আপনি শুধু সঠিক সংখ্যা লিখুন, চিন্তার কিছু নেই।</div></div>
+              </div>
+              <div class="flab2">কারণ</div>
+              <div class="chipwrap">
+                <button class="chip on crit" data-i="check">অক্সিজেন</button>
+                <button class="chip">রোগ</button>
+                <button class="chip">শিকার</button>
+                <button class="chip">হ্যান্ডলিং</button>
+                <button class="chip">অজানা</button>
+              </div>
+              <div class="flab2">ছবি<span class="opt">ঐচ্ছিক</span></div>
+              <div class="shot"><span class="ph" data-i="image"></span><button class="retake" data-i="refresh-cw">আবার তুলুন</button></div>
+            </div>
+          </div>
+          <div class="savebar">
+            <div class="sm"><span data-i="check-circle"></span>এ-২ · ১২ টি · অক্সিজেন · ১টি ছবি</div>
+            <button class="btn primary" data-i="save">সংরক্ষণ করুন</button>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- SAMPLING TAB FILLED -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">নমুনা · FILLED</span><span class="state-pill sp-filled">sampling</span></div>
+        <p class="fnote">Sampling tab: pond + species, sample size and average weight on steppers (decimal step for grams), a plain reason it matters, and the pond’s recent samplings so the new number can be sanity-checked.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৭:০৫</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৭৯%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">মৃত্যু ও নমুনা</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="tabs"><span class="tb" data-i="fish-off">মৃত্যু</span><span class="tb on" data-i="flask">নমুনা</span></div>
+          <div class="body">
+            <div class="fcard">
+              <div class="pondbar" style="background:var(--surface-muted);margin-top:0"><span class="pn" style="color:var(--text)"><span data-i="map-pin" style="opacity:.6"></span>পুকুর জে-১</span><span class="chg" style="background:var(--brand);color:#fff"><span data-i="chevron-down"></span>বদলান</span></div>
+              <div class="flab2">প্রজাতি</div>
+              <div class="seg"><button class="s on">SPF গলদা</button><button class="s">রুই</button><button class="s">পার্শে</button></div>
+              <div class="flab2">নমুনার সংখ্যা</div>
+              <div class="stepper">
+                <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+                <div class="step-val"><span class="sv"><span class="n">৩০</span><span class="u">টি</span></span></div>
+                <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+              </div>
+              <div class="flab2">গড় ওজন</div>
+              <div class="stepper">
+                <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+                <div class="step-val"><span class="sv"><span class="n">২৮.৪</span><span class="u">গ্রাম</span></span></div>
+                <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+              </div>
+              <div class="whybox">
+                <span class="wi" data-i="info"></span>
+                <div><div class="wt bn">নমুনা কেন জরুরি</div><div class="wd bn">গড় ওজন থেকেই আজকের খাবারের অংশ ঠিক হয়, আর মালিক বৃদ্ধি দেখতে পান। বৃদ্ধির হার বের করতে অন্তত <b>দুইবার</b> নমুনা লাগে।</div></div>
+              </div>
+            </div>
+            <div class="sectlab">সাম্প্রতিক নমুনা · জে-১</div>
+            <div class="surf">
+              <div class="lrow"><span class="lic" style="background:var(--tint-brand);color:var(--brand)" data-i="flask"></span><div class="lm"><div class="lt">২৫ আষাঢ় · গলদা</div><div class="lmeta">৩০ টি নমুনা</div></div><span class="lv">২৪.১<small>গ্রাম</small></span></div>
+              <div class="lrow"><span class="lic" style="background:var(--tint-brand);color:var(--brand)" data-i="flask"></span><div class="lm"><div class="lt">১৫ আষাঢ় · গলদা</div><div class="lmeta">২৮ টি নমুনা</div></div><span class="lv">১৯.৬<small>গ্রাম</small></span></div>
+            </div>
+          </div>
+          <div class="savebar">
+            <div class="sm"><span data-i="check-circle"></span>জে-১ · গলদা · ৩০ টি · গড় ২৮.৪ গ্রাম</div>
+            <button class="btn primary" data-i="save">নমুনা সংরক্ষণ করুন</button>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- SAVED OFFLINE -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">SAVED OFFLINE</span><span class="state-pill sp-offline">stored on phone</span></div>
+        <p class="fnote">Mortality saved with no signal. Amber banner + toast; today’s log shows the এ-২ entry অপেক্ষমাণ with its photo thumbnail and per-item sync badges.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৬:৪৪</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi-off"></span><span>৮০%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">মৃত্যু ও নমুনা</span><span class="syncpill off"><span data-i="wifi-off"></span>অফলাইন</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="offline-banner"><span data-i="wifi-off"></span>অফলাইন — সংরক্ষিত, পরে সিংক হবে</div>
+          <div class="body">
+            <div class="sectlab">আজকের মৃত্যু লগ<span class="cnt">২টি পুকুর</span></div>
+            <div class="surf">
+              <div class="lrow"><span class="lthumb" data-i="image"></span><div class="lm"><div class="lt">পুকুর এ-২ · অক্সিজেন</div><div class="lmeta">সকাল ৬:৪৪ · <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div></div><span class="lv" style="color:#991B1B">১২<small>টি</small></span></div>
+              <div class="lrow"><span class="lic" style="background:var(--tint-critical);color:var(--critical)" data-i="fish-off"></span><div class="lm"><div class="lt">পুকুর বি-৩ · অজানা</div><div class="lmeta">সকাল ৬:১০ · <span class="badge b-ok"><span class="dot"></span>সিংক হয়েছে</span></div></div><span class="lv">২<small>টি</small></span></div>
+            </div>
+            <div class="sectlab" style="margin-top:18px">আজকের নমুনা</div>
+            <div class="surf">
+              <div class="lrow"><span class="lic" style="background:var(--tint-brand);color:var(--brand)" data-i="flask"></span><div class="lm"><div class="lt">পুকুর জে-১ · গলদা</div><div class="lmeta">সকাল ৭:০৫ · <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div></div><span class="lv">২৮.৪<small>গ্রাম</small></span></div>
+            </div>
+          </div>
+          <div class="toast"><span class="ti" data-i="check"></span><div><div class="tt">সংরক্ষিত</div><div class="tb">এ-২-এর মৃত্যু ও ছবি এই ফোনে রাখা হয়েছে — সংযোগ পেলে সিংক হবে</div></div></div>
+          <div class="bnav">
+            <div class="ni"><span data-i="home"></span>হোম</div>
+            <div class="ni"><span data-i="utensils"></span>খাবার</div>
+            <div class="ni"><span data-i="droplet"></span>পানি</div>
+            <div class="ni"><span data-i="clipboard"></span>কাজ</div>
+            <div class="ni active"><span data-i="menu"></span>আরও</div>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- LOADING -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">LOADING</span><span class="state-pill sp-loading">shimmer</span></div>
+        <p class="fnote">Opening the screen. Header + tabs stay real so context is kept; the form loads as a shimmer skeleton matching the real layout.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৬:৪১</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৮০%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">মৃত্যু ও নমুনা</span><span class="syncpill"><span data-i="refresh-cw"></span>সিংক হচ্ছে…</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="tabs"><span class="tb on" data-i="fish-off">মৃত্যু</span><span class="tb" data-i="flask">নমুনা</span></div>
+          <div class="body">
+            <div class="sk-card">
+              <div class="sk" style="height:44px;width:100%;border-radius:10px;margin-bottom:18px"></div>
+              <div class="sk" style="height:12px;width:45%;margin-bottom:10px"></div>
+              <div style="display:flex;gap:12px;margin-bottom:20px"><div class="sk" style="width:60px;height:60px;border-radius:10px"></div><div class="sk" style="flex:1;height:60px;border-radius:10px"></div><div class="sk" style="width:60px;height:60px;border-radius:10px"></div></div>
+              <div class="sk" style="height:12px;width:30%;margin-bottom:10px"></div>
+              <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px"><div class="sk" style="width:96px;height:52px;border-radius:10px"></div><div class="sk" style="width:72px;height:52px;border-radius:10px"></div><div class="sk" style="width:84px;height:52px;border-radius:10px"></div></div>
+              <div class="sk" style="height:12px;width:24%;margin-bottom:10px"></div>
+              <div class="sk" style="height:96px;width:100%;border-radius:16px"></div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="ni"><span data-i="home"></span>হোম</div>
+            <div class="ni"><span data-i="utensils"></span>খাবার</div>
+            <div class="ni"><span data-i="droplet"></span>পানি</div>
+            <div class="ni"><span data-i="clipboard"></span>কাজ</div>
+            <div class="ni active"><span data-i="menu"></span>আরও</div>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════ SCREEN 2 — TASKS (M-07) ════════════════════ -->
+  <div class="screenblock" style="border-top:1px solid var(--border)">
+    <div class="sb-head"><span class="sb-num">Screen 2 · M-07</span><h2 class="bn">কাজের তালিকা <span class="en">— Tasks</span></h2></div>
+    <p class="sb-desc">The owner defines recurring work; the worker completes it here, often offline, a photo being how the owner sees it really happened. Today’s list carries per-task states (বাকি / নির্ধারিত / সম্পন্ন), a ≥48px completion control, and a two-tap completion sheet with an optional proof photo. A missed task from yesterday is handled matter-of-factly — completed late at the real time, keeping the record honest — and upcoming days are shown compactly with their recurrence.</p>
+
+    <div class="frames">
+
+      <!-- TASKS DEFAULT -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">DEFAULT</span><span class="state-pill sp-ready">৩ tasks · ১ done</span></div>
+        <p class="fnote">Today’s three tasks: one done (with completion time + photo thumbnail), one due now, one scheduled later. A missed task sits below, then upcoming days.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৭:০২</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৭৯%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">কাজ</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="body">
+            <div class="sectlab">আজকের কাজ<span class="cnt" style="color:var(--warning)">২টি বাকি</span></div>
+            <div class="surf">
+              <div class="trow"><div class="tmain"><div class="ttitle">চেইন ড্র্যাগ <span class="badge b-info"><span class="dot"></span>বাকি</span></div><div class="tmeta"><span data-i="map-pin"></span>পুকুর এ-২ · <span data-i="clock"></span>সকাল ৭:০০</div></div><button class="check due" data-i="check" aria-label="সম্পন্ন করুন"></button></div>
+              <div class="trow"><div class="tmain"><div class="ttitle">চুন প্রয়োগ <span class="badge b-neutral"><span class="dot"></span>নির্ধারিত</span></div><div class="tmeta"><span data-i="map-pin"></span>পুকুর জে-১ · <span data-i="clock"></span>সকাল ৯:৩০</div></div><button class="check" data-i="check" aria-label="সম্পন্ন করুন"></button></div>
+              <div class="trow done-row"><span class="tthumb" data-i="image"></span><div class="tmain"><div class="ttitle">সকালের খাবার <span class="badge b-ok"><span class="dot"></span>সম্পন্ন</span></div><div class="tmeta">পুকুর এ-২ · সম্পন্ন সকাল ৬:১৮</div></div><button class="check done" data-i="check" aria-label="সম্পন্ন"></button></div>
+            </div>
+            <div class="sectlab" style="margin-top:18px">বাদ পড়েছে<span class="cnt" style="color:var(--warning)">১টি</span></div>
+            <div class="surf">
+              <div class="trow miss-row"><div class="tmain"><div class="ttitle">চুন প্রয়োগ <span class="badge b-warning"><span class="dot"></span>বাদ পড়েছে</span></div><div class="tmeta"><span data-i="map-pin"></span>পুকুর বি-৩ · <span data-i="alert-triangle"></span>গতকাল থেকে বাকি · ১ দিন</div></div><button class="late-btn" data-i="check">এখন করুন</button></div>
+            </div>
+            <div class="sectlab" style="margin-top:18px">আসন্ন কাজ</div>
+            <div class="surf">
+              <div class="upc"><div class="ud"><div class="dd">৬</div><div class="dm bn">শ্রাবণ</div></div><div class="um"><div class="ut">চেইন ড্র্যাগ — এ-২</div><div class="urep"><span data-i="repeat"></span>প্রতিদিন সকাল ৭:০০</div></div></div>
+              <div class="upc"><div class="ud"><div class="dd">৭</div><div class="dm bn">শ্রাবণ</div></div><div class="um"><div class="ut">নমুনা — জে-১</div><div class="urep"><span data-i="repeat"></span>প্রতি ১০ দিন</div></div></div>
+              <div class="upc"><div class="ud"><div class="dd">৮</div><div class="dm bn">শ্রাবণ</div></div><div class="um"><div class="ut">চুন প্রয়োগ — সি-১</div><div class="urep"><span data-i="repeat"></span>প্রতি সপ্তাহে</div></div></div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="ni"><span data-i="home"></span>হোম</div>
+            <div class="ni"><span data-i="utensils"></span>খাবার</div>
+            <div class="ni"><span data-i="droplet"></span>পানি</div>
+            <div class="ni active"><span data-i="clipboard"></span>কাজ</div>
+            <div class="ni"><span data-i="menu"></span>আরও</div>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- COMPLETION SHEET -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">COMPLETION SHEET</span><span class="state-pill sp-filled">photo captured</span></div>
+        <p class="fnote">Tapping চেইন ড্র্যাগ opens a bottom sheet: time defaults to now, an optional proof photo is captured, and one save finishes it — two taps for the common case.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৭:০৩</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৭৯%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">কাজ</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="sheetwrap">
+            <div class="body" style="filter:blur(1px);opacity:.7">
+              <div class="sectlab">আজকের কাজ<span class="cnt" style="color:var(--warning)">২টি বাকি</span></div>
+              <div class="surf">
+                <div class="trow"><div class="tmain"><div class="ttitle">চেইন ড্র্যাগ <span class="badge b-info"><span class="dot"></span>বাকি</span></div><div class="tmeta"><span data-i="map-pin"></span>পুকুর এ-২ · <span data-i="clock"></span>সকাল ৭:০০</div></div><button class="check due" data-i="check"></button></div>
+                <div class="trow"><div class="tmain"><div class="ttitle">চুন প্রয়োগ <span class="badge b-neutral"><span class="dot"></span>নির্ধারিত</span></div><div class="tmeta"><span data-i="map-pin"></span>পুকুর জে-১ · <span data-i="clock"></span>সকাল ৯:৩০</div></div><button class="check" data-i="check"></button></div>
+              </div>
+            </div>
+            <div class="sheet-dim"></div>
+            <div class="sheet">
+              <div class="grab"></div>
+              <div class="sh-h"><span class="sh-ic" data-i="link"></span><div><div class="sh-t">চেইন ড্র্যাগ</div><div class="sh-s">পুকুর এ-২ · সম্পন্ন হিসেবে চিহ্নিত করুন</div></div></div>
+              <div class="flab2">সময়</div>
+              <div class="timepick"><span class="ti2" data-i="clock"></span><span class="tv2">সকাল ৭:০৩</span><span class="now">এখন</span></div>
+              <div class="flab2">প্রমাণ ছবি<span class="opt">ঐচ্ছিক</span></div>
+              <div class="shot" style="min-height:120px"><span class="ph" data-i="image"></span><button class="retake" data-i="refresh-cw">আবার তুলুন</button></div>
+              <div style="margin-top:14px"><button class="btn primary" data-i="check">সম্পন্ন হিসেবে সংরক্ষণ করুন</button></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- MISSED TASK -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">MISSED · complete late</span><span class="state-pill sp-warn">honest record</span></div>
+        <p class="fnote">Completing a task missed yesterday. The sheet is matter-of-fact, defaults to the real time now (not pretending it was on time), and notes the record stays honest.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৭:০৪</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৭৯%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">কাজ</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="sheetwrap">
+            <div class="body" style="filter:blur(1px);opacity:.7">
+              <div class="sectlab" style="margin-top:0">বাদ পড়েছে<span class="cnt" style="color:var(--warning)">১টি</span></div>
+              <div class="surf">
+                <div class="trow miss-row"><div class="tmain"><div class="ttitle">চুন প্রয়োগ <span class="badge b-warning"><span class="dot"></span>বাদ পড়েছে</span></div><div class="tmeta"><span data-i="map-pin"></span>পুকুর বি-৩ · ১ দিন বাকি</div></div><button class="late-btn" data-i="check">এখন করুন</button></div>
+              </div>
+            </div>
+            <div class="sheet-dim"></div>
+            <div class="sheet">
+              <div class="grab"></div>
+              <div class="sh-h"><span class="sh-ic" style="background:var(--tint-warning);color:var(--warning)" data-i="alert-triangle"></span><div><div class="sh-t">চুন প্রয়োগ · দেরিতে</div><div class="sh-s">পুকুর বি-৩ · গতকালের কাজ</div></div></div>
+              <div class="ctx" style="margin-top:8px"><span class="ci" data-i="info"></span><div><div class="ct bn">সত্য রেকর্ড থাকুক</div><div class="cd bn">এটি গতকালের কাজ। আসল সময় লেখা হবে — <b>গতকাল করা হয়েছে বলে দেখানো হবে না।</b> দেরি হলেও সমস্যা নেই, শুধু সঠিক তথ্য দিন।</div></div></div>
+              <div class="flab2">এখন সম্পন্ন করার সময়</div>
+              <div class="timepick"><span class="ti2" data-i="clock"></span><span class="tv2">আজ সকাল ৭:০৪</span><span class="now">এখন</span></div>
+              <div style="margin-top:14px"><button class="btn warn" data-i="check">দেরিতে সম্পন্ন হিসেবে সংরক্ষণ</button></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- ALL DONE -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">ALL DONE</span><span class="state-pill sp-done">day complete</span></div>
+        <p class="fnote">Every task ticked — the rewarding end-of-day moment that keeps the habit loop going. A streak line, a recap of what was done, and one way back to হোম.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>১০:১২</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৭২%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">কাজ</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="done">
+            <div class="dchk" data-i="check"></div>
+            <h2>আজকের সব কাজ শেষ!</h2>
+            <p>দারুণ, করিম। আজকের ৪টি কাজই সম্পন্ন ও সিংক হয়ে গেছে।</p>
+            <span class="streak" data-i="flame">টানা ৭ দিন সব কাজ শেষ</span>
+          </div>
+          <div class="surf" style="margin:14px">
+            <div class="trow done-row"><span class="tthumb" data-i="image"></span><div class="tmain"><div class="ttitle">সকালের খাবার</div><div class="tmeta">এ-২ · সকাল ৬:১৮</div></div><button class="check done" data-i="check"></button></div>
+            <div class="trow done-row"><span class="tthumb" data-i="image"></span><div class="tmain"><div class="ttitle">চেইন ড্র্যাগ</div><div class="tmeta">এ-২ · সকাল ৭:০৩</div></div><button class="check done" data-i="check"></button></div>
+            <div class="trow done-row"><div class="tmain" style="margin-left:0"><div class="ttitle">চুন প্রয়োগ</div><div class="tmeta">জে-১ · সকাল ৯:৪০</div></div><button class="check done" data-i="check"></button></div>
+            <div class="trow done-row"><div class="tmain"><div class="ttitle">চুন প্রয়োগ <span class="badge b-warning"><span class="dot"></span>দেরিতে</span></div><div class="tmeta">বি-৩ · সকাল ৭:০৪</div></div><button class="check done" data-i="check"></button></div>
+          </div>
+          <div class="doneact">
+            <button class="btn primary" data-i="home">হোমে ফিরুন</button>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- OFFLINE -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">OFFLINE</span><span class="state-pill sp-offline">no signal</span></div>
+        <p class="fnote">No signal — every task still completable. The two just-finished tasks show অপেক্ষমাণ; nothing is blocked, uploads happen later.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৭:০৬</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi-off"></span><span>৭৯%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">কাজ</span><span class="syncpill off"><span data-i="wifi-off"></span>অফলাইন</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="offline-banner"><span data-i="wifi-off"></span>অফলাইন — সংরক্ষিত, পরে সিংক হবে</div>
+          <div class="body">
+            <div class="sectlab">আজকের কাজ<span class="cnt" style="color:var(--warning)">১টি বাকি</span></div>
+            <div class="surf">
+              <div class="trow"><div class="tmain"><div class="ttitle">চুন প্রয়োগ <span class="badge b-info"><span class="dot"></span>বাকি</span></div><div class="tmeta"><span data-i="map-pin"></span>পুকুর জে-১ · <span data-i="clock"></span>সকাল ৯:৩০</div></div><button class="check due" data-i="check"></button></div>
+              <div class="trow done-row"><span class="tthumb" data-i="image"></span><div class="tmain"><div class="ttitle">চেইন ড্র্যাগ <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div><div class="tmeta">এ-২ · সম্পন্ন সকাল ৭:০৩</div></div><button class="check done" data-i="check"></button></div>
+              <div class="trow done-row"><div class="tmain"><div class="ttitle">সকালের খাবার <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div><div class="tmeta">এ-২ · সম্পন্ন সকাল ৬:১৮</div></div><button class="check done" data-i="check"></button></div>
+            </div>
+            <div class="sectlab" style="margin-top:18px">আসন্ন কাজ</div>
+            <div class="surf">
+              <div class="upc"><div class="ud"><div class="dd">৬</div><div class="dm bn">শ্রাবণ</div></div><div class="um"><div class="ut">চেইন ড্র্যাগ — এ-২</div><div class="urep"><span data-i="repeat"></span>প্রতিদিন সকাল ৭:০০</div></div></div>
+              <div class="upc"><div class="ud"><div class="dd">৭</div><div class="dm bn">শ্রাবণ</div></div><div class="um"><div class="ut">নমুনা — জে-১</div><div class="urep"><span data-i="repeat"></span>প্রতি ১০ দিন</div></div></div>
+            </div>
+          </div>
+          <div class="toast"><span class="ti" data-i="check"></span><div><div class="tt">সম্পন্ন — এই ফোনে সংরক্ষিত</div><div class="tb">সংযোগ পেলে কাজগুলো নিজে থেকে সিংক হবে</div></div></div>
+          <div class="bnav">
+            <div class="ni"><span data-i="home"></span>হোম</div>
+            <div class="ni"><span data-i="utensils"></span>খাবার</div>
+            <div class="ni"><span data-i="droplet"></span>পানি</div>
+            <div class="ni active"><span data-i="clipboard"></span>কাজ</div>
+            <div class="ni"><span data-i="menu"></span>আরও</div>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- EMPTY -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">EMPTY</span><span class="state-pill sp-ready">no tasks today</span></div>
+        <p class="fnote">No tasks assigned today. A calm Bangla empty state — nothing to chase — with the next scheduled work still shown so the day isn’t a blank.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৬:৫৮</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৮৮%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">কাজ</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="body">
+            <div class="surf"><div class="state">
+              <span class="sic2" data-i="clipboard-check"></span>
+              <div class="st bn">আজ কোনো কাজ নেই</div>
+              <div class="sd bn">মালিক আজকের জন্য কোনো কাজ দেননি। লগ চালিয়ে যান — খাবার, পানি ও মৃত্যু ঠিকমতো রেকর্ড করুন।</div>
+            </div></div>
+            <div class="sectlab" style="margin-top:18px">আসন্ন কাজ</div>
+            <div class="surf">
+              <div class="upc"><div class="ud"><div class="dd">৬</div><div class="dm bn">শ্রাবণ</div></div><div class="um"><div class="ut">চেইন ড্র্যাগ — এ-২</div><div class="urep"><span data-i="repeat"></span>প্রতিদিন সকাল ৭:০০</div></div></div>
+              <div class="upc"><div class="ud"><div class="dd">৭</div><div class="dm bn">শ্রাবণ</div></div><div class="um"><div class="ut">নমুনা — জে-১</div><div class="urep"><span data-i="repeat"></span>প্রতি ১০ দিন</div></div></div>
+              <div class="upc"><div class="ud"><div class="dd">৮</div><div class="dm bn">শ্রাবণ</div></div><div class="um"><div class="ut">চুন প্রয়োগ — সি-১</div><div class="urep"><span data-i="repeat"></span>প্রতি সপ্তাহে</div></div></div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="ni"><span data-i="home"></span>হোম</div>
+            <div class="ni"><span data-i="utensils"></span>খাবার</div>
+            <div class="ni"><span data-i="droplet"></span>পানি</div>
+            <div class="ni active"><span data-i="clipboard"></span>কাজ</div>
+            <div class="ni"><span data-i="menu"></span>আরও</div>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- LOADING -->
+      <div class="framecol">
+        <div class="flabel"><span class="ft">LOADING</span><span class="state-pill sp-loading">shimmer</span></div>
+        <p class="fnote">Fetching today’s list. Header stays real; task rows load as a shimmer skeleton matching the real layout.</p>
+        <div class="device"><div class="screen">
+          <div class="statusbar"><span>৭:০১</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৭৯%</span></span></div>
+          <div class="apphead">
+            <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">কাজ</span><span class="syncpill"><span data-i="refresh-cw"></span>সিংক হচ্ছে…</span></div>
+            <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          </div>
+          <div class="body">
+            <div class="sectlab"><div class="sk" style="height:13px;width:90px"></div></div>
+            <div class="surf">
+              <div class="sk-row"><div style="flex:1"><div class="sk" style="height:14px;width:55%;margin-bottom:8px"></div><div class="sk" style="height:11px;width:70%"></div></div><div class="sk" style="width:48px;height:48px;border-radius:10px"></div></div>
+              <div class="sk-row"><div style="flex:1"><div class="sk" style="height:14px;width:48%;margin-bottom:8px"></div><div class="sk" style="height:11px;width:66%"></div></div><div class="sk" style="width:48px;height:48px;border-radius:10px"></div></div>
+              <div class="sk-row"><div class="sk" style="width:48px;height:48px;border-radius:10px"></div><div style="flex:1"><div class="sk" style="height:14px;width:52%;margin-bottom:8px"></div><div class="sk" style="height:11px;width:60%"></div></div><div class="sk" style="width:48px;height:48px;border-radius:10px"></div></div>
+            </div>
+            <div class="sectlab" style="margin-top:18px"><div class="sk" style="height:13px;width:70px"></div></div>
+            <div class="surf">
+              <div class="sk-row"><div class="sk" style="width:44px;height:38px;border-radius:6px"></div><div style="flex:1"><div class="sk" style="height:13px;width:60%;margin-bottom:8px"></div><div class="sk" style="height:10px;width:44%"></div></div></div>
+              <div class="sk-row"><div class="sk" style="width:44px;height:38px;border-radius:6px"></div><div style="flex:1"><div class="sk" style="height:13px;width:52%;margin-bottom:8px"></div><div class="sk" style="height:10px;width:40%"></div></div></div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="ni"><span data-i="home"></span>হোম</div>
+            <div class="ni"><span data-i="utensils"></span>খাবার</div>
+            <div class="ni"><span data-i="droplet"></span>পানি</div>
+            <div class="ni active"><span data-i="clipboard"></span>কাজ</div>
+            <div class="ni"><span data-i="menu"></span>আরও</div>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="foot bn">FMS · ফিশ ফার্ম ম্যানেজমেন্ট সিস্টেম — M-06 মৃত্যু ও নমুনা · M-07 কাজ (কর্মী)। F-02 / M-02 / M-03 মোবাইল ডিজাইন ভাষা থেকে সরাসরি। কীবোর্ড নেই — সব স্টেপার, চিপ ও ট্যাপ। মৃত্যু আইকন মাছভিত্তিক (স্কাল নয়); mg/L ও pH ছাড়া সব একক বাংলায়; সব সংখ্যা বাংলা অঙ্কে। স্বাভাবিকের চেয়ে বেশি মৃত্যু = তথ্য, দোষ নয়; দেরিতে কাজ = সত্য সময়ে রেকর্ড। প্রতিটি সংরক্ষণ আগে ফোনে, পরে আপলোড। আইকন: Lucide (inline SVG)।</div>
+</div>
+
+<script>
+const ICONS={
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "home":"M3 10.5 12 3l9 7.5M5 9.6V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.6",
+ "utensils":"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "fish-off":"M3 12c2.5-4.5 9.5-4.5 12 0-2.5 4.5-9.5 4.5-12 0zM15 12l5-3.2v6.4L15 12M6.6 10.4h.01M3 3l18 18",
+ "flask":"M9 3h6M10 3v5.5L5 17a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 17l-5-8.5V3M7.5 14h9",
+ "clipboard":"M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2zM9 13l2 2 4-4",
+ "clipboard-check":"M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2zM9 14l2 2 4-4",
+ "camera":"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "image":"M3 3h18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM21 15l-5-5L5 21",
+ "menu":"M4 6h16M4 12h16M4 18h16",
+ "plus":"M12 5v14M5 12h14",
+ "minus":"M5 12h14",
+ "check":"M20 6 9 17l-5-5",
+ "save":"M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2zM17 21v-8H7v8M7 3v5h8",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "info":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "refresh-cw":"M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6",
+ "wifi":"M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01",
+ "wifi-off":"M2 8.82a15 15 0 0 1 4.17-2.65M10.66 5c4.01-.36 8.14.9 11.34 3.76M16.85 11.25a10 10 0 0 1 2.22 1.68M5 12.86a10 10 0 0 1 5.17-2.69M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01M2 2l20 20",
+ "signal":"M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 20V4",
+ "chevron-left":"M15 18l-6-6 6-6",
+ "chevron-down":"M6 9l6 6 6-6",
+ "trending-up":"M23 6l-9.5 9.5-5-5L1 18M17 6h6v6",
+ "repeat":"M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3",
+ "link":"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
+ "flame":"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

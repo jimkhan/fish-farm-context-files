@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · M-02 Home / Today (Worker)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;--tint-muted:#F1F5F9;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --ui:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ui);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+a{color:var(--brand);text-decoration:none}a:hover{color:var(--brand-dark)}
+.bn{font-family:var(--bn)}
+
+.page{max-width:1840px;margin:0 auto;padding:0 32px}
+.hero{padding:48px 0 8px}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--brand)}
+.hero h1{font-size:32px;font-weight:700;letter-spacing:-.5px;margin-top:10px;line-height:1.1}
+.hero p{font-size:16px;color:var(--text-2);max-width:820px;margin-top:14px}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+.tag{font-size:12px;font-weight:500;color:var(--text-2);background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:var(--r-pill)}
+
+.frames{display:flex;gap:44px;flex-wrap:wrap;padding:40px 0 72px;align-items:flex-start}
+.framecol{display:flex;flex-direction:column;gap:16px;width:412px}
+.flabel{display:flex;align-items:center;gap:10px}
+.flabel .ft{font-size:16px;font-weight:700}
+.flabel .fx{font-size:13px;color:var(--text-2)}
+.state-pill{display:inline-flex;align-items:center;height:24px;padding:0 11px;border-radius:var(--r-pill);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.sp-online{background:var(--tint-ok);color:#166534}
+.sp-offline{background:var(--tint-warning);color:#92400E}
+.sp-empty{background:var(--tint-brand);color:var(--brand-dark)}
+.sp-loading{background:var(--surface-muted);color:var(--text-2)}
+.fnote{font-size:13px;color:var(--text-2);line-height:1.55}
+
+/* device frame */
+.device{width:412px;padding:11px;background:#0F172A;border-radius:46px;box-shadow:var(--sh-lift)}
+.screen{width:390px;border-radius:35px;overflow:hidden;background:var(--bg);font-family:var(--bn);position:relative}
+.statusbar{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;background:var(--brand-dark);color:#fff;font-size:13px;font-weight:500}
+.statusbar .sbr{display:flex;align-items:center;gap:7px}
+.statusbar svg{width:15px;height:15px}
+
+/* app header */
+.apphead{background:var(--brand);color:#fff;padding:14px 16px 16px}
+.apphead .r1{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.apphead .pname{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.apphead .pname svg{width:20px;height:20px;opacity:.9}
+.apphead .date{font-size:14px;color:rgba(255,255,255,.85);margin-top:8px;display:flex;align-items:center;gap:7px}
+.apphead .date svg{width:15px;height:15px}
+.syncpill{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-pill);font-size:13px;font-weight:600;background:rgba(255,255,255,.16);color:#fff}
+.syncpill svg{width:16px;height:16px}
+.syncpill.off{background:var(--warning);color:#fff}
+.offline-banner{display:flex;align-items:center;gap:10px;background:var(--warning);color:#fff;padding:12px 16px;font-size:15px;font-weight:600}
+.offline-banner svg{width:20px;height:20px;flex-shrink:0}
+
+/* home content */
+.home{padding:16px}
+.section-title{font-size:15px;font-weight:700;color:var(--text);margin:18px 2px 12px;display:flex;align-items:center;justify-content:space-between}
+.section-title:first-child{margin-top:0}
+.section-title .link{font-size:13px;font-weight:600;color:var(--brand)}
+.section-title .cnt{font-size:13px;font-weight:600;color:var(--warning)}
+
+/* critical alert */
+.crit{background:var(--tint-critical);border:1.5px solid var(--critical);border-radius:var(--r-lg);padding:14px}
+.crit-top{display:flex;gap:12px;align-items:flex-start}
+.crit-ic{width:46px;height:46px;border-radius:var(--r-md);background:var(--critical);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.crit-ic svg{width:26px;height:26px}
+.crit-t{font-size:18px;font-weight:700;color:#991B1B;line-height:1.25}
+.crit-s{font-size:15px;color:#B91C1C;margin-top:3px;font-variant-numeric:tabular-nums;font-weight:600}
+.crit-do{font-size:15px;color:var(--text);margin:13px 0;font-weight:600;display:flex;gap:8px;align-items:flex-start}
+.crit-do svg{width:18px;height:18px;color:var(--critical);flex-shrink:0;margin-top:2px}
+
+/* weather (stale/degraded) */
+.wx{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;box-shadow:var(--sh-card)}
+.wx-main{display:flex;gap:12px;align-items:center}
+.wx-ic{width:46px;height:46px;border-radius:var(--r-md);background:var(--tint-info);color:var(--info);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wx-ic svg{width:28px;height:28px}
+.wx-temp{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.wx-hint{font-size:14px;color:var(--text-2);margin-top:2px}
+.wx-stale{display:flex;align-items:center;gap:7px;font-size:13px;color:#92400E;background:var(--tint-warning);border-radius:var(--r-md);padding:8px 10px;margin-top:12px;font-weight:600}
+.wx-stale svg{width:15px;height:15px;flex-shrink:0}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);min-height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text);box-shadow:var(--sh-card)}
+.tile .ic{width:56px;height:56px;border-radius:var(--r-md);background:var(--tint-brand);display:flex;align-items:center;justify-content:center;color:var(--brand)}
+.tile .ic svg{width:40px;height:40px}
+.tile .cap{font-size:15px;font-weight:600}
+.tile.danger .ic{background:var(--tint-critical);color:var(--critical)}
+.tile.accent .ic{background:#E0F2FE;color:var(--accent)}
+.tile.hot{border-color:var(--brand);box-shadow:0 0 0 2px var(--tint-brand)}
+
+/* surface + rows */
+.surf{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
+.rows{display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.row.done-row{background:var(--tint-ok)}
+.row .rmain{flex:1;min-width:0}
+.row .rtitle{font-size:16px;font-weight:600}
+.row .rmeta{font-size:13px;color:var(--text-2);margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.row .rmeta svg{width:14px;height:14px}
+.row .rval{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.check{width:48px;height:48px;border-radius:var(--r-md);border:2px solid var(--border-strong);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0}
+.check svg{width:24px;height:24px}
+.check.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.lic{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lic svg{width:24px;height:24px}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:var(--r-pill);font-size:13px;font-weight:600;font-family:var(--bn);white-space:nowrap}
+.badge svg{width:14px;height:14px}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.b-neutral{background:var(--surface-muted);color:var(--text-2)}.b-neutral .dot{background:var(--muted)}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-warning{background:var(--tint-warning);color:#92400E}.b-warning .dot{background:var(--warning)}
+.b-critical{background:var(--tint-critical);color:#991B1B}.b-critical .dot{background:var(--critical)}
+.retry{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border-strong);color:var(--danger);font-family:var(--bn);font-size:13px;font-weight:600}
+.retry svg{width:15px;height:15px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 20px;border-radius:var(--r-md);font-family:var(--bn);font-size:17px;font-weight:700;border:1px solid transparent;width:100%}
+.btn svg{width:22px;height:22px}
+.btn.danger{background:var(--danger);color:#fff}
+
+/* emergency */
+.emg-wrap{margin-top:22px;padding-top:20px;border-top:1px dashed var(--border-strong)}
+.emg{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:68px;border-radius:var(--r-lg);background:var(--danger);color:#fff;font-family:var(--bn);font-size:22px;font-weight:700;box-shadow:0 6px 16px rgba(220,38,38,.32);letter-spacing:.5px}
+.emg svg{width:32px;height:32px}
+.emg-hint{font-size:13px;color:var(--text-2);text-align:center;margin-top:10px}
+
+/* empty state */
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:30px 24px}
+.state .sic2{width:64px;height:64px;border-radius:var(--r-pill);background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center}
+.state .sic2 svg{width:32px;height:32px}
+.state .st{font-size:17px;font-weight:700}
+.state .sd{font-size:14px;color:var(--text-2);max-width:290px}
+.state .up{display:inline-flex;align-items:center;gap:6px;color:var(--brand);font-weight:700;font-size:14px;margin-top:2px}
+.state .up svg{width:16px;height:16px}
+
+/* skeleton */
+@keyframes shimmer{100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E2E8F0 0%,#EEF3F8 50%,#E2E8F0 100%);background-size:200% 100%;background-position:200% 0;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-sm)}
+.sk-card{border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;background:var(--surface)}
+.sk-tile{border:1px solid var(--border);border-radius:var(--r-lg);min-height:108px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--surface)}
+.sk-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.sk-row:last-child{border-bottom:none}
+
+/* bottom nav */
+.bnav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:6px 4px 8px}
+.bnav .ni{flex:1;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text-2);border-radius:var(--r-md);font-size:12px;font-weight:500}
+.bnav .ni svg{width:26px;height:26px}
+.bnav .ni.active{color:var(--brand)}
+
+.foot{padding:36px 0 60px;color:var(--muted);font-size:13px;border-top:1px solid var(--border)}
+@media(max-width:520px){.page{padding:0 12px}.device,.framecol{width:100%;max-width:412px}}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="hero">
+    <div class="eyebrow">FMS · Screen M-02 · Worker (mobile)</div>
+    <h1 class="bn">হোম / আজ — কর্মীর দিনের শুরু</h1>
+    <p>Karim opens the app at dawn beside the pond. In about two seconds this screen answers “what must I do today, and is anything wrong right now?” — then gets him logging in one tap. Priority of attention: critical alert → today’s tasks → quick log → everything else. One assigned project, no switcher, no finance, no settings. 100% Bangla, Bengali numerals, single Bangla date + ritu.</p>
+    <div class="meta">
+      <span class="tag">Reuses F-02 verbatim</span><span class="tag">Fish-off mortality mark (no skull)</span><span class="tag">Units localised · only mg/L &amp; pH Latin</span><span class="tag">Tap target ≥48px</span><span class="tag">Offline = normal, not error</span>
+    </div>
+  </div>
+
+  <div class="frames">
+
+    <!-- ══════════ ONLINE ══════════ -->
+    <div class="framecol">
+      <div class="flabel"><span class="ft">ONLINE</span><span class="state-pill sp-online">synced</span></div>
+      <p class="fnote">Everything synced. Header pill calm, no offline banner, this-morning’s log entries all show <span class="bn">সিংক হয়েছে</span>.</p>
+      <div class="device"><div class="screen">
+        <div class="statusbar"><span>৬:০৪</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৮১%</span></span></div>
+        <div class="apphead">
+          <div class="r1"><span class="pname"><span data-i="map-pin"></span>মেঘনা ঘের</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+          <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+        </div>
+        <div class="home">
+          <div class="crit">
+            <div class="crit-top"><span class="crit-ic" data-i="alert-triangle"></span><div><div class="crit-t">অক্সিজেন সংকট — পুকুর এ-২</div><div class="crit-s">দ্রবীভূত অক্সিজেন ২.১ mg/L · বিপজ্জনক</div></div></div>
+            <div class="crit-do"><span data-i="wind"></span>এখনই এয়ারেটর চালু করুন ও মালিককে জানান।</div>
+            <button class="btn danger" data-i="alert-triangle">মালিককে জানান</button>
+          </div>
+          <div class="section-title">আবহাওয়া</div>
+          <div class="wx">
+            <div class="wx-main"><span class="wx-ic" data-i="cloud-rain"></span><div><div class="wx-temp">২৯° সে · বৃষ্টির সম্ভাবনা ৮০%</div><div class="wx-hint">ভারী বৃষ্টি — খাবার কমান, অক্সিজেন খেয়াল রাখুন</div></div></div>
+            <div class="wx-stale"><span data-i="clock"></span>হালনাগাদ নাও হতে পারে · ৩ ঘণ্টা আগে</div>
+          </div>
+          <div class="section-title">আজকের কাজ<span class="cnt">২টি বাকি</span></div>
+          <div class="surf"><div class="rows">
+            <div class="row"><div class="rmain"><div class="rtitle">চেইন ড্র্যাগ — পুকুর এ-২</div><div class="rmeta"><span data-i="clock"></span>সকাল ৭:০০ · <span class="badge b-warning"><span class="dot"></span>বাকি</span></div></div><button class="check" data-i="check" aria-label="সম্পন্ন করুন"></button></div>
+            <div class="row"><div class="rmain"><div class="rtitle">চুন প্রয়োগ — পুকুর জে-১</div><div class="rmeta"><span data-i="clock"></span>সকাল ৯:৩০ · <span class="badge b-neutral"><span class="dot"></span>নির্ধারিত</span></div></div><button class="check" data-i="check" aria-label="সম্পন্ন করুন"></button></div>
+            <div class="row done-row"><div class="rmain"><div class="rtitle">সকালের খাবার — পুকুর এ-২</div><div class="rmeta">সম্পন্ন · সকাল ৮:১৫ · <span class="badge b-ok"><span class="dot"></span>সম্পন্ন</span></div></div><button class="check done" data-i="check" aria-label="সম্পন্ন"></button></div>
+          </div></div>
+          <div class="section-title">দ্রুত লগ</div>
+          <div class="tiles">
+            <div class="tile"><span class="ic" data-i="utensils"></span><span class="cap">খাবার</span></div>
+            <div class="tile accent"><span class="ic" data-i="droplet"></span><span class="cap">পানি</span></div>
+            <div class="tile danger"><span class="ic" data-i="fish-off"></span><span class="cap">মৃত্যু</span></div>
+            <div class="tile"><span class="ic" data-i="flask"></span><span class="cap">নমুনা</span></div>
+            <div class="tile"><span class="ic" data-i="clipboard"></span><span class="cap">কাজ</span></div>
+            <div class="tile accent"><span class="ic" data-i="camera"></span><span class="cap">ক্যামেরা</span></div>
+          </div>
+          <div class="section-title">আজকের লগ</div>
+          <div class="surf"><div class="rows">
+            <div class="row"><span class="lic" style="background:var(--tint-brand);color:var(--brand)" data-i="utensils"></span><div class="rmain"><div class="rtitle">খাবার · গ্রোয়ার</div><div class="rmeta">সকাল ৮:১৫ · <span class="badge b-ok"><span class="dot"></span>সিংক হয়েছে</span></div></div><span class="rval">১২ কেজি</span></div>
+            <div class="row"><span class="lic" style="background:#E0F2FE;color:var(--accent)" data-i="droplet"></span><div class="rmain"><div class="rtitle">পানি · দ্রবীভূত অক্সিজেন</div><div class="rmeta">ভোর ৫:৫০ · <span class="badge b-ok"><span class="dot"></span>সিংক হয়েছে</span></div></div><span class="rval">২.১</span></div>
+            <div class="row"><span class="lic" style="background:var(--tint-critical);color:var(--critical)" data-i="fish-off"></span><div class="rmain"><div class="rtitle">মৃত্যু · পুকুর এ-২</div><div class="rmeta">সকাল ৬:৪০ · <span class="badge b-ok"><span class="dot"></span>সিংক হয়েছে</span></div></div><span class="rval">৩ টি</span></div>
+          </div></div>
+          <div class="emg-wrap">
+            <button class="emg" data-i="alert-triangle">জরুরি</button>
+            <div class="emg-hint">অক্সিজেন সংকট / মাছ ভেসে উঠছে — সাহায্য চান</div>
+          </div>
+        </div>
+        <div class="bnav">
+          <div class="ni active"><span data-i="home"></span>হোম</div>
+          <div class="ni"><span data-i="utensils"></span>খাবার</div>
+          <div class="ni"><span data-i="droplet"></span>পানি</div>
+          <div class="ni"><span data-i="clipboard"></span>কাজ</div>
+          <div class="ni"><span data-i="menu"></span>আরও</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ══════════ OFFLINE ══════════ -->
+    <div class="framecol">
+      <div class="flabel"><span class="ft">OFFLINE</span><span class="state-pill sp-offline">no signal</span></div>
+      <p class="fnote">Amber banner + amber header pill + pending count. Recent entries show <span class="bn">অপেক্ষমাণ</span>. Still completely usable — offline is normal.</p>
+      <div class="device"><div class="screen">
+        <div class="statusbar"><span>৬:০৪</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi-off"></span><span>৮১%</span></span></div>
+        <div class="apphead">
+          <div class="r1"><span class="pname"><span data-i="map-pin"></span>মেঘনা ঘের</span><span class="syncpill off"><span data-i="wifi-off"></span>অফলাইন</span></div>
+          <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+        </div>
+        <div class="offline-banner"><span data-i="wifi-off"></span>অফলাইন — সংরক্ষিত, পরে সিংক হবে</div>
+        <div class="home">
+          <div class="crit">
+            <div class="crit-top"><span class="crit-ic" data-i="alert-triangle"></span><div><div class="crit-t">অক্সিজেন সংকট — পুকুর এ-২</div><div class="crit-s">দ্রবীভূত অক্সিজেন ২.১ mg/L · বিপজ্জনক</div></div></div>
+            <div class="crit-do"><span data-i="wind"></span>এখনই এয়ারেটর চালু করুন ও মালিককে জানান।</div>
+            <button class="btn danger" data-i="alert-triangle">মালিককে জানান</button>
+          </div>
+          <div class="section-title">আবহাওয়া</div>
+          <div class="wx">
+            <div class="wx-main"><span class="wx-ic" data-i="cloud-rain"></span><div><div class="wx-temp">২৯° সে · বৃষ্টির সম্ভাবনা ৮০%</div><div class="wx-hint">ভারী বৃষ্টি — খাবার কমান, অক্সিজেন খেয়াল রাখুন</div></div></div>
+            <div class="wx-stale"><span data-i="wifi-off"></span>অফলাইন — সর্বশেষ তথ্য ৩ ঘণ্টা আগের</div>
+          </div>
+          <div class="section-title">আজকের কাজ<span class="cnt">২টি বাকি</span></div>
+          <div class="surf"><div class="rows">
+            <div class="row"><div class="rmain"><div class="rtitle">চেইন ড্র্যাগ — পুকুর এ-২</div><div class="rmeta"><span data-i="clock"></span>সকাল ৭:০০ · <span class="badge b-warning"><span class="dot"></span>বাকি</span></div></div><button class="check" data-i="check" aria-label="সম্পন্ন করুন"></button></div>
+            <div class="row"><div class="rmain"><div class="rtitle">চুন প্রয়োগ — পুকুর জে-১</div><div class="rmeta"><span data-i="clock"></span>সকাল ৯:৩০ · <span class="badge b-neutral"><span class="dot"></span>নির্ধারিত</span></div></div><button class="check" data-i="check" aria-label="সম্পন্ন করুন"></button></div>
+            <div class="row done-row"><div class="rmain"><div class="rtitle">সকালের খাবার — পুকুর এ-২</div><div class="rmeta">সম্পন্ন · সকাল ৮:১৫ · <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div></div><button class="check done" data-i="check" aria-label="সম্পন্ন"></button></div>
+          </div></div>
+          <div class="section-title">দ্রুত লগ<span class="link">৭টি অপেক্ষমাণ</span></div>
+          <div class="tiles">
+            <div class="tile"><span class="ic" data-i="utensils"></span><span class="cap">খাবার</span></div>
+            <div class="tile accent"><span class="ic" data-i="droplet"></span><span class="cap">পানি</span></div>
+            <div class="tile danger"><span class="ic" data-i="fish-off"></span><span class="cap">মৃত্যু</span></div>
+            <div class="tile"><span class="ic" data-i="flask"></span><span class="cap">নমুনা</span></div>
+            <div class="tile"><span class="ic" data-i="clipboard"></span><span class="cap">কাজ</span></div>
+            <div class="tile accent"><span class="ic" data-i="camera"></span><span class="cap">ক্যামেরা</span></div>
+          </div>
+          <div class="section-title">আজকের লগ</div>
+          <div class="surf"><div class="rows">
+            <div class="row"><span class="lic" style="background:var(--tint-brand);color:var(--brand)" data-i="utensils"></span><div class="rmain"><div class="rtitle">খাবার · গ্রোয়ার</div><div class="rmeta">সকাল ৮:১৫ · <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div></div><span class="rval">১২ কেজি</span></div>
+            <div class="row"><span class="lic" style="background:#E0F2FE;color:var(--accent)" data-i="droplet"></span><div class="rmain"><div class="rtitle">পানি · দ্রবীভূত অক্সিজেন</div><div class="rmeta">ভোর ৫:৫০ · <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div></div><span class="rval">২.১</span></div>
+            <div class="row"><span class="lic" style="background:var(--tint-critical);color:var(--critical)" data-i="fish-off"></span><div class="rmain"><div class="rtitle">মৃত্যু · পুকুর এ-২</div><div class="rmeta">সকাল ৬:৪০ · <span class="badge b-critical"><span class="dot"></span>ব্যর্থ</span> <button class="retry" data-i="refresh-cw">আবার</button></div></div><span class="rval">৩ টি</span></div>
+          </div></div>
+          <div class="emg-wrap">
+            <button class="emg" data-i="alert-triangle">জরুরি</button>
+            <div class="emg-hint">অফলাইনেও কাজ করে — সংযোগ পেলেই পাঠানো হবে</div>
+          </div>
+        </div>
+        <div class="bnav">
+          <div class="ni active"><span data-i="home"></span>হোম</div>
+          <div class="ni"><span data-i="utensils"></span>খাবার</div>
+          <div class="ni"><span data-i="droplet"></span>পানি</div>
+          <div class="ni"><span data-i="clipboard"></span>কাজ</div>
+          <div class="ni"><span data-i="menu"></span>আরও</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ══════════ EMPTY / FRESH DAY ══════════ -->
+    <div class="framecol">
+      <div class="flabel"><span class="ft">EMPTY / FRESH DAY</span><span class="state-pill sp-empty">nothing logged</span></div>
+      <p class="fnote">Dawn, nothing logged yet. Calm — no alert. Tasks are scheduled; the quick-log tiles are highlighted and a warm empty state points straight at them.</p>
+      <div class="device"><div class="screen">
+        <div class="statusbar"><span>৫:৪৮</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৯৪%</span></span></div>
+        <div class="apphead">
+          <div class="r1"><span class="pname"><span data-i="map-pin"></span>মেঘনা ঘের</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+          <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+        </div>
+        <div class="home">
+          <div class="wx">
+            <div class="wx-main"><span class="wx-ic" data-i="cloud-rain"></span><div><div class="wx-temp">২৭° সে · বৃষ্টির সম্ভাবনা ৬০%</div><div class="wx-hint">সকালটা মেঘলা — খাবারের আগে অক্সিজেন দেখে নিন</div></div></div>
+            <div class="wx-stale"><span data-i="clock"></span>হালনাগাদ নাও হতে পারে · ২ ঘণ্টা আগে</div>
+          </div>
+          <div class="section-title">আজকের কাজ<span class="cnt">৩টি নির্ধারিত</span></div>
+          <div class="surf"><div class="rows">
+            <div class="row"><div class="rmain"><div class="rtitle">চেইন ড্র্যাগ — পুকুর এ-২</div><div class="rmeta"><span data-i="clock"></span>সকাল ৭:০০ · <span class="badge b-neutral"><span class="dot"></span>নির্ধারিত</span></div></div><button class="check" data-i="check" aria-label="সম্পন্ন করুন"></button></div>
+            <div class="row"><div class="rmain"><div class="rtitle">সকালের খাবার — পুকুর এ-২</div><div class="rmeta"><span data-i="clock"></span>সকাল ৮:০০ · <span class="badge b-neutral"><span class="dot"></span>নির্ধারিত</span></div></div><button class="check" data-i="check" aria-label="সম্পন্ন করুন"></button></div>
+            <div class="row"><div class="rmain"><div class="rtitle">চুন প্রয়োগ — পুকুর জে-১</div><div class="rmeta"><span data-i="clock"></span>সকাল ৯:৩০ · <span class="badge b-neutral"><span class="dot"></span>নির্ধারিত</span></div></div><button class="check" data-i="check" aria-label="সম্পন্ন করুন"></button></div>
+          </div></div>
+          <div class="section-title">দ্রুত লগ</div>
+          <div class="tiles">
+            <div class="tile hot"><span class="ic" data-i="utensils"></span><span class="cap">খাবার</span></div>
+            <div class="tile accent"><span class="ic" data-i="droplet"></span><span class="cap">পানি</span></div>
+            <div class="tile danger"><span class="ic" data-i="fish-off"></span><span class="cap">মৃত্যু</span></div>
+            <div class="tile"><span class="ic" data-i="flask"></span><span class="cap">নমুনা</span></div>
+            <div class="tile"><span class="ic" data-i="clipboard"></span><span class="cap">কাজ</span></div>
+            <div class="tile accent"><span class="ic" data-i="camera"></span><span class="cap">ক্যামেরা</span></div>
+          </div>
+          <div class="section-title">আজকের লগ</div>
+          <div class="surf"><div class="state">
+            <span class="sic2" data-i="sunrise"></span>
+            <div class="st bn">শুভ সকাল, করিম</div>
+            <div class="sd bn">আজ এখনো কিছু লগ করেননি। উপরের টাইলে চাপ দিয়ে দিনের প্রথম কাজ শুরু করুন।</div>
+            <span class="up bn"><span data-i="arrow-up"></span>দ্রুত লগ থেকে শুরু করুন</span>
+          </div></div>
+          <div class="emg-wrap">
+            <button class="emg" data-i="alert-triangle">জরুরি</button>
+            <div class="emg-hint">অক্সিজেন সংকট / মাছ ভেসে উঠছে — সাহায্য চান</div>
+          </div>
+        </div>
+        <div class="bnav">
+          <div class="ni active"><span data-i="home"></span>হোম</div>
+          <div class="ni"><span data-i="utensils"></span>খাবার</div>
+          <div class="ni"><span data-i="droplet"></span>পানি</div>
+          <div class="ni"><span data-i="clipboard"></span>কাজ</div>
+          <div class="ni"><span data-i="menu"></span>আরও</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ══════════ LOADING ══════════ -->
+    <div class="framecol">
+      <div class="flabel"><span class="ft">LOADING</span><span class="state-pill sp-loading">shimmer</span></div>
+      <p class="fnote">First open of the day. Header is real so context is never lost; the body loads as a shimmer skeleton matching the real layout.</p>
+      <div class="device"><div class="screen">
+        <div class="statusbar"><span>৫:৪৭</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৯৪%</span></span></div>
+        <div class="apphead">
+          <div class="r1"><span class="pname"><span data-i="map-pin"></span>মেঘনা ঘের</span><span class="syncpill"><span data-i="refresh-cw"></span>সিংক হচ্ছে…</span></div>
+          <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+        </div>
+        <div class="home">
+          <div class="sk-card"><div style="display:flex;gap:12px;align-items:center"><div class="sk" style="width:46px;height:46px;border-radius:10px"></div><div style="flex:1"><div class="sk" style="height:14px;width:70%;margin-bottom:8px"></div><div class="sk" style="height:11px;width:50%"></div></div></div></div>
+          <div class="section-title"><div class="sk" style="height:13px;width:80px"></div></div>
+          <div class="sk-card"><div style="display:flex;gap:12px;align-items:center"><div class="sk" style="width:46px;height:46px;border-radius:10px"></div><div style="flex:1"><div class="sk" style="height:13px;width:60%;margin-bottom:8px"></div><div class="sk" style="height:11px;width:80%"></div></div></div></div>
+          <div class="section-title"><div class="sk" style="height:13px;width:96px"></div></div>
+          <div class="surf">
+            <div class="sk-row"><div style="flex:1"><div class="sk" style="height:13px;width:65%;margin-bottom:8px"></div><div class="sk" style="height:11px;width:40%"></div></div><div class="sk" style="width:48px;height:48px;border-radius:10px"></div></div>
+            <div class="sk-row"><div style="flex:1"><div class="sk" style="height:13px;width:55%;margin-bottom:8px"></div><div class="sk" style="height:11px;width:44%"></div></div><div class="sk" style="width:48px;height:48px;border-radius:10px"></div></div>
+          </div>
+          <div class="section-title"><div class="sk" style="height:13px;width:70px"></div></div>
+          <div class="tiles">
+            <div class="sk-tile"><div class="sk" style="width:44px;height:44px;border-radius:10px"></div><div class="sk" style="height:12px;width:60%"></div></div>
+            <div class="sk-tile"><div class="sk" style="width:44px;height:44px;border-radius:10px"></div><div class="sk" style="height:12px;width:60%"></div></div>
+            <div class="sk-tile"><div class="sk" style="width:44px;height:44px;border-radius:10px"></div><div class="sk" style="height:12px;width:60%"></div></div>
+            <div class="sk-tile"><div class="sk" style="width:44px;height:44px;border-radius:10px"></div><div class="sk" style="height:12px;width:60%"></div></div>
+            <div class="sk-tile"><div class="sk" style="width:44px;height:44px;border-radius:10px"></div><div class="sk" style="height:12px;width:60%"></div></div>
+            <div class="sk-tile"><div class="sk" style="width:44px;height:44px;border-radius:10px"></div><div class="sk" style="height:12px;width:60%"></div></div>
+          </div>
+        </div>
+        <div class="bnav">
+          <div class="ni active"><span data-i="home"></span>হোম</div>
+          <div class="ni"><span data-i="utensils"></span>খাবার</div>
+          <div class="ni"><span data-i="droplet"></span>পানি</div>
+          <div class="ni"><span data-i="clipboard"></span>কাজ</div>
+          <div class="ni"><span data-i="menu"></span>আরও</div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <div class="foot bn">FMS · ফিশ ফার্ম ম্যানেজমেন্ট সিস্টেম — M-02 হোম / আজ (কর্মী)। F-02 মোবাইল ডিজাইন ভাষা থেকে সরাসরি। সংশোধন: মৃত্যু আইকন এখন মাছভিত্তিক (স্কাল নয়); mg/L ও pH ছাড়া সব একক বাংলায়। আইকন: Lucide (inline SVG)।</div>
+</div>
+
+<script>
+const ICONS={
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "home":"M3 10.5 12 3l9 7.5M5 9.6V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.6",
+ "utensils":"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "fish-off":"M3 12c2.5-4.5 9.5-4.5 12 0-2.5 4.5-9.5 4.5-12 0zM15 12l5-3.2v6.4L15 12M6.6 10.4h.01M3 3l18 18",
+ "flask":"M9 3h6M10 3v5.5L5 17a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 17l-5-8.5V3M7.5 14h9",
+ "clipboard":"M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2zM9 13l2 2 4-4",
+ "camera":"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "menu":"M4 6h16M4 12h16M4 18h16",
+ "check":"M20 6 9 17l-5-5",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "refresh-cw":"M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6",
+ "wifi":"M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01",
+ "wifi-off":"M2 8.82a15 15 0 0 1 4.17-2.65M10.66 5c4.01-.36 8.14.9 11.34 3.76M16.85 11.25a10 10 0 0 1 2.22 1.68M5 12.86a10 10 0 0 1 5.17-2.69M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01M2 2l20 20",
+ "signal":"M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 20V4",
+ "wind":"M9.59 4.59A2 2 0 1 1 11 8H2M12.59 19.41A2 2 0 1 0 14 16H2M17.73 7.73A2.5 2.5 0 1 1 19.5 12H2",
+ "cloud-rain":"M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25M8 19v2M12 19v3M16 19v2",
+ "sunrise":"M12 2v6M4.22 10.22l1.42 1.42M1 18h2M21 18h2M18.36 11.64l1.42-1.42M23 22H1M16 18a4 4 0 0 0-8 0M8 6l4-4 4 4",
+ "arrow-up":"M12 19V5M5 12l7-7 7 7",
+ "inbox":"M22 12h-6l-2 3h-4l-2-3H2M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

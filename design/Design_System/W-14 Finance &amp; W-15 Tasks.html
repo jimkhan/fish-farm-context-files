@@ -1,0 +1,1138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · Finance / Tasks (Owner)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;--tint-muted:#F1F5F9;
+  --focus:#0891B2;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --font:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.bn{font-family:var(--bn)}
+a{color:var(--brand);text-decoration:none}a:hover{color:var(--brand-dark)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:var(--r-sm)}
+
+/* app bar */
+.appbar{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;gap:16px;padding:0 20px}
+.mark{display:flex;align-items:center;gap:9px}
+.mark .logo{width:30px;height:30px;border-radius:8px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.5px}
+.switcher{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text)}
+.switcher svg{width:16px;height:16px;color:var(--text-2)}
+.abspacer{flex:1}
+.iconbtn{position:relative;width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+.iconbtn:hover{background:var(--surface-muted);color:var(--text)}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn .cnt{position:absolute;top:4px;right:4px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--critical);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.userchip{display:flex;align-items:center;gap:10px;padding:4px 10px 4px 4px;border-radius:var(--r-pill);border:1px solid var(--border)}
+.userchip .av{width:32px;height:32px;border-radius:50%;background:var(--brand-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.userchip .un{font-size:13px;font-weight:600;line-height:1.2}
+.userchip .ur{font-size:11px;color:var(--text-2)}
+.userchip.worker .av{background:var(--warning)}
+
+/* shell */
+.shell{display:grid;grid-template-columns:248px 1fr;align-items:start}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:16px 12px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.sb-proj{padding:8px 10px 14px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sb-proj .pn{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px}
+.sb-proj .pl{font-size:12px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:5px}
+.sb-proj .pl svg{width:12px;height:12px}
+.navgroup{margin-bottom:14px}
+.navgroup .gh{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:0 10px;margin-bottom:6px}
+.navitem{display:flex;align-items:center;gap:11px;height:40px;padding:0 10px;border-radius:var(--r-md);font-size:14px;font-weight:500;color:var(--text-2);position:relative}
+.navitem:hover{background:var(--surface-muted);color:var(--text)}
+.navitem svg{width:20px;height:20px;flex-shrink:0}
+.navitem .nb{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:99px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.navitem .nb.crit{background:var(--critical);color:#fff}
+.navitem .nb.warn{background:var(--tint-warning);color:#92400E}
+.navitem.active{background:var(--tint-brand);color:var(--brand-dark);font-weight:700}
+.navitem.active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--brand)}
+.navitem.active svg{color:var(--brand)}
+.navitem.locked{opacity:.5}
+.navitem.locked svg.lk{width:14px;height:14px;margin-left:auto;color:var(--muted)}
+
+/* main */
+.main{padding:24px 28px 60px;min-width:0}
+.maintag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--tint-brand);padding:5px 12px;border-radius:var(--r-pill);margin-bottom:16px}
+
+/* header */
+.phead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.phead h1{font-size:26px;font-weight:700;letter-spacing:-.5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.phead .meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--text-2)}
+.phead .meta .m{display:flex;align-items:center;gap:6px}
+.phead .meta .m svg{width:15px;height:15px;color:var(--muted)}
+.phead .acts{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:1px solid transparent}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--brand);border-color:var(--border-strong)}.btn.secondary:hover{background:var(--surface-muted)}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:12px;font-weight:600;white-space:nowrap}
+.badge svg{width:13px;height:13px}
+.dot{width:7px;height:7px;border-radius:50%}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-muted{background:var(--surface-muted);color:var(--text-2)}.b-muted .dot{background:var(--muted)}
+.b-crit{background:var(--tint-critical);color:#991B1B}.b-crit .dot{background:var(--critical)}
+.b-info{background:var(--tint-info);color:#075985}.b-info .dot{background:var(--info)}
+.b-warn{background:var(--tint-warning);color:#92400E}.b-warn .dot{background:var(--warning)}
+.tbadge{font-size:11px;font-weight:700;letter-spacing:.03em;padding:3px 8px;border-radius:6px;background:var(--surface-muted);color:var(--text-2);border:1px solid var(--border);white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.tbadge svg{width:12px;height:12px}
+.kind{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.03em}
+.kind svg{width:12px;height:12px}
+.kind-rev{background:var(--tint-ok);color:#166534}
+.kind-cost{background:var(--tint-critical);color:#991B1B}
+/* task status */
+.st{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:11px;font-weight:700;letter-spacing:.03em;white-space:nowrap}
+.st svg{width:12px;height:12px}
+.st-done{background:var(--tint-ok);color:#166534}
+.st-due{background:var(--tint-warning);color:#92400E}
+.st-sched{background:var(--surface-muted);color:var(--text-2)}
+.st-missed{background:var(--tint-critical);color:#991B1B}
+
+/* filters */
+.filters{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:13px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);margin-bottom:20px}
+.fgroup{display:flex;align-items:center;gap:10px}
+.fglab{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.selctl{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text);background:var(--surface)}
+.selctl svg{width:15px;height:15px;color:var(--text-2)}
+.seg{display:inline-flex;background:var(--surface-muted);border-radius:var(--r-md);padding:3px}
+.seg button{height:32px;padding:0 15px;border-radius:7px;font-size:13px;font-weight:600;color:var(--text-2)}
+.seg button.on{background:var(--surface);color:var(--brand-dark);box-shadow:var(--sh-card)}
+.fspacer{flex:1}
+
+/* KPI */
+.kpirow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px;display:flex;flex-direction:column;min-height:150px}
+.kpi .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.kpi .lab{font-size:13px;font-weight:600;color:var(--text-2)}
+.kpi .ico{width:32px;height:32px;border-radius:var(--r-md);background:var(--surface-muted);color:var(--text-2);display:flex;align-items:center;justify-content:center}
+.kpi .ico svg{width:19px;height:19px}
+.kpi .val{font-size:30px;font-weight:700;letter-spacing:-.5px;margin-top:auto;line-height:1.05}
+.kpi .val.bn{font-size:26px}
+.kpi .val .u{font-size:15px;color:var(--text-2);font-weight:500}
+.kpi .val.neg{color:var(--danger)}
+.kpi .val.pos{color:var(--ok)}
+.kpi .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.delta{display:inline-flex;align-items:center;gap:4px;width:fit-content;font-size:13px;font-weight:600;padding:3px 9px;border-radius:var(--r-pill);font-variant-numeric:tabular-nums}
+.delta.up{color:var(--ok);background:var(--tint-ok)}
+.delta.down{color:var(--danger);background:var(--tint-critical)}
+.delta.flat{color:var(--text-2);background:var(--surface-muted)}
+.delta .cx{font-size:11px}
+.kpi .subnote{font-size:12px;color:var(--text-2)}
+.kpi .subnote .deriv{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)}
+.kpi.warnkpi{background:var(--tint-warning);border-color:#FCD8A0}
+.kpi.warnkpi .lab{color:#92400E}.kpi.warnkpi .ico{background:var(--warning);color:#fff}.kpi.warnkpi .val{color:#B45309}
+.kpi.warnkpi .subnote{color:#92400E;font-weight:600}
+.progtrack{height:8px;border-radius:99px;background:var(--surface-muted);overflow:hidden;margin-top:2px}
+.progfill{height:100%;border-radius:99px;background:var(--brand)}
+
+/* derivation panel (net profit / roi) */
+.deriv-panel{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+.dcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px 20px}
+.dcard .dh{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--text-2)}
+.dcard .dh svg{width:16px;height:16px;color:var(--brand)}
+.calcline{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;font-variant-numeric:tabular-nums}
+.calcline .term{display:flex;flex-direction:column;gap:2px}
+.calcline .term .tl{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.calcline .term .tv{font-size:19px;font-weight:700;font-family:var(--bn)}
+.calcline .term .tv.plain{font-family:var(--font)}
+.calcline .op{font-size:20px;font-weight:700;color:var(--muted)}
+.calcline .term.result .tv{color:var(--danger)}
+.calcline .term.result.pos .tv{color:var(--ok)}
+.est{display:inline-flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-2);margin-top:14px;padding-top:13px;border-top:1px dashed var(--border-strong);line-height:1.5}
+.est svg{width:14px;height:14px;color:var(--warning);flex-shrink:0;margin-top:2px}
+.est b{color:var(--text)}
+
+/* panel */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden;margin-bottom:22px}
+.ph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700}
+.ph svg{width:17px;height:17px}
+.ph .cnt{margin-left:auto;font-size:12px;font-weight:600;color:var(--text-2)}
+.ph .phact{margin-left:auto}
+.editbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--border-strong);color:var(--brand);font-size:13px;font-weight:600;background:var(--surface)}
+.editbtn:hover{background:var(--surface-muted)}
+.editbtn svg{width:15px;height:15px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px}
+@media(max-width:1100px){.split{grid-template-columns:1fr}}
+
+/* breakdown bars */
+.bd{padding:16px}
+.bdrow{display:grid;grid-template-columns:130px 1fr auto;align-items:center;gap:14px;padding:9px 0}
+.bdrow+.bdrow{border-top:1px solid var(--border)}
+.bdrow .bcat{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.bdrow .bcat .sw{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+.bdrow .btrack{height:12px;border-radius:99px;background:var(--surface-muted);overflow:hidden}
+.bdrow .bfill{height:100%;border-radius:99px}
+.bdrow .bamt{text-align:right;white-space:nowrap}
+.bdrow .bamt .ba{font-size:14px;font-weight:700;font-family:var(--bn)}
+.bdrow .bamt .bp{font-size:11px;color:var(--text-2);font-variant-numeric:tabular-nums}
+.bd-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:2px solid var(--border-strong);background:var(--surface-muted);font-weight:700;font-size:14px}
+.bd-foot .money{font-family:var(--bn)}
+.c-feed{background:var(--brand)}.c-salary{background:var(--accent)}.c-stock{background:#0EA5B7}.c-med{background:var(--warning)}.c-equip{background:#64748B}.c-misc{background:var(--muted)}
+.c-export{background:var(--brand-dark)}.c-local{background:#6366F1}
+
+/* tables */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:11px 16px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface)}
+.dtable th.num{text-align:right}
+.dtable td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+.dtable td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.dtable td.money{text-align:right;font-family:var(--bn);font-weight:700;white-space:nowrap}
+.dtable td.money.rev{color:#166534}
+.dtable td.money.cost{color:#991B1B}
+.dtable tr:last-child td{border-bottom:none}
+.dtable .ts{font-variant-numeric:tabular-nums;white-space:nowrap}
+.dtable .tsb{font-size:12px;color:var(--text-2);font-family:var(--bn)}
+.dtable .strong{font-weight:700}
+.dtable .note{color:var(--text-2)}
+.src{display:inline-flex;align-items:center;gap:8px;font-size:13px;white-space:nowrap}
+.src .sa{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.src .worker{background:var(--brand-dark);color:#fff}
+.src .auto{background:var(--surface-muted);color:var(--text-2)}
+.autotag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text-2);background:var(--surface-muted);border:1px solid var(--border);padding:2px 8px;border-radius:99px}
+.autotag svg{width:12px;height:12px;color:var(--muted)}
+.autotag.man{color:var(--brand-dark);background:var(--tint-brand);border-color:#A5DCE4}
+.autotag.man svg{color:var(--brand)}
+
+/* record transaction form */
+.rh{padding:18px 16px}
+.rh-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1/-1}
+.field .fl{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.inp{height:42px;border:1px solid var(--border-strong);border-radius:var(--r-md);padding:0 12px;font-size:14px;font-weight:600;font-family:inherit;color:var(--text);background:var(--surface);display:flex;align-items:center;gap:8px}
+.inp svg{width:15px;height:15px;color:var(--text-2)}
+.inp .ph2{color:var(--muted);font-weight:500}
+.inp .cur{color:var(--text-2);font-weight:700;font-family:var(--bn)}
+.kindpick{display:flex;gap:12px}
+.kopt{flex:1;border:1.5px solid var(--border-strong);border-radius:var(--r-md);padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;background:var(--surface)}
+.kopt .ck{width:20px;height:20px;border-radius:50%;border:2px solid var(--border-strong);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kopt.sel{border-color:var(--brand);background:var(--tint-brand)}
+.kopt.sel .ck{border-color:var(--brand);background:var(--brand);color:#fff}
+.kopt.sel .ck svg{width:12px;height:12px}
+.rh-actions{display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* tasks list */
+.tasklist{padding:6px 0}
+.trow{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.trow:last-child{border-bottom:none}
+.trow.missed{background:var(--tint-critical)}
+.trow .tcheck{width:26px;height:26px;border-radius:50%;border:2px solid var(--border-strong);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;color:transparent}
+.trow.done .tcheck{background:var(--ok);border-color:var(--ok);color:#fff}
+.trow.done .tcheck svg{width:14px;height:14px}
+.trow .tbody{flex:1;min-width:0}
+.trow .ttitle{font-size:15px;font-weight:700;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.trow .ttitle .bnn{font-weight:500;color:var(--text-2);font-size:13px}
+.trow .tmeta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:5px;font-size:12px;color:var(--text-2)}
+.trow .tmeta .mm{display:inline-flex;align-items:center;gap:5px}
+.trow .tmeta .mm svg{width:13px;height:13px;color:var(--muted)}
+.trow .tcompletion{display:flex;align-items:center;gap:10px;margin-top:10px;padding:9px 11px;background:var(--surface-muted);border-radius:var(--r-md);font-size:12px;color:var(--text-2)}
+.trow.missed .tcompletion{background:var(--surface)}
+.trow .tcompletion .who{font-weight:700;color:var(--text)}
+.trow .tright{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
+.proof{width:46px;height:46px;border-radius:var(--r-md);flex-shrink:0;background:linear-gradient(135deg,#CFE9EE,#A5DCE4);border:1px solid #A5DCE4;display:flex;align-items:center;justify-content:center;color:var(--brand-dark);position:relative;overflow:hidden}
+.proof svg{width:18px;height:18px}
+.proof .pv{position:absolute;bottom:0;left:0;right:0;font-size:8px;font-weight:700;text-align:center;background:rgba(21,94,117,.82);color:#fff;letter-spacing:.03em}
+.synced{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#166534;background:var(--tint-ok);border:1px solid #BBF7D0;padding:2px 8px;border-radius:99px}
+.synced svg{width:12px;height:12px}
+.missed-note{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:12px;color:#7c3a09}
+.missed-note svg{width:14px;height:14px;flex-shrink:0;margin-top:1px;color:var(--warning)}
+.taskacts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.tbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-md);font-size:12px;font-weight:600}
+.tbtn svg{width:14px;height:14px}
+.tbtn.primary{background:var(--warning);color:#fff}
+.tbtn.ghost{background:var(--surface);color:var(--text-2);border:1px solid var(--border-strong)}
+.tbtn.ghost:hover{background:var(--surface-muted)}
+
+/* recurring rules */
+.rules .dtable td .rt{font-weight:700}
+.freq{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--text-2);background:var(--surface-muted);padding:2px 9px;border-radius:99px}
+.freq svg{width:12px;height:12px;color:var(--muted)}
+.rstate{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700}
+.rstate svg{width:12px;height:12px}
+.rstate.on{color:#166534}.rstate.paused{color:var(--text-2)}
+
+/* completion detail */
+.cdetail{padding:18px 16px;display:grid;grid-template-columns:220px 1fr;gap:20px}
+@media(max-width:720px){.cdetail{grid-template-columns:1fr}}
+.cphoto{border-radius:var(--r-md);aspect-ratio:4/3;background:linear-gradient(135deg,#CFE9EE,#A5DCE4);border:1px solid #A5DCE4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--brand-dark)}
+.cphoto svg{width:34px;height:34px}
+.cphoto .cl{font-size:12px;font-weight:700}
+.cphoto .cs{font-size:11px;font-weight:500;opacity:.8}
+.cinfo{display:flex;flex-direction:column;gap:12px}
+.cinfo .cline{display:flex;align-items:center;gap:10px;font-size:13px}
+.cinfo .cline svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.cinfo .cline b{font-weight:700}
+
+/* role denied (worker) */
+.denied{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:72px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card)}
+.denied .di{width:66px;height:66px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--muted);display:flex;align-items:center;justify-content:center}
+.denied .di svg{width:32px;height:32px}
+.denied .dt{font-size:19px;font-weight:700}
+.denied .dd{font-size:14px;color:var(--text-2);max-width:440px;line-height:1.6}
+.denied .dback{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 16px;border-radius:var(--r-md);background:var(--brand);color:#fff;font-size:14px;font-weight:600;margin-top:4px}
+.denied .dback svg{width:16px;height:16px}
+
+/* degraded / empty / skeleton */
+.degraded{background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--r-lg);padding:26px;display:flex;align-items:center;gap:14px;min-height:170px;justify-content:center}
+.degraded .di{width:46px;height:46px;border-radius:var(--r-pill);background:var(--tint-warning);color:var(--warning);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.degraded .di svg{width:24px;height:24px}
+.degraded .dt{font-size:14px;font-weight:700}
+.degraded .dd{font-size:13px;color:var(--text-2);margin-top:2px;max-width:520px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:52px 24px}
+.empty .ei{width:64px;height:64px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--muted);display:flex;align-items:center;justify-content:center}
+.empty .ei svg{width:32px;height:32px}
+.empty .et{font-size:17px;font-weight:700}
+.empty .ed{font-size:14px;color:var(--text-2);max-width:460px}
+.empty .eacts{display:flex;gap:10px;margin-top:6px}
+.empty .goodpill{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#166534;background:var(--tint-ok);border:1px solid #BBF7D0;padding:8px 15px;border-radius:var(--r-pill);margin-top:2px}
+.empty .goodpill svg{width:16px;height:16px}
+@keyframes shimmer{100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E2E8F0 0%,#EEF3F8 50%,#E2E8F0 100%);background-size:200% 100%;background-position:200% 0;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-sm)}
+.sk-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px;min-height:150px;display:flex;flex-direction:column;gap:12px}
+.ro-ind{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--text-2);font-size:12px;font-weight:600}
+.ro-ind svg{width:14px;height:14px}
+
+/* screen band + variant framing */
+.screenband{background:var(--brand-dark);color:#fff;border-radius:var(--r-lg);margin:24px 28px 0;padding:20px 24px;display:flex;align-items:center;gap:16px}
+.screenband .sn{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7DD3E0;background:rgba(255,255,255,.08);padding:5px 12px;border-radius:var(--r-pill);flex-shrink:0}
+.screenband h2{font-size:22px;font-weight:700}
+.screenband p{font-size:13px;color:rgba(255,255,255,.82);margin-top:2px;max-width:900px}
+.bigsep{height:10px;background:var(--surface-muted);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:40px}
+.divider{height:1px;background:var(--border);margin:36px 0 0}
+.slab{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:26px 0 0}
+.variant{margin-top:34px}
+.vhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.vhead .vtag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--text);padding:4px 10px;border-radius:var(--r-pill)}
+.vhead .vtag.red{background:var(--critical)}
+.vhead .vtag.green{background:var(--ok)}
+.vhead h3{font-size:16px;font-weight:700}
+.vsub{font-size:14px;color:var(--text-2);margin-bottom:16px;max-width:880px}
+.vbox{border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;background:var(--bg)}
+
+@media(max-width:1180px){.kpirow{grid-template-columns:1fr 1fr}.deriv-panel{grid-template-columns:1fr}.rh-grid{grid-template-columns:1fr}}
+@media(max-width:820px){.shell{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+
+<!-- APP BAR -->
+<div class="appbar">
+  <div class="mark"><span class="logo">FMS</span></div>
+  <button class="switcher"><span data-i="layers"></span>Meghna Gher<span data-i="chevron-down"></span></button>
+  <div class="abspacer"></div>
+  <button class="iconbtn" aria-label="Alerts"><span data-i="bell"></span><span class="cnt">2</span></button>
+  <button class="iconbtn" aria-label="Settings"><span data-i="settings"></span></button>
+  <div class="userchip"><span class="av">RK</span><div><div class="un">Rahima Khatun</div><div class="ur">Owner</div></div></div>
+</div>
+
+<!-- ═══════════════ SCREEN 1 BAND ═══════════════ -->
+<div class="screenband">
+  <span class="sn">Screen 1</span>
+  <div><h2>Finance</h2><p>The money screen — trustworthy and auditable. Net profit, cost and revenue reconcile to the harvest and stocking records from other screens; every derivation is shown openly. Full for the OWNER, read-only for a PARTNER (an investor needs the numbers), and completely hidden from a WORKER — the data is never fetched.</p></div>
+</div>
+
+<div class="shell">
+  <!-- SIDEBAR — Finance active -->
+  <aside class="sidebar">
+    <div class="sb-proj">
+      <div class="pn"><span class="badge b-ok" style="height:auto;padding:0"><span class="dot"></span></span>Meghna Gher</div>
+      <div class="pl"><span data-i="map-pin"></span>Debidwar, Cumilla · 4 ponds</div>
+    </div>
+    <div class="navgroup"><div class="gh">Operations</div>
+      <a class="navitem"><span data-i="layout"></span>Overview</a>
+      <a class="navitem"><span data-i="grid"></span>Ponds</a>
+      <a class="navitem"><span data-i="droplet"></span>Water<span class="nb crit">2</span></a>
+      <a class="navitem"><span data-i="utensils"></span>Feed</a>
+      <a class="navitem"><span data-i="check-square"></span>Tasks<span class="nb warn">3</span></a>
+    </div>
+    <div class="navgroup"><div class="gh">Stock &amp; Growth</div>
+      <a class="navitem"><span data-i="package"></span>Inventory</a>
+      <a class="navitem"><span data-i="heart-pulse"></span>Health</a>
+      <a class="navitem"><span data-i="trending-up"></span>Growth</a>
+      <a class="navitem"><span data-i="scale"></span>Harvest</a>
+    </div>
+    <div class="navgroup"><div class="gh">Business</div>
+      <a class="navitem active"><span data-i="wallet"></span>Finance</a>
+      <a class="navitem"><span data-i="file-text"></span>Reports</a>
+    </div>
+    <div class="navgroup"><div class="gh">Monitoring</div>
+      <a class="navitem"><span data-i="camera"></span>Camera</a>
+      <a class="navitem"><span data-i="cloud"></span>Weather</a>
+    </div>
+    <div class="navgroup"><div class="gh">Admin · owner only</div>
+      <a class="navitem"><span data-i="users"></span>Members</a>
+      <a class="navitem"><span data-i="settings"></span>Settings</a>
+    </div>
+  </aside>
+
+  <!-- MAIN — Finance -->
+  <main class="main">
+    <div class="maintag"><span data-i="wallet"></span>Finance · /projects/meghna-gher/finance · Owner</div>
+
+    <!-- HEADER -->
+    <div class="phead">
+      <div>
+        <h1>Finance</h1>
+        <div class="meta">
+          <span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span>
+          <span class="m"><span data-i="refresh"></span>Cycle to date · since 2026-04-20</span>
+        </div>
+      </div>
+      <div class="acts">
+        <button class="btn secondary"><span data-i="download"></span>Export CSV</button>
+        <button class="btn primary"><span data-i="plus"></span>Record transaction</button>
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpirow">
+      <div class="kpi">
+        <div class="top"><span class="lab">Net profit · cycle to date</span><span class="ico" data-i="trending-down"></span></div>
+        <div class="val bn neg">-৳২,৫৭,৪০০</div>
+        <div class="foot"><span class="delta down"><span class="cx">▼</span>cost-heavy mid-cycle</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Total revenue</span><span class="ico" data-i="trending-up"></span></div>
+        <div class="val bn">৳১,৫৬,৬০০</div>
+        <div class="foot"><span class="subnote">All from harvest · <span class="deriv">4</span> sales</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Total cost</span><span class="ico" data-i="receipt"></span></div>
+        <div class="val bn">৳৪,১৪,০০০</div>
+        <div class="foot"><span class="subnote">6 categories · feed <span class="deriv">44%</span></span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Projected ROI</span><span class="ico" data-i="percent"></span></div>
+        <div class="val">155<span class="u">%</span></div>
+        <div class="foot"><span class="subnote">Incl. <span class="deriv">1,200 kg</span> stock still in water</span></div>
+      </div>
+    </div>
+
+    <!-- DERIVATION PANEL -->
+    <div class="deriv-panel">
+      <div class="dcard">
+        <div class="dh"><span data-i="activity"></span>Net profit — cycle to date</div>
+        <div class="calcline">
+          <div class="term"><span class="tl">Total revenue</span><span class="tv">৳১,৫৬,৬০০</span></div>
+          <span class="op">−</span>
+          <div class="term"><span class="tl">Total cost</span><span class="tv">৳৪,১৪,০০০</span></div>
+          <span class="op">=</span>
+          <div class="term result"><span class="tl">Net profit</span><span class="tv">-৳২,৫৭,৪০০</span></div>
+        </div>
+        <div class="est"><span data-i="info"></span><span>A negative figure this far into the cycle is expected: stocking and feed are paid up front, while most revenue arrives once the standing stock is harvested. This is realised cash only — no stock value is counted here.</span></div>
+      </div>
+      <div class="dcard">
+        <div class="dh"><span data-i="percent"></span>Projected ROI — includes stock still in water</div>
+        <div class="calcline">
+          <div class="term"><span class="tl">Net profit</span><span class="tv">-৳২,৫৭,৪০০</span></div>
+          <span class="op">+</span>
+          <div class="term"><span class="tl">Remaining harvest value</span><span class="tv">৳৯,০০,০০০</span></div>
+        </div>
+        <div class="calcline" style="margin-top:10px">
+          <span class="op" style="font-size:15px">÷</span>
+          <div class="term"><span class="tl">Total cost</span><span class="tv">৳৪,১৪,০০০</span></div>
+          <span class="op">× 100 =</span>
+          <div class="term result pos"><span class="tl">Projected ROI</span><span class="tv plain">155%</span></div>
+        </div>
+        <div class="est"><span data-i="alert-triangle"></span><span><b>Estimate — not settled money.</b> Remaining harvest value = <b>1,200 kg</b> still to land × <b>৳৭৫০/kg</b> blended market rate (Golda export/local + carp local, 2026-07 rate). Actual revenue depends on final weights, grade and price at sale.</span></div>
+      </div>
+    </div>
+
+    <!-- BREAKDOWNS -->
+    <div class="split">
+      <div class="panel" style="margin-bottom:0">
+        <div class="ph"><span data-i="receipt"></span>Cost by category<span class="cnt">Cycle to date</span></div>
+        <div class="bd">
+          <div class="bdrow"><span class="bcat"><span class="sw c-feed"></span>Feed</span><span class="btrack"><span class="bfill c-feed" style="width:44%"></span></span><span class="bamt"><div class="ba">৳১,৮৪,০০০</div><div class="bp">44%</div></span></div>
+          <div class="bdrow"><span class="bcat"><span class="sw c-stock"></span>Stocking</span><span class="btrack"><span class="bfill c-stock" style="width:29%"></span></span><span class="bamt"><div class="ba">৳১,১৯,০০০</div><div class="bp">29%</div></span></div>
+          <div class="bdrow"><span class="bcat"><span class="sw c-salary"></span>Salary</span><span class="btrack"><span class="bfill c-salary" style="width:12%"></span></span><span class="bamt"><div class="ba">৳৪৮,০০০</div><div class="bp">12%</div></span></div>
+          <div class="bdrow"><span class="bcat"><span class="sw c-equip"></span>Equipment</span><span class="btrack"><span class="bfill c-equip" style="width:8%"></span></span><span class="bamt"><div class="ba">৳৩১,০০০</div><div class="bp">8%</div></span></div>
+          <div class="bdrow"><span class="bcat"><span class="sw c-med"></span>Medicine</span><span class="btrack"><span class="bfill c-med" style="width:5%"></span></span><span class="bamt"><div class="ba">৳২২,৫০০</div><div class="bp">5%</div></span></div>
+          <div class="bdrow"><span class="bcat"><span class="sw c-misc"></span>Misc</span><span class="btrack"><span class="bfill c-misc" style="width:2%"></span></span><span class="bamt"><div class="ba">৳৯,৫০০</div><div class="bp">2%</div></span></div>
+        </div>
+        <div class="bd-foot"><span>Total cost · 100%</span><span class="money">৳৪,১৪,০০০</span></div>
+      </div>
+      <div class="panel" style="margin-bottom:0">
+        <div class="ph"><span data-i="trending-up"></span>Revenue by grade<span class="cnt">Harvest only</span></div>
+        <div class="bd">
+          <div class="bdrow"><span class="bcat"><span class="sw c-export"></span>Export</span><span class="btrack"><span class="bfill c-export" style="width:54%"></span></span><span class="bamt"><div class="ba">৳৮৫,২০০</div><div class="bp">54%</div></span></div>
+          <div class="bdrow"><span class="bcat"><span class="sw c-local"></span>Local market</span><span class="btrack"><span class="bfill c-local" style="width:46%"></span></span><span class="bamt"><div class="ba">৳৭১,৪০০</div><div class="bp">46%</div></span></div>
+        </div>
+        <div class="bd-foot"><span>Total revenue · 100%</span><span class="money">৳১,৫৬,৬০০</span></div>
+        <div class="est" style="margin:0;padding:14px 16px;border-top:1px solid var(--border)"><span data-i="link"></span><span>Revenue rows are auto-created from the Harvest screen — <b>৳৮৫,২০০</b> export + <b>৳৭১,৪০০</b> local = <b>৳১,৫৬,৬০০</b>, matching the 4 harvest sales to date.</span></div>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS LEDGER -->
+    <div class="panel">
+      <div class="ph"><span data-i="list"></span>Transactions<span class="cnt">Recent · showing 8 of 34 this cycle</span></div>
+      <table class="dtable">
+        <thead><tr>
+          <th>Date</th><th>Kind</th><th>Category</th><th class="num">Amount</th><th>Note</th><th>Source</th><th>Recorded by</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="ts">2026-07-20</div><div class="tsb">৪ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="kind kind-rev"><span data-i="trending-up"></span>REVENUE</span></td>
+            <td>Harvest</td><td class="num money rev">৳১৭,০০০</td>
+            <td class="note">C1 Golda · local · 25 kg</td>
+            <td><span class="autotag"><span data-i="zap"></span>Auto · Harvest</span></td>
+            <td><span class="src"><span class="sa auto" data-i="cpu"></span>System</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-18</div><div class="tsb">২ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="kind kind-rev"><span data-i="trending-up"></span>REVENUE</span></td>
+            <td>Harvest</td><td class="num money rev">৳৩৯,২০০</td>
+            <td class="note">C1 Golda · export · 35 kg</td>
+            <td><span class="autotag"><span data-i="zap"></span>Auto · Harvest</span></td>
+            <td><span class="src"><span class="sa auto" data-i="cpu"></span>System</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-15</div><div class="tsb">৩১ আষাঢ় ১৪৩৩</div></td>
+            <td><span class="kind kind-rev"><span data-i="trending-up"></span>REVENUE</span></td>
+            <td>Harvest</td><td class="num money rev">৳৪৬,০০০</td>
+            <td class="note">C1 Golda · export · 40 kg</td>
+            <td><span class="autotag"><span data-i="zap"></span>Auto · Harvest</span></td>
+            <td><span class="src"><span class="sa auto" data-i="cpu"></span>System</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-14</div><div class="tsb">৩০ আষাঢ় ১৪৩৩</div></td>
+            <td><span class="kind kind-cost"><span data-i="trending-down"></span>COST</span></td>
+            <td>Feed</td><td class="num money cost">৳৩২,০০০</td>
+            <td class="note">Mega Feed 25kg × 40 sacks</td>
+            <td><span class="autotag"><span data-i="zap"></span>Auto · Feed purchase</span></td>
+            <td><span class="src"><span class="sa auto" data-i="cpu"></span>System</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-12</div><div class="tsb">২৮ আষাঢ় ১৪৩৩</div></td>
+            <td><span class="kind kind-rev"><span data-i="trending-up"></span>REVENUE</span></td>
+            <td>Harvest</td><td class="num money rev">৳৫৪,৪০০</td>
+            <td class="note">B3 Rui/Catla · local · 160 kg</td>
+            <td><span class="autotag"><span data-i="zap"></span>Auto · Harvest</span></td>
+            <td><span class="src"><span class="sa auto" data-i="cpu"></span>System</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-08</div><div class="tsb">২৪ আষাঢ় ১৪৩৩</div></td>
+            <td><span class="kind kind-cost"><span data-i="trending-down"></span>COST</span></td>
+            <td>Salary</td><td class="num money cost">৳১২,০০০</td>
+            <td class="note">Karim Uddin · July wage</td>
+            <td><span class="autotag man"><span data-i="edit"></span>Manual entry</span></td>
+            <td><span class="src"><span class="sa worker">RK</span>Rahima Khatun</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-05</div><div class="tsb">২১ আষাঢ় ১৪৩৩</div></td>
+            <td><span class="kind kind-cost"><span data-i="trending-down"></span>COST</span></td>
+            <td>Medicine</td><td class="num money cost">৳৮,৫০০</td>
+            <td class="note">Oxytetracycline · Pond A2</td>
+            <td><span class="autotag man"><span data-i="edit"></span>Manual entry</span></td>
+            <td><span class="src"><span class="sa worker">RK</span>Rahima Khatun</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-05-10</div><div class="tsb">২৭ বৈশাখ ১৪৩৩</div></td>
+            <td><span class="kind kind-cost"><span data-i="trending-down"></span>COST</span></td>
+            <td>Stocking</td><td class="num money cost">৳৩৬,০০০</td>
+            <td class="note">J1 SPF Golda · 12,000 pcs</td>
+            <td><span class="autotag"><span data-i="zap"></span>Auto · Stocking</span></td>
+            <td><span class="src"><span class="sa auto" data-i="cpu"></span>System</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="est" style="margin:0;padding:12px 16px;border-top:1px solid var(--border)"><span data-i="info"></span><span>This is the 8 most recent of 34 transactions — the category totals above are computed across all 34, so this view is not footed. Revenue rows marked <b>Auto</b> are created by the Harvest, Feed and Inventory screens; manual rows are entered here by the owner.</span></div>
+    </div>
+
+    <!-- RECORD TRANSACTION PANEL (open) -->
+    <div class="panel">
+      <div class="ph"><span data-i="plus"></span>Record transaction<span class="cnt">Owner only</span></div>
+      <div class="rh">
+        <div class="field full">
+          <span class="fl">Kind</span>
+          <div class="kindpick">
+            <div class="kopt sel"><span class="ck"><span data-i="check"></span></span><span data-i="trending-down"></span>Cost</div>
+            <div class="kopt"><span class="ck"></span><span data-i="trending-up"></span>Revenue</div>
+          </div>
+        </div>
+        <div class="rh-grid" style="margin-top:16px">
+          <div class="field"><span class="fl">Category</span><div class="inp"><span data-i="tag"></span>Medicine<span data-i="chevron-down" style="margin-left:auto"></span></div></div>
+          <div class="field"><span class="fl">Amount (৳)</span><div class="inp"><span class="cur">৳</span><span class="ph2">e.g. 8,500</span></div></div>
+          <div class="field"><span class="fl">Date</span><div class="inp"><span data-i="calendar"></span>2026-07-21 <span class="bn" style="color:var(--text-2)">(৫ শ্রাবণ ১৪৩৩)</span></div></div>
+          <div class="field"><span class="fl">Pond / reference (optional)</span><div class="inp"><span data-i="grid"></span>Pond A2</div></div>
+          <div class="field full"><span class="fl">Note</span><div class="inp"><span class="ph2">Short description — supplier, invoice, reason…</span></div></div>
+        </div>
+        <div class="rh-actions">
+          <button class="btn primary"><span data-i="check"></span>Save transaction</button>
+          <button class="btn secondary"><span data-i="x"></span>Cancel</button>
+        </div>
+        <div class="est" style="border-top:none;padding-top:14px"><span data-i="shield-check"></span><span>Manual entries are attributed to you and timestamped. Auto-ingested rows (harvest, feed, stocking) cannot be edited here — correct them at their source screen so both stay in sync.</span></div>
+      </div>
+    </div>
+
+    <!-- ============ SCREEN-1 VARIANTS ============ -->
+    <div class="divider"></div>
+    <p class="slab">Finance · documented variants</p>
+
+    <!-- WORKER (role-denied) -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag red">Worker</span><h3>Role-denied — finance is never fetched</h3></div>
+      <p class="vsub">A worker signing in does not get a greyed-out page or an empty ledger — the finance route is not authorised for their role, so no figure is ever sent to their device. The message is brief and non-technical; it leaks nothing, not even a total or a category name.</p>
+      <div class="vbox">
+        <div class="appbar" style="border-radius:var(--r-md);border:1px solid var(--border);margin-bottom:16px">
+          <div class="mark"><span class="logo">FMS</span></div>
+          <button class="switcher"><span data-i="layers"></span>Meghna Gher<span data-i="chevron-down"></span></button>
+          <div class="abspacer"></div>
+          <div class="userchip worker"><span class="av">KU</span><div><div class="un">Karim Uddin</div><div class="ur">Worker</div></div></div>
+        </div>
+        <div class="denied">
+          <span class="di" data-i="lock"></span>
+          <div class="dt">Finance isn’t part of your access</div>
+          <div class="dd">Money records — costs, sales and profit — are kept between the owner and any partners. Your work is logged under Tasks, Feed and Health. If you think you need this, ask Rahima Khatun.</div>
+          <a class="dback"><span data-i="check-square"></span>Go to my Tasks</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTNER -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Partner</span><h3>Read-only partner — an investor sees every number</h3></div>
+      <p class="vsub">A partner is an investor and needs the full picture: net profit, ROI, cost breakdown and revenue. What they do not get is any way to change it — no “Record transaction”, no edit affordances. A discreet read-only indicator sits in the header.</p>
+      <div class="vbox">
+        <div class="phead" style="margin-bottom:18px;padding-bottom:16px">
+          <div><h1 style="font-size:20px">Finance</h1>
+            <div class="meta"><span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span><span class="m"><span data-i="user"></span>Partner: A. Rahman · 30% stake</span></div></div>
+          <span class="ro-ind"><span data-i="eye"></span>Read-only view</span>
+        </div>
+        <div class="kpirow" style="margin-bottom:0">
+          <div class="kpi"><div class="top"><span class="lab">Net profit</span><span class="ico" data-i="trending-down"></span></div><div class="val bn neg" style="font-size:22px">-৳২,৫৭,৪০০</div><div class="foot"><span class="subnote">Cycle to date</span></div></div>
+          <div class="kpi"><div class="top"><span class="lab">Total revenue</span><span class="ico" data-i="trending-up"></span></div><div class="val bn" style="font-size:22px">৳১,৫৬,৬০০</div><div class="foot"><span class="subnote">4 harvest sales</span></div></div>
+          <div class="kpi"><div class="top"><span class="lab">Total cost</span><span class="ico" data-i="receipt"></span></div><div class="val bn" style="font-size:22px">৳৪,১৪,০০০</div><div class="foot"><span class="subnote">6 categories</span></div></div>
+          <div class="kpi"><div class="top"><span class="lab">Projected ROI</span><span class="ico" data-i="percent"></span></div><div class="val">155<span class="u">%</span></div><div class="foot"><span class="subnote">Incl. stock in water</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPTY -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Empty</span><h3>No transactions yet</h3></div>
+      <p class="vsub">A brand-new cycle before any cost or sale is recorded. Instead of showing zeros as if they were meaningful, it explains that finance fills itself as the farm operates — stocking, feed and harvest all post here automatically.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="list"></span>Transactions<span class="cnt">This cycle</span></div>
+          <div class="empty">
+            <span class="ei" data-i="wallet"></span>
+            <div class="et">No transactions yet</div>
+            <div class="ed">Nothing has been spent or earned on this cycle so far. As you stock ponds, buy feed and record harvests, those entries post here automatically — and you can add manual costs like salary or repairs any time.</div>
+            <div class="eacts"><button class="btn primary"><span data-i="plus"></span>Record first transaction</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEGRADED -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Degraded</span><h3>Totals service down</h3></div>
+      <p class="vsub">The aggregation service that computes net profit, ROI and the category breakdown is unreachable. Individual transaction rows are stored records and still render, so the ledger is auditable — only the derived roll-ups fall back to the degraded widget rather than showing a stale or guessed total.</p>
+      <div class="vbox">
+        <div class="kpirow" style="margin-bottom:16px">
+          <div class="degraded" style="grid-column:1/-1;min-height:120px"><span class="di" data-i="alert-triangle"></span><div><div class="dt">Profit &amp; ROI totals are temporarily unavailable</div><div class="dd">The finance aggregation service is down. Individual transactions below are live and unaffected — totals will recompute automatically once it recovers. No figure shown here is stale or estimated.</div></div></div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="list"></span>Transactions<span class="cnt">Live · records unaffected</span></div>
+          <table class="dtable">
+            <thead><tr><th>Date</th><th>Kind</th><th>Category</th><th class="num">Amount</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td><div class="ts">2026-07-20</div><div class="tsb">৪ শ্রাবণ</div></td><td><span class="kind kind-rev"><span data-i="trending-up"></span>REVENUE</span></td><td>Harvest</td><td class="num money rev">৳১৭,০০০</td><td><span class="autotag"><span data-i="zap"></span>Auto</span></td></tr>
+              <tr><td><div class="ts">2026-07-14</div><div class="tsb">৩০ আষাঢ়</div></td><td><span class="kind kind-cost"><span data-i="trending-down"></span>COST</span></td><td>Feed</td><td class="num money cost">৳৩২,০০০</td><td><span class="autotag"><span data-i="zap"></span>Auto</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Loading</span><h3>Skeleton state</h3></div>
+      <p class="vsub">Shimmer skeletons for the KPI row and derivation cards — never spinners, never a flash of ৳0.</p>
+      <div class="vbox">
+        <div class="kpirow" style="margin-bottom:16px">
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:60%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:55%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:55%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:35%;margin-top:auto"></div><div class="sk" style="height:16px;width:80%"></div></div>
+        </div>
+        <div class="deriv-panel" style="margin-bottom:0">
+          <div class="dcard"><div class="sk" style="height:14px;width:40%"></div><div class="sk" style="height:44px;width:100%;margin-top:16px"></div><div class="sk" style="height:28px;width:80%;margin-top:14px"></div></div>
+          <div class="dcard"><div class="sk" style="height:14px;width:50%"></div><div class="sk" style="height:44px;width:100%;margin-top:16px"></div><div class="sk" style="height:28px;width:80%;margin-top:14px"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════ SCREEN 2 BAND ═══════════════ -->
+<div class="bigsep"></div>
+<div class="screenband">
+  <span class="sn">Screen 2</span>
+  <div><h2>Tasks</h2><p>The owner defines recurring work, the worker completes it on the phone with a proof photo, and the owner verifies it happened — accountability without surveillance. The sidebar badge reads <b>3</b>, and the page agrees: 3 tasks are due today. Tone is “here’s what happened”, not “here’s who to blame”.</p></div>
+</div>
+
+<div class="shell">
+  <!-- SIDEBAR — Tasks active -->
+  <aside class="sidebar">
+    <div class="sb-proj">
+      <div class="pn"><span class="badge b-ok" style="height:auto;padding:0"><span class="dot"></span></span>Meghna Gher</div>
+      <div class="pl"><span data-i="map-pin"></span>Debidwar, Cumilla · 4 ponds</div>
+    </div>
+    <div class="navgroup"><div class="gh">Operations</div>
+      <a class="navitem"><span data-i="layout"></span>Overview</a>
+      <a class="navitem"><span data-i="grid"></span>Ponds</a>
+      <a class="navitem"><span data-i="droplet"></span>Water<span class="nb crit">2</span></a>
+      <a class="navitem"><span data-i="utensils"></span>Feed</a>
+      <a class="navitem active"><span data-i="check-square"></span>Tasks<span class="nb warn">3</span></a>
+    </div>
+    <div class="navgroup"><div class="gh">Stock &amp; Growth</div>
+      <a class="navitem"><span data-i="package"></span>Inventory</a>
+      <a class="navitem"><span data-i="heart-pulse"></span>Health</a>
+      <a class="navitem"><span data-i="trending-up"></span>Growth</a>
+      <a class="navitem"><span data-i="scale"></span>Harvest</a>
+    </div>
+    <div class="navgroup"><div class="gh">Business</div>
+      <a class="navitem"><span data-i="wallet"></span>Finance</a>
+      <a class="navitem"><span data-i="file-text"></span>Reports</a>
+    </div>
+    <div class="navgroup"><div class="gh">Monitoring</div>
+      <a class="navitem"><span data-i="camera"></span>Camera</a>
+      <a class="navitem"><span data-i="cloud"></span>Weather</a>
+    </div>
+    <div class="navgroup"><div class="gh">Admin · owner only</div>
+      <a class="navitem"><span data-i="users"></span>Members</a>
+      <a class="navitem"><span data-i="settings"></span>Settings</a>
+    </div>
+  </aside>
+
+  <!-- MAIN — Tasks -->
+  <main class="main">
+    <div class="maintag"><span data-i="check-square"></span>Tasks · /projects/meghna-gher/tasks · Owner</div>
+
+    <!-- HEADER -->
+    <div class="phead">
+      <div>
+        <h1>Tasks</h1>
+        <div class="meta">
+          <span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span>
+          <span class="m"><span data-i="user"></span>Worker: Karim Uddin</span>
+        </div>
+      </div>
+      <div class="acts">
+        <button class="btn secondary"><span data-i="repeat"></span>Manage recurring</button>
+        <button class="btn primary"><span data-i="plus"></span>New task</button>
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpirow">
+      <div class="kpi">
+        <div class="top"><span class="lab">Due today</span><span class="ico" data-i="clock"></span></div>
+        <div class="val">3</div>
+        <div class="foot"><span class="subnote"><span class="deriv">2</span> due now · <span class="deriv">1</span> scheduled later</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Completed this week</span><span class="ico" data-i="check-circle"></span></div>
+        <div class="val">12</div>
+        <div class="foot"><span class="delta up"><span class="cx">▲</span>2 vs last week</span></div>
+      </div>
+      <div class="kpi warnkpi">
+        <div class="top"><span class="lab">Missed this week</span><span class="ico" data-i="alert-triangle"></span></div>
+        <div class="val">1</div>
+        <div class="foot"><span class="subnote">Net cleaning · C1 · flagged by system</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">On-time completion</span><span class="ico" data-i="gauge"></span></div>
+        <div class="val">92<span class="u">%</span></div>
+        <div class="foot" style="flex-direction:column;align-items:stretch;gap:6px">
+          <div class="progtrack"><div class="progfill" style="width:92%"></div></div>
+          <span class="subnote"><span class="deriv">12</span> on time ÷ <span class="deriv">13</span> resolved = 92% <span style="color:var(--ok);font-weight:700">▲4%</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MISSED TASK (server-detected) -->
+    <div class="panel" style="border-color:#FCD8A0">
+      <div class="ph" style="background:var(--tint-warning);color:#92400E"><span data-i="alert-triangle"></span>The system noticed a missed task<span class="cnt" style="color:#92400E">Detected server-side · 2026-07-21 00:05</span></div>
+      <div class="tasklist">
+        <div class="trow missed">
+          <span class="tcheck"></span>
+          <div class="tbody">
+            <div class="ttitle">জাল পরিষ্কার <span class="bnn">/ Net cleaning</span> <span class="st st-missed"><span data-i="x"></span>MISSED</span></div>
+            <div class="tmeta">
+              <span class="mm"><span data-i="grid"></span>Pond C1</span>
+              <span class="mm"><span data-i="clock"></span>Was due 2026-07-20 17:00 <span class="bn">(৪ শ্রাবণ)</span></span>
+              <span class="mm"><span data-i="repeat"></span>Every 7 days</span>
+            </div>
+            <div class="missed-note"><span data-i="alert-triangle"></span><span>Outstanding for <b>18 hours</b>. The scheduled window closed without a completion or proof photo — the system flagged it automatically at midnight. No action was taken by the worker; this is a nudge, not a penalty.</span></div>
+            <div class="taskacts">
+              <button class="tbtn primary"><span data-i="calendar"></span>Reschedule</button>
+              <button class="tbtn ghost"><span data-i="bell"></span>Notify Karim</button>
+              <button class="tbtn ghost"><span data-i="x"></span>Skip this occurrence</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TODAY'S TASKS -->
+    <div class="panel">
+      <div class="ph"><span data-i="clock"></span>Today’s tasks<span class="cnt">2026-07-21 (৫ শ্রাবণ ১৪৩৩) · 5 total · 2 done</span></div>
+      <div class="tasklist">
+        <!-- DUE -->
+        <div class="trow">
+          <span class="tcheck"></span>
+          <div class="tbody">
+            <div class="ttitle">চেইন ড্র্যাগ <span class="bnn">/ Chain drag</span> <span class="st st-due"><span data-i="clock"></span>DUE</span></div>
+            <div class="tmeta">
+              <span class="mm"><span data-i="grid"></span>Pond A2</span>
+              <span class="mm"><span data-i="clock"></span>06:30</span>
+              <span class="mm"><span data-i="repeat"></span>Every 10–15 days</span>
+              <span class="mm"><span data-i="user"></span>Karim Uddin</span>
+            </div>
+          </div>
+        </div>
+        <!-- DONE with proof -->
+        <div class="trow done">
+          <span class="tcheck"><span data-i="check"></span></span>
+          <div class="tbody">
+            <div class="ttitle">চুন প্রয়োগ <span class="bnn">/ Liming</span> <span class="st st-done"><span data-i="check"></span>DONE</span></div>
+            <div class="tmeta">
+              <span class="mm"><span data-i="grid"></span>Pond B3</span>
+              <span class="mm"><span data-i="clock"></span>07:00</span>
+              <span class="mm"><span data-i="repeat"></span>Every 15 days</span>
+            </div>
+            <div class="tcompletion">
+              <span data-i="check-circle" style="color:var(--ok);width:15px;height:15px"></span>
+              <span>Completed by <span class="who">Karim Uddin</span> · 2026-07-21 06:52 <span class="bn">(৫ শ্রাবণ)</span></span>
+              <span class="synced"><span data-i="wifi-off"></span>Synced offline</span>
+            </div>
+          </div>
+          <div class="tright">
+            <div class="proof"><span data-i="camera"></span><span class="pv">PROOF</span></div>
+          </div>
+        </div>
+        <!-- DONE with proof -->
+        <div class="trow done">
+          <span class="tcheck"><span data-i="check"></span></span>
+          <div class="tbody">
+            <div class="ttitle">ঘাস দেওয়া <span class="bnn">/ Grass for grass carp</span> <span class="st st-done"><span data-i="check"></span>DONE</span></div>
+            <div class="tmeta">
+              <span class="mm"><span data-i="grid"></span>Pond J1</span>
+              <span class="mm"><span data-i="clock"></span>08:00</span>
+              <span class="mm"><span data-i="repeat"></span>Daily</span>
+            </div>
+            <div class="tcompletion">
+              <span data-i="check-circle" style="color:var(--ok);width:15px;height:15px"></span>
+              <span>Completed by <span class="who">Karim Uddin</span> · 2026-07-21 08:11 <span class="bn">(৫ শ্রাবণ)</span></span>
+            </div>
+          </div>
+          <div class="tright">
+            <div class="proof"><span data-i="camera"></span><span class="pv">PROOF</span></div>
+          </div>
+        </div>
+        <!-- DUE -->
+        <div class="trow">
+          <span class="tcheck"></span>
+          <div class="tbody">
+            <div class="ttitle">Water exchange <span class="st st-due"><span data-i="clock"></span>DUE</span></div>
+            <div class="tmeta">
+              <span class="mm"><span data-i="grid"></span>Pond A2</span>
+              <span class="mm"><span data-i="clock"></span>09:00</span>
+              <span class="mm"><span data-i="repeat"></span>Daily while DO warning active</span>
+              <span class="mm"><span data-i="droplet"></span>Triggered by low DO</span>
+            </div>
+          </div>
+        </div>
+        <!-- SCHEDULED later -->
+        <div class="trow">
+          <span class="tcheck"></span>
+          <div class="tbody">
+            <div class="ttitle">Feed · round 2 <span class="st st-sched"><span data-i="clock"></span>SCHEDULED</span></div>
+            <div class="tmeta">
+              <span class="mm"><span data-i="grid"></span>All ponds</span>
+              <span class="mm"><span data-i="clock"></span>16:00</span>
+              <span class="mm"><span data-i="repeat"></span>Twice daily</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLETION DETAIL (expanded) -->
+    <div class="panel">
+      <div class="ph"><span data-i="check-circle"></span>Completion detail — চুন প্রয়োগ / Liming<span class="cnt">Pond B3 · 2026-07-21</span></div>
+      <div class="cdetail">
+        <div class="cphoto">
+          <span data-i="camera"></span>
+          <div class="cl">Proof photo</div>
+          <div class="cs">Tap to view full size</div>
+        </div>
+        <div class="cinfo">
+          <div class="cline"><span data-i="user"></span><span>Completed by <b>Karim Uddin</b> (Worker)</span></div>
+          <div class="cline"><span data-i="clock"></span><span>Marked done <b>2026-07-21 06:52</b> <span class="bn" style="color:var(--text-2)">(৫ শ্রাবণ ১৪৩৩)</span></span></div>
+          <div class="cline"><span data-i="wifi-off"></span><span>Logged <b>offline</b> at 06:52 · synced <b>08:14</b> when signal returned — the phone had no network at the pond, so the timestamp is when it was done, not when it uploaded.</span></div>
+          <div class="cline"><span data-i="map-pin"></span><span>Location tag: Pond B3 embankment <span style="color:var(--text-2)">(within geofence)</span></span></div>
+          <div class="cline"><span data-i="repeat"></span><span>Next occurrence: <b>2026-08-05</b> <span class="bn" style="color:var(--text-2)">(২০ শ্রাবণ ১৪৩৩)</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECURRING DEFINITIONS -->
+    <div class="panel rules">
+      <div class="ph"><span data-i="repeat"></span>Recurring task definitions<span class="phact"><button class="editbtn"><span data-i="plus"></span>New rule</button></span></div>
+      <table class="dtable">
+        <thead><tr>
+          <th>Task</th><th>Ponds</th><th>Frequency</th><th>Assigned to</th><th>Next occurrence</th><th>State</th><th></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="rt">চেইন ড্র্যাগ / Chain drag</span></td>
+            <td>A2, J1</td>
+            <td><span class="freq"><span data-i="repeat"></span>Every 10–15 days</span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+            <td><div class="ts">2026-07-21</div><div class="tsb">৫ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="rstate on"><span data-i="check-circle"></span>Active</span></td>
+            <td><button class="editbtn"><span data-i="edit"></span>Edit</button></td>
+          </tr>
+          <tr>
+            <td><span class="rt">চুন প্রয়োগ / Liming</span></td>
+            <td>All ponds</td>
+            <td><span class="freq"><span data-i="repeat"></span>Every 15 days</span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+            <td><div class="ts">2026-08-05</div><div class="tsb">২০ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="rstate on"><span data-i="check-circle"></span>Active</span></td>
+            <td><button class="editbtn"><span data-i="edit"></span>Edit</button></td>
+          </tr>
+          <tr>
+            <td><span class="rt">Water exchange</span></td>
+            <td>A2</td>
+            <td><span class="freq"><span data-i="repeat"></span>Daily while DO warning</span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+            <td><div class="ts">2026-07-21</div><div class="tsb">৫ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="rstate on"><span data-i="check-circle"></span>Active</span></td>
+            <td><button class="editbtn"><span data-i="edit"></span>Edit</button></td>
+          </tr>
+          <tr>
+            <td><span class="rt">ঘাস দেওয়া / Grass for grass carp</span></td>
+            <td>J1</td>
+            <td><span class="freq"><span data-i="repeat"></span>Daily</span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+            <td><div class="ts">2026-07-22</div><div class="tsb">৬ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="rstate on"><span data-i="check-circle"></span>Active</span></td>
+            <td><button class="editbtn"><span data-i="edit"></span>Edit</button></td>
+          </tr>
+          <tr>
+            <td><span class="rt">সার প্রয়োগ / Pond fertilisation</span></td>
+            <td>B3, J1</td>
+            <td><span class="freq"><span data-i="repeat"></span>Every 20 days</span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+            <td><div class="ts note">Paused</div></td>
+            <td><span class="rstate paused"><span data-i="pause"></span>Paused</span></td>
+            <td><button class="editbtn"><span data-i="edit"></span>Edit</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============ SCREEN-2 VARIANTS ============ -->
+    <div class="divider"></div>
+    <p class="slab">Tasks · documented variants</p>
+
+    <!-- ALL DONE -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag green">All done</span><h3>Everything completed today — a genuinely good day</h3></div>
+      <p class="vsub">When every scheduled task is done, the page should feel like a reward, not an empty grid. The tone stays warm and specific — it names what got done and by whom, so the owner sees the work, not just a green tick.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="clock"></span>Today’s tasks<span class="cnt">2026-07-21 · 4 of 4 done</span></div>
+          <div class="empty">
+            <span class="ei" style="background:var(--tint-ok);color:var(--ok)" data-i="check-circle"></span>
+            <div class="et">All four tasks done today</div>
+            <div class="ed">Chain drag, liming, grass cutting and both feed rounds are complete — every one with a proof photo. Karim finished the last at 16:20. Nothing outstanding across any pond.</div>
+            <span class="goodpill"><span data-i="check"></span>4 of 4 · 100% on time today</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPTY -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Empty</span><h3>No recurring tasks defined yet</h3></div>
+      <p class="vsub">A new project before any routine is set up. Rather than a blank list, it explains what recurring tasks are for — turning the daily rhythm of the farm into something the worker is reminded of and the owner can verify — and offers to create the first.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="repeat"></span>Recurring task definitions<span class="cnt">None yet</span></div>
+          <div class="empty">
+            <span class="ei" data-i="repeat"></span>
+            <div class="et">No recurring tasks set up</div>
+            <div class="ed">Recurring tasks turn the farm’s routine — liming, chain drag, water exchange, feeding — into scheduled reminders on the worker’s phone, each closed with a proof photo you can check. Set one up and it will start appearing in Today’s tasks.</div>
+            <div class="eacts"><button class="btn primary"><span data-i="plus"></span>Create first recurring task</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEGRADED -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Degraded</span><h3>Proof-photo storage unreachable</h3></div>
+      <p class="vsub">The media service that stores and serves proof photos is down. Task rows, completions and timestamps are database records and still render — only the thumbnails fall back. A completion without a visible photo is marked as such rather than silently looking un-verified.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="clock"></span>Today’s tasks<span class="cnt">Records live · photos degraded</span></div>
+          <div class="tasklist">
+            <div class="trow done">
+              <span class="tcheck"><span data-i="check"></span></span>
+              <div class="tbody">
+                <div class="ttitle">চুন প্রয়োগ <span class="bnn">/ Liming</span> <span class="st st-done"><span data-i="check"></span>DONE</span></div>
+                <div class="tmeta"><span class="mm"><span data-i="grid"></span>Pond B3</span><span class="mm"><span data-i="clock"></span>07:00</span></div>
+                <div class="tcompletion"><span data-i="check-circle" style="color:var(--ok);width:15px;height:15px"></span><span>Completed by <span class="who">Karim Uddin</span> · 06:52</span></div>
+              </div>
+              <div class="tright">
+                <div class="proof" style="background:var(--surface-muted);border-color:var(--border);color:var(--muted)"><span data-i="image-off"></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="degraded" style="min-height:96px;margin:14px 16px 16px"><span class="di" data-i="alert-triangle"></span><div><div class="dt">Proof photos can’t load right now</div><div class="dd">The completion record and timestamp are confirmed and stored — only the image thumbnails are unavailable while media storage recovers.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Loading</span><h3>Skeleton state</h3></div>
+      <p class="vsub">Shimmer skeletons for the KPI row and today’s list.</p>
+      <div class="vbox">
+        <div class="kpirow" style="margin-bottom:16px">
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:30%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:30%;margin-top:auto"></div><div class="sk" style="height:16px;width:60%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:30%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:35%;margin-top:auto"></div><div class="sk" style="height:16px;width:90%"></div></div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div style="padding:16px;display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;gap:14px;align-items:center"><div class="sk" style="width:26px;height:26px;border-radius:50%"></div><div style="flex:1"><div class="sk" style="height:15px;width:40%"></div><div class="sk" style="height:12px;width:60%;margin-top:8px"></div></div></div>
+            <div style="display:flex;gap:14px;align-items:center"><div class="sk" style="width:26px;height:26px;border-radius:50%"></div><div style="flex:1"><div class="sk" style="height:15px;width:35%"></div><div class="sk" style="height:12px;width:55%;margin-top:8px"></div></div><div class="sk" style="width:46px;height:46px;border-radius:10px"></div></div>
+            <div style="display:flex;gap:14px;align-items:center"><div class="sk" style="width:26px;height:26px;border-radius:50%"></div><div style="flex:1"><div class="sk" style="height:15px;width:45%"></div><div class="sk" style="height:12px;width:50%;margin-top:8px"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTNER -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Partner</span><h3>Read-only partner</h3></div>
+      <p class="vsub">A partner can see the tasks, their completions and the proof photos — reassurance that the farm is being run properly — but has no create, edit or reschedule affordance. Even the missed-task panel shows without its action buttons.</p>
+      <div class="vbox">
+        <div class="phead" style="margin-bottom:18px;padding-bottom:16px">
+          <div><h1 style="font-size:20px">Tasks</h1>
+            <div class="meta"><span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩)</span><span class="m"><span data-i="user"></span>Partner: A. Rahman</span></div></div>
+          <span class="ro-ind"><span data-i="eye"></span>Read-only view</span>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="clock"></span>Today’s tasks<span class="cnt">View only</span></div>
+          <div class="tasklist">
+            <div class="trow done">
+              <span class="tcheck"><span data-i="check"></span></span>
+              <div class="tbody">
+                <div class="ttitle">চুন প্রয়োগ <span class="bnn">/ Liming</span> <span class="st st-done"><span data-i="check"></span>DONE</span></div>
+                <div class="tmeta"><span class="mm"><span data-i="grid"></span>Pond B3</span><span class="mm"><span data-i="clock"></span>07:00</span></div>
+                <div class="tcompletion"><span data-i="check-circle" style="color:var(--ok);width:15px;height:15px"></span><span>Completed by <span class="who">Karim Uddin</span> · 06:52 <span class="bn">(৫ শ্রাবণ)</span></span><span class="synced"><span data-i="wifi-off"></span>Synced offline</span></div>
+              </div>
+              <div class="tright"><div class="proof"><span data-i="camera"></span><span class="pv">PROOF</span></div></div>
+            </div>
+            <div class="trow">
+              <span class="tcheck"></span>
+              <div class="tbody">
+                <div class="ttitle">চেইন ড্র্যাগ <span class="bnn">/ Chain drag</span> <span class="st st-due"><span data-i="clock"></span>DUE</span></div>
+                <div class="tmeta"><span class="mm"><span data-i="grid"></span>Pond A2</span><span class="mm"><span data-i="clock"></span>06:30</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="est" style="margin:0;padding:12px 16px;border-top:1px solid var(--border)"><span data-i="lock"></span><span>Tasks are defined by the owner and completed by the worker. Partner accounts can view tasks, completions and proof photos, but cannot create, edit, reschedule or mark tasks done.</span></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const ICONS={
+ "layers":"M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+ "chevron-down":"M6 9l6 6 6-6","chevron-left":"M15 18l-6-6 6-6","chevron-right":"M9 18l6-6-6-6",
+ "bell":"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",
+ "settings":"M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z",
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "layout":"M3 3h18v18H3zM3 9h18M9 21V9",
+ "grid":"M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "utensils":"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ "check-square":"M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11",
+ "package":"M16.5 9.4 7.5 4.21M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12",
+ "heart-pulse":"M20.42 4.58a5.4 5.4 0 0 0-7.65 0L12 5.36l-.77-.78a5.4 5.4 0 0 0-7.65 7.65l.78.78L12 21l7.64-7.99.78-.78a5.4 5.4 0 0 0 0-7.65zM3.5 12h4l1.5-3 3 6 1.5-3h4",
+ "trending-up":"M22 7l-8.5 8.5-5-5L2 17M16 7h6v6",
+ "trending-down":"M22 17l-8.5-8.5-5 5L2 7M16 17h6v-6",
+ "scale":"M12 3v18M7 21h10M6.5 7 3 14a3.5 3.5 0 0 0 7 0L6.5 7zM17.5 7 14 14a3.5 3.5 0 0 0 7 0l-3.5-7zM3 7h18",
+ "wallet":"M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4z",
+ "file-text":"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8",
+ "camera":"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "cloud":"M17.5 19a4.5 4.5 0 1 0 0-9h-1.26A8 8 0 1 0 4 15.25",
+ "users":"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+ "user":"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "activity":"M22 12h-4l-3 9L9 3l-3 9H2",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "check":"M20 6 9 17l-5-5",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "x":"M18 6 6 18M6 6l12 12",
+ "waves":"M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1",
+ "gauge":"M12 15l3.5-3.5M6.34 18a9 9 0 1 1 11.32 0z",
+ "list":"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
+ "download":"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
+ "plus":"M12 5v14M5 12h14",
+ "shield-check":"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4",
+ "eye":"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "lock":"M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4",
+ "info":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01",
+ "receipt":"M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1zM8 7h8M8 11h8M8 15h5",
+ "percent":"M19 5 5 19M6.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM17.5 20a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
+ "refresh":"M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15",
+ "link":"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
+ "zap":"M13 2 3 14h9l-1 8 10-12h-9l1-8z",
+ "cpu":"M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2M4 4h16v16H4zM9 9h6v6H9z",
+ "edit":"M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z",
+ "tag":"M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01",
+ "repeat":"M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3",
+ "wifi-off":"M2 2l20 20M8.5 16.5a5 5 0 0 1 7 0M5 12.86a10 10 0 0 1 5.17-2.7M19 12.86a10 10 0 0 0-4.34-2.55M2 8.82a15 15 0 0 1 4.17-2.65M22 8.82a15 15 0 0 0-11.29-3.7M12 20h.01",
+ "pause":"M6 4h4v16H6zM14 4h4v16h-4z",
+ "image-off":"M2 2l20 20M10.41 10.41a2 2 0 1 1-2.83-2.83M21 15l-5-5L5 21M21 21H5a2 2 0 0 1-2-2V5M5 3h14a2 2 0 0 1 2 2v10"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

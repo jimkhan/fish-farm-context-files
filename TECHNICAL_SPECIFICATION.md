@@ -174,8 +174,13 @@ All worker-facing screens render Bangla + Bengali numerals; owner screens show d
 
 ## 9. UI architecture
 
+- **Design system (visual source of truth):** `design/Design_System/` — 30 approved HTML screen
+  mockups, a reusable React component kit, and the full `tokens/` — built design-first ahead of the
+  web/mobile build. Web + mobile implement against these screens; see `DESIGN_PROCESS.md` for the
+  screen-id → file map and review log.
 - **Design tokens:** `contracts/design-tokens.json` (color, type, spacing, radii, alert-severity
-  palette, Bangla-capable font stack) shared by web + mobile.
+  palette, Bangla-capable font stack) shared by web + mobile — the shipped token contract these
+  UIs theme from; the complete token values it mirrors live in `design/Design_System/tokens/`.
 - **web:** Tailwind configured from tokens + shadcn/ui components; charts via a lightweight lib.
 - **mobile:** a small token-driven component kit; large touch targets, high-contrast icons,
   icon-first labels (NFR-009, NFR-014).

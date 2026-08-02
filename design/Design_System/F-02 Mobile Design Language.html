@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · F-02 Mobile Design Language (Worker)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;--tint-muted:#F1F5F9;
+  --focus:#0891B2;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --ui:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ui);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.bn{font-family:var(--bn)}
+
+/* page shell */
+.page{max-width:1160px;margin:0 auto;padding:0 24px}
+.hero{padding:56px 0 24px}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--brand)}
+.hero h1{font-size:34px;font-weight:700;letter-spacing:-.5px;margin-top:10px;line-height:1.1}
+.hero p{font-size:16px;color:var(--text-2);max-width:660px;margin-top:14px}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+.tag{font-size:12px;font-weight:500;color:var(--text-2);background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:var(--r-pill)}
+
+section.sec{padding:40px 0;border-top:1px solid var(--border)}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.sec-num{font-family:var(--ui);font-size:13px;font-weight:600;color:var(--muted);flex-shrink:0}
+.sec-head h2{font-size:21px;font-weight:700}
+.sec-head .sub{font-size:14px;color:var(--text-2)}
+.cols{display:grid;gap:32px;align-items:start}
+.subcap{font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.note{font-size:13px;color:var(--text-2);margin-top:10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:20px}
+
+/* device frame */
+.device{width:412px;padding:11px;background:#0F172A;border-radius:46px;box-shadow:var(--sh-lift);flex-shrink:0}
+.screen{width:390px;border-radius:35px;overflow:hidden;background:var(--bg);font-family:var(--bn);position:relative}
+.statusbar{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;background:var(--brand-dark);color:#fff;font-size:13px;font-weight:500}
+.statusbar .sbr{display:flex;align-items:center;gap:7px}
+.statusbar svg{width:15px;height:15px}
+
+/* mobile surface (component in honest width) */
+.surf{width:390px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;font-family:var(--bn);box-shadow:var(--sh-card)}
+.surf.pad{padding:16px}
+.surf.plain{background:var(--bg)}
+
+/* app header */
+.apphead{background:var(--brand);color:#fff;padding:14px 16px 16px}
+.apphead .r1{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.apphead .pname{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.apphead .pname svg{width:20px;height:20px;opacity:.9}
+.apphead .date{font-size:14px;color:rgba(255,255,255,.85);margin-top:8px;display:flex;align-items:center;gap:7px}
+.apphead .date svg{width:15px;height:15px}
+.syncpill{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-pill);font-size:13px;font-weight:500;background:rgba(255,255,255,.16);color:#fff}
+.syncpill svg{width:16px;height:16px}
+.syncpill.ok{background:rgba(255,255,255,.16)}
+.syncpill.off{background:var(--warning);color:#fff}
+
+/* bottom nav */
+.bnav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:6px 4px 8px}
+.bnav .ni{flex:1;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text-2);border-radius:var(--r-md);font-size:12px;font-weight:500}
+.bnav .ni svg{width:26px;height:26px}
+.bnav .ni.active{color:var(--brand)}
+.bnav .ni.active svg{color:var(--brand)}
+
+/* home content */
+.home{padding:16px}
+.section-title{font-size:15px;font-weight:700;color:var(--text);margin:4px 2px 12px;display:flex;align-items:center;justify-content:space-between}
+.section-title .link{font-size:13px;font-weight:500;color:var(--brand)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);min-height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text);box-shadow:var(--sh-card)}
+.tile .ic{width:56px;height:56px;border-radius:var(--r-md);background:var(--tint-brand);display:flex;align-items:center;justify-content:center;color:var(--brand)}
+.tile .ic svg{width:40px;height:40px}
+.tile .cap{font-size:15px;font-weight:600}
+.tile.danger .ic{background:var(--tint-critical);color:var(--critical)}
+.tile.accent .ic{background:#E0F2FE;color:var(--accent)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 20px;border-radius:var(--r-md);font-family:var(--bn);font-size:17px;font-weight:700;border:1px solid transparent}
+.btn svg{width:22px;height:22px}
+.btn.full{display:flex;width:100%}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.primary:active{background:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--brand);border-color:var(--border-strong)}
+.btn.secondary:active{background:var(--surface-muted)}
+.btn.danger{background:var(--danger);color:#fff}
+.btn.danger:active{background:#B91C1C}
+.btn.pressed.primary{background:var(--brand-dark)}
+.btn.pressed.secondary{background:var(--surface-muted)}
+.btn.disabled{background:var(--surface-muted);color:var(--muted);border-color:var(--border);pointer-events:none}
+.btn-note{font-size:12px;color:var(--text-2);text-align:center;margin-top:8px}
+
+/* stepper */
+.stepper{display:flex;align-items:center;gap:14px}
+.step-btn{width:64px;height:64px;border-radius:var(--r-md);background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}
+.step-btn:active{background:var(--brand);color:#fff}
+.step-btn svg{width:32px;height:32px;stroke-width:2.4}
+.step-val{flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);min-height:64px;display:flex;align-items:baseline;justify-content:center;gap:8px}
+.step-val .n{font-size:34px;font-weight:700;font-variant-numeric:tabular-nums}
+.step-val .u{font-size:18px;color:var(--text-2);font-weight:500}
+.stepper.compact .step-btn{width:48px;height:48px}.stepper.compact .step-btn svg{width:24px;height:24px}
+.stepper.compact .step-val{min-height:48px}.stepper.compact .step-val .n{font-size:22px}.stepper.compact .step-val .u{font-size:14px}
+
+/* chips */
+.chips{display:flex;gap:10px}
+.chip{flex:1;min-height:52px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-md);font-size:16px;font-weight:600;background:var(--surface);border:1.5px solid var(--border-strong);color:var(--text-2)}
+.chip svg{width:20px;height:20px}
+.chip.on{background:var(--tint-brand);border-color:var(--brand);color:var(--brand-dark)}
+
+/* photo capture */
+.capture{width:100%;min-height:150px;border:2px dashed var(--border-strong);border-radius:var(--r-lg);background:var(--surface-muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text-2)}
+.capture .cic{width:52px;height:52px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--brand)}
+.capture .cic svg{width:28px;height:28px}
+.capture .lab{font-size:16px;font-weight:600;color:var(--text)}
+.shot{position:relative;width:100%;border-radius:var(--r-lg);overflow:hidden;min-height:150px;background:linear-gradient(135deg,#5b8a72,#3f6b57)}
+.shot .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7)}
+.shot .ph svg{width:44px;height:44px}
+.shot .retake{position:absolute;right:10px;bottom:10px;min-height:44px;padding:0 14px;border-radius:var(--r-pill);background:rgba(15,23,42,.72);color:#fff;font-family:var(--bn);font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:7px}
+.shot .retake svg{width:18px;height:18px}
+
+/* list rows */
+.rows{display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.row .rmain{flex:1;min-width:0}
+.row .rtitle{font-size:16px;font-weight:600}
+.row .rmeta{font-size:13px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.row .rval{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.check{width:48px;height:48px;border-radius:var(--r-md);border:2px solid var(--border-strong);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0}
+.check svg{width:24px;height:24px}
+.check.done{background:var(--ok);border-color:var(--ok);color:#fff}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:var(--r-pill);font-size:13px;font-weight:600;font-family:var(--bn);white-space:nowrap}
+.badge svg{width:14px;height:14px}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.b-neutral{background:var(--surface-muted);color:var(--text-2)}.b-neutral .dot{background:var(--muted)}
+.b-brand{background:var(--tint-brand);color:var(--brand-dark)}.b-brand .dot{background:var(--brand)}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-info{background:var(--tint-info);color:#075985}.b-info .dot{background:var(--info)}
+.b-warning{background:var(--tint-warning);color:#92400E}.b-warning .dot{background:var(--warning)}
+.b-critical{background:var(--tint-critical);color:#991B1B}.b-critical .dot{background:var(--critical)}
+.badge-grid{display:flex;flex-direction:column;gap:16px}
+.badge-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge-row .gl{font-size:13px;font-weight:600;color:var(--text-2);font-family:var(--ui);width:150px;flex-shrink:0}
+
+/* sync chrome */
+.offline-banner{display:flex;align-items:center;gap:10px;background:var(--warning);color:#fff;padding:12px 16px;font-size:15px;font-weight:600}
+.offline-banner svg{width:20px;height:20px;flex-shrink:0}
+.conn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:var(--r-pill);font-size:15px;font-weight:600}
+.conn svg{width:18px;height:18px}
+.conn.online{background:var(--tint-ok);color:#166534}
+.conn.syncing{background:var(--tint-info);color:#075985}
+.conn.pending{background:var(--tint-warning);color:#92400E}
+.retry{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border-strong);color:var(--danger);font-family:var(--bn);font-size:13px;font-weight:600}
+.retry svg{width:15px;height:15px}
+
+/* toast */
+.toast{display:flex;align-items:center;gap:12px;background:var(--text);color:#fff;border-radius:var(--r-md);padding:14px 16px;box-shadow:var(--sh-lift)}
+.toast .ti{width:30px;height:30px;border-radius:var(--r-pill);background:var(--ok);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast .ti svg{width:18px;height:18px;color:#fff}
+.toast .tt{font-size:15px;font-weight:700}
+.toast .tb{font-size:13px;color:rgba(255,255,255,.8);margin-top:1px}
+
+/* emergency */
+.emg{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:68px;border-radius:var(--r-lg);background:var(--danger);color:#fff;font-family:var(--bn);font-size:22px;font-weight:700;box-shadow:0 6px 16px rgba(220,38,38,.32);letter-spacing:.5px}
+.emg svg{width:32px;height:32px}
+.emg:active{background:#B91C1C}
+.emg-hint{font-size:13px;color:var(--text-2);text-align:center;margin-top:10px;font-family:var(--bn)}
+.sheetwrap{position:relative;width:390px;height:520px;border-radius:35px;overflow:hidden;background:var(--bg);font-family:var(--bn);border:1px solid var(--border)}
+.sheetwrap .scrim{position:absolute;inset:0;background:rgba(15,23,42,.55)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:24px 24px 0 0;padding:22px 20px 24px}
+.sheet .grip{width:44px;height:5px;border-radius:99px;background:var(--border-strong);margin:0 auto 18px}
+.sheet .sic{width:64px;height:64px;border-radius:var(--r-pill);background:var(--tint-critical);color:var(--critical);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.sheet .sic svg{width:34px;height:34px}
+.sheet h3{font-size:22px;font-weight:700;text-align:center}
+.sheet p{font-size:15px;color:var(--text-2);text-align:center;margin-top:8px}
+.sheet .off-note{display:flex;align-items:center;gap:8px;justify-content:center;background:var(--tint-warning);color:#92400E;border-radius:var(--r-md);padding:10px 12px;font-size:14px;font-weight:600;margin-top:16px}
+.sheet .off-note svg{width:18px;height:18px;flex-shrink:0}
+.sheet .actions{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+
+/* states */
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:40px 24px}
+.state .sic2{width:64px;height:64px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--muted);display:flex;align-items:center;justify-content:center}
+.state .sic2 svg{width:32px;height:32px}
+.state .st{font-size:17px;font-weight:700}
+.state .sd{font-size:14px;color:var(--text-2);max-width:280px}
+.cam-off{position:relative;width:100%;min-height:180px;border-radius:var(--r-lg);background:#1E293B;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#94A3B8}
+.cam-off svg{width:40px;height:40px}
+.cam-off .ct{font-size:15px;font-weight:600;color:#CBD5E1}
+.cam-off .cd{font-size:13px}
+@keyframes shimmer{100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E2E8F0 0%,#EEF3F8 50%,#E2E8F0 100%);background-size:200% 100%;background-position:200% 0;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-sm)}
+.sk-tile{border:1px solid var(--border);border-radius:var(--r-lg);min-height:108px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--surface)}
+
+.foot{padding:44px 0 60px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);margin-top:8px}
+
+@media(max-width:900px){.device,.screen,.surf,.sheetwrap{max-width:100%}.hero h1{font-size:28px}}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="hero">
+    <div class="eyebrow">FMS · Reference F-02 · Worker (mobile)</div>
+    <h1 class="bn">মোবাইল ডিজাইন ভাষা ও কম্পোনেন্ট কিট</h1>
+    <p>The offline-first field kit for the WORKER — one assigned pond project, logged from a low-end Android phone in bright sun with wet hands. Icon-first, 100% Bangla, Bengali numerals, big tap targets (≥48px). No finance, no settings. A daily log in under 2 minutes, ~10 taps.</p>
+    <div class="meta">
+      <span class="tag">Bangla-only UI</span><span class="tag">Offline-first · optimistic writes</span><span class="tag">Tap target ≥48px</span><span class="tag">Icon 40px primary</span><span class="tag">Base 18px (outdoor)</span>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- 01 APP CHROME -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">01</span><h2>App chrome</h2><span class="sub">header (project · sync · Bangla date + ritu) + bottom navigation · shown as the assembled Home screen</span></div>
+  <div class="cols" style="grid-template-columns:auto 1fr">
+    <div class="device">
+      <div class="screen">
+        <div class="statusbar"><span>৯:৪১</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi-off"></span><span>৭২%</span></span></div>
+        <div class="apphead">
+          <div class="r1">
+            <span class="pname"><span data-i="map-pin"></span>মেঘনা ঘের</span>
+            <span class="syncpill off"><span data-i="wifi-off"></span>অফলাইন</span>
+          </div>
+          <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+        </div>
+        <div class="offline-banner"><span data-i="wifi-off"></span>অফলাইন — সংরক্ষিত, পরে সিংক হবে</div>
+        <div class="home">
+          <div class="section-title">দ্রুত লগ<span class="link">৭টি অপেক্ষমাণ</span></div>
+          <div class="tiles">
+            <div class="tile"><span class="ic" data-i="utensils"></span><span class="cap">খাবার</span></div>
+            <div class="tile accent"><span class="ic" data-i="droplet"></span><span class="cap">পানি</span></div>
+            <div class="tile danger"><span class="ic" data-i="skull"></span><span class="cap">মৃত্যু</span></div>
+            <div class="tile"><span class="ic" data-i="flask"></span><span class="cap">নমুনা</span></div>
+            <div class="tile"><span class="ic" data-i="clipboard"></span><span class="cap">কাজ</span></div>
+            <div class="tile accent"><span class="ic" data-i="camera"></span><span class="cap">ক্যামেরা</span></div>
+          </div>
+        </div>
+        <div class="bnav">
+          <div class="ni active"><span data-i="home"></span>হোম</div>
+          <div class="ni"><span data-i="utensils"></span>খাবার</div>
+          <div class="ni"><span data-i="droplet"></span>পানি</div>
+          <div class="ni"><span data-i="clipboard"></span>কাজ</div>
+          <div class="ni"><span data-i="menu"></span>আরও</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="subcap">Header anatomy</div>
+      <div class="card" style="font-size:14px;color:var(--text-2)">
+        <p style="color:var(--text);font-weight:600;font-size:15px">Always answers two questions at a glance.</p>
+        <p style="margin-top:10px"><strong>“Am I online?”</strong> — the teal header carries a sync pill that turns amber (<span class="bn">অফলাইন</span>) when there is no connection; a full-width warning banner repeats the exact reassurance <span class="bn">“অফলাইন — সংরক্ষিত, পরে সিংক হবে”</span>.</p>
+        <p style="margin-top:10px"><strong>“How much is waiting?”</strong> — the pending count (<span class="bn">৭টি অপেক্ষমাণ</span>) sits on the Home section header.</p>
+        <p style="margin-top:10px">Project name is fixed (one assigned project). Date is a <strong>single Bangla date + ritu</strong> — never Gregorian on mobile. Bottom nav = 5 items, active in teal. No finance, no settings.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 TYPOGRAPHY -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Bangla typography</h2><span class="sub">Noto Sans Bengali is the primary face · base biased larger than web for sunlight</span></div>
+  <div class="cols" style="grid-template-columns:1fr 1fr">
+    <div class="card bn">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div><div class="subcap">2xl · 32 · Display</div><div style="font-size:32px;font-weight:700;line-height:1.15">আজকের কাজ শেষ করুন</div></div>
+        <div><div class="subcap">xl · 26 · Screen title</div><div style="font-size:26px;font-weight:700">খাবার লগ করুন</div></div>
+        <div><div class="subcap">lg · 21 · Section</div><div style="font-size:21px;font-weight:600">পুকুর এ-২ · গ্রোয়ার ফিড</div></div>
+        <div><div class="subcap">md · 18 · Body (base)</div><div style="font-size:18px">সকালের খাবার দেওয়া হয়েছে। মাছ স্বাভাবিকভাবে খাচ্ছে।</div></div>
+        <div><div class="subcap">sm · 15 · Meta</div><div style="font-size:15px;color:var(--text-2)">সর্বশেষ সিংক: ৩ ঘণ্টা আগে</div></div>
+        <div><div class="subcap">xs · 13 · Caption</div><div style="font-size:13px;color:var(--text-2)">আইকনের নিচে সবসময় বাংলা ক্যাপশন</div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card bn">
+        <div class="subcap">Bengali numerals</div>
+        <div style="font-size:40px;font-weight:700;letter-spacing:4px;font-variant-numeric:tabular-nums">০১২৩৪৫৬৭৮৯</div>
+        <div class="note bn" style="font-size:14px">সব সংখ্যা, পরিমাণ, সময় ও তারিখ বাংলা অঙ্কে। কখনো ০–৯ (Latin) নয়।</div>
+      </div>
+      <div class="card bn">
+        <div class="subcap">Date + ritu (single, mobile)</div>
+        <div style="font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px"><span style="color:var(--brand)" data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ <span style="color:var(--text-2);font-weight:500">· বর্ষা</span></div>
+        <div class="note bn" style="font-size:14px">বাংলা পঞ্জিকা থেকে — অ্যাপের ক্যালেন্ডার প্যাকেজ, Intl নয়। মোবাইলে গ্রেগরিয়ান তারিখ দেখানো হয় না।</div>
+      </div>
+      <div class="card bn">
+        <div class="subcap">Sample readings</div>
+        <div style="display:flex;gap:24px;font-variant-numeric:tabular-nums">
+          <div><div style="font-size:14px;color:var(--text-2)">দ্রবীভূত অক্সিজেন</div><div style="font-size:24px;font-weight:700">৬.২ <span style="font-size:15px;color:var(--text-2)">mg/L</span></div></div>
+          <div><div style="font-size:14px;color:var(--text-2)">তাপমাত্রা</div><div style="font-size:24px;font-weight:700">২৯.৫°<span style="font-size:15px;color:var(--text-2)">সে</span></div></div>
+          <div><div style="font-size:14px;color:var(--text-2)">খাবার</div><div style="font-size:24px;font-weight:700">১২ <span style="font-size:15px;color:var(--text-2)">কেজি</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 ACTION TILES -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Icon-first action tiles</h2><span class="sub">the Home quick-log grid · 40px icon over a Bangla caption · the core worker affordance</span></div>
+  <div class="surf pad" style="background:var(--bg)">
+    <div class="tiles">
+      <div class="tile"><span class="ic" data-i="utensils"></span><span class="cap">খাবার</span></div>
+      <div class="tile accent"><span class="ic" data-i="droplet"></span><span class="cap">পানি</span></div>
+      <div class="tile danger"><span class="ic" data-i="skull"></span><span class="cap">মৃত্যু</span></div>
+      <div class="tile"><span class="ic" data-i="flask"></span><span class="cap">নমুনা</span></div>
+      <div class="tile"><span class="ic" data-i="clipboard"></span><span class="cap">কাজ</span></div>
+      <div class="tile accent"><span class="ic" data-i="camera"></span><span class="cap">ক্যামেরা</span></div>
+    </div>
+  </div>
+  <p class="note">Tiles are ≥108px square, icon 40px, single-word Bangla caption. Colour separates domains: teal = routine, cyan = water/media, red tint = mortality. No English anywhere.</p>
+</section>
+
+<!-- 04 BUTTONS -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Buttons</h2><span class="sub">primary / secondary / danger · all ≥52px · full-width & inline · pressed & disabled</span></div>
+  <div class="cols" style="grid-template-columns:1fr 1fr 1fr">
+    <div><div class="subcap">Primary</div><div class="card" style="display:flex;flex-direction:column;gap:14px">
+      <button class="btn primary full" data-i="save">সংরক্ষণ করুন</button>
+      <button class="btn primary pressed full" data-i="save">সংরক্ষণ করুন</button><div class="btn-note">pressed</div>
+      <button class="btn primary disabled full" data-i="save">সংরক্ষণ করুন</button><div class="btn-note">disabled</div>
+    </div></div>
+    <div><div class="subcap">Secondary</div><div class="card" style="display:flex;flex-direction:column;gap:14px">
+      <button class="btn secondary full">বাতিল</button>
+      <button class="btn secondary pressed full">বাতিল</button><div class="btn-note">pressed</div>
+      <button class="btn secondary disabled full">বাতিল</button><div class="btn-note">disabled</div>
+    </div></div>
+    <div><div class="subcap">Danger / inline</div><div class="card" style="display:flex;flex-direction:column;gap:14px">
+      <button class="btn danger full" data-i="alert-triangle">জরুরি</button>
+      <div style="display:flex;gap:10px"><button class="btn secondary" style="flex:1">পরে</button><button class="btn primary" style="flex:1" data-i="check">সম্পন্ন</button></div>
+      <div class="btn-note">inline pair (≥52px each)</div>
+    </div></div>
+  </div>
+</section>
+
+<!-- 05 NUMBER ENTRY -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Number entry — big stepper</h2><span class="sub">replaces the keyboard · −/+ ≥56px around a large Bengali-numeral value + unit</span></div>
+  <div class="cols" style="grid-template-columns:1fr 1fr">
+    <div><div class="subcap bn">খাবার পরিমাণ (main)</div><div class="surf pad">
+      <div class="stepper">
+        <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+        <div class="step-val"><span class="n">১২</span><span class="u">কেজি</span></div>
+        <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+      </div>
+      <div class="note bn" style="font-size:14px">প্রতি ট্যাপে ± ১ কেজি। কোনো কীবোর্ড নেই।</div>
+    </div></div>
+    <div><div class="subcap bn">Compact (inline field)</div><div class="surf pad">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <span class="bn" style="font-size:16px;font-weight:600">মৃত মাছ</span>
+        <div class="stepper compact" style="width:190px">
+          <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+          <div class="step-val"><span class="n">৩</span><span class="u">টি</span></div>
+          <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- 06 CHIPS -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Segmented chips</h2><span class="sub">single-select · feed observation · ≥52px tall</span></div>
+  <div class="surf pad">
+    <div class="subcap bn">খাবার পর্যবেক্ষণ</div>
+    <div class="chips">
+      <button class="chip on" data-i="check">স্বাভাবিক</button>
+      <button class="chip">উদ্বৃত্ত</button>
+      <button class="chip">খালি</button>
+    </div>
+    <div class="note bn" style="font-size:14px">একটি মাত্র নির্বাচন। নির্বাচিত চিপ টিল রঙে ভরাট।</div>
+  </div>
+</section>
+
+<!-- 07 PHOTO -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Photo capture</h2><span class="sub">empty capture tile → captured thumbnail with retake</span></div>
+  <div class="cols" style="grid-template-columns:1fr 1fr">
+    <div><div class="subcap">Empty</div><div class="surf pad">
+      <button class="capture" style="width:100%"><span class="cic" data-i="camera"></span><span class="lab bn">ছবি তুলুন</span><span class="bn" style="font-size:13px">পুকুরের অবস্থা রেকর্ড করুন</span></button>
+    </div></div>
+    <div><div class="subcap">Captured</div><div class="surf pad">
+      <div class="shot"><span class="ph" data-i="image"></span><button class="retake" data-i="refresh-cw">আবার তুলুন</button></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- 08 LIST ROWS -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">08</span><h2>List rows</h2><span class="sub">task row (with complete control) · logged-entry row (with per-item sync badge)</span></div>
+  <div class="cols" style="grid-template-columns:1fr 1fr">
+    <div><div class="subcap bn">আজকের কাজ (task rows)</div>
+      <div class="surf"><div class="rows">
+        <div class="row">
+          <div class="rmain"><div class="rtitle">চেইন ড্র্যাগ — পুকুর এ-২</div><div class="rmeta"><span data-i="clock" style="display:inline-flex"></span>সকাল ৭:০০ · <span class="badge b-warning"><span class="dot"></span>বাকি</span></div></div>
+          <button class="check" aria-label="সম্পন্ন" data-i="check"></button>
+        </div>
+        <div class="row">
+          <div class="rmain"><div class="rtitle">চুন প্রয়োগ — পুকুর জে-১</div><div class="rmeta"><span data-i="clock" style="display:inline-flex"></span>সকাল ৯:৩০ · <span class="badge b-neutral"><span class="dot"></span>নির্ধারিত</span></div></div>
+          <button class="check" aria-label="সম্পন্ন" data-i="check"></button>
+        </div>
+        <div class="row">
+          <div class="rmain"><div class="rtitle">সকালের খাবার — পুকুর এ-২</div><div class="rmeta">সম্পন্ন · সকাল ৮:১৫</div></div>
+          <button class="check done" aria-label="সম্পন্ন" data-i="check"></button>
+        </div>
+      </div></div>
+    </div>
+    <div><div class="subcap bn">লগ করা এন্ট্রি (logged rows)</div>
+      <div class="surf"><div class="rows">
+        <div class="row">
+          <span class="ic" style="width:44px;height:44px;border-radius:10px;background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0" data-i="utensils"></span>
+          <div class="rmain"><div class="rtitle">খাবার · গ্রোয়ার</div><div class="rmeta">সকাল ৮:১৫ · <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div></div>
+          <span class="rval">১২ কেজি</span>
+        </div>
+        <div class="row">
+          <span class="ic" style="width:44px;height:44px;border-radius:10px;background:#E0F2FE;color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0" data-i="droplet"></span>
+          <div class="rmain"><div class="rtitle">পানি · দ্রবীভূত অক্সিজেন</div><div class="rmeta">ভোর ৫:৫০ · <span class="badge b-ok"><span class="dot"></span>সিংক হয়েছে</span></div></div>
+          <span class="rval">৬.২</span>
+        </div>
+        <div class="row">
+          <span class="ic" style="width:44px;height:44px;border-radius:10px;background:var(--tint-critical);color:var(--critical);display:flex;align-items:center;justify-content:center;flex-shrink:0" data-i="skull"></span>
+          <div class="rmain"><div class="rtitle">মৃত্যু · পুকুর এ-২</div><div class="rmeta">সকাল ৬:৪০ · <span class="badge b-critical"><span class="dot"></span>ব্যর্থ</span> <button class="retry" data-i="refresh-cw">আবার</button></div></div>
+          <span class="rval">৩ টি</span>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 SYNC CHROME -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Sync &amp; connectivity chrome</h2><span class="sub">the defining behaviour · offline banner · connection pills · pending count · four sync badges</span></div>
+  <div class="cols" style="grid-template-columns:1fr 1fr">
+    <div>
+      <div class="subcap">Offline banner (verbatim)</div>
+      <div class="surf" style="margin-bottom:20px"><div class="offline-banner"><span data-i="wifi-off"></span>অফলাইন — সংরক্ষিত, পরে সিংক হবে</div></div>
+      <div class="subcap">Connection &amp; pending pills</div>
+      <div class="card" style="display:flex;flex-wrap:wrap;gap:12px">
+        <span class="conn online bn"><span data-i="check-circle"></span>অনলাইন · সিংক হয়েছে</span>
+        <span class="conn syncing bn"><span data-i="refresh-cw"></span>সিংক হচ্ছে…</span>
+        <span class="conn pending bn"><span data-i="clock"></span>৭টি অপেক্ষমাণ</span>
+      </div>
+    </div>
+    <div>
+      <div class="subcap">Per-item sync badges</div>
+      <div class="card"><div class="badge-grid">
+        <div class="badge-row"><span class="gl">Pending / queued</span><span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div>
+        <div class="badge-row"><span class="gl">Synced</span><span class="badge b-ok" data-i="check-circle">সিংক হয়েছে</span></div>
+        <div class="badge-row"><span class="gl">Conflict</span><span class="badge b-warning" data-i="alert-triangle">দ্বন্দ্ব</span></div>
+        <div class="badge-row"><span class="gl">Failed + retry</span><span class="badge b-critical" data-i="alert-circle">ব্যর্থ</span><button class="retry" data-i="refresh-cw">আবার চেষ্টা</button></div>
+      </div></div>
+      <p class="note">Every write saves to the phone instantly and shows <span class="bn">অপেক্ষমাণ</span> until it uploads. Nothing ever blocks on the network.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 TOAST -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">10</span><h2>Save confirmation</h2><span class="sub">lightweight snackbar · confirms an optimistic local save that will upload later</span></div>
+  <div class="surf pad" style="background:var(--bg)">
+    <div class="toast"><span class="ti" data-i="check"></span><div><div class="tt bn">সংরক্ষিত</div><div class="tb bn">এই ফোনে রাখা হয়েছে — সংযোগ পেলে সিংক হবে</div></div></div>
+  </div>
+  <p class="note">Appears for ~2s after any log. Confirms success immediately — even fully offline — and is explicit that upload happens later.</p>
+</section>
+
+<!-- 11 EMERGENCY -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">11</span><h2>Emergency</h2><span class="sub">one-tap জরুরি in critical red · confirmation sheet · offline variant is a safety requirement</span></div>
+  <div class="cols" style="grid-template-columns:auto auto 1fr">
+    <div><div class="subcap">Trigger</div><div class="surf pad" style="width:280px">
+      <button class="emg" data-i="alert-triangle">জরুরি</button>
+      <div class="emg-hint">অক্সিজেন সংকট / মাছ ভেসে উঠছে — সাহায্য চান</div>
+    </div></div>
+    <div><div class="subcap">Confirmation sheet (offline)</div>
+      <div class="sheetwrap">
+        <div class="scrim"></div>
+        <div class="sheet">
+          <div class="grip"></div>
+          <div class="sic" data-i="alert-triangle"></div>
+          <h3>জরুরি সাহায্য পাঠাবেন?</h3>
+          <p>মালিক ও কাছের কর্মীকে এখনই জানানো হবে। শুধু সত্যিকারের জরুরি অবস্থায় ব্যবহার করুন।</p>
+          <div class="off-note"><span data-i="wifi-off"></span>অফলাইন — সংযোগ পেলেই সাথে সাথে পাঠানো হবে</div>
+          <div class="actions">
+            <button class="btn danger full" data-i="alert-triangle">হ্যাঁ, জরুরি পাঠান</button>
+            <button class="btn secondary full">বাতিল</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div><div class="subcap">Why it's built this way</div><div class="card" style="font-size:14px;color:var(--text-2)">
+      <p>The trigger is oversized red and lives away from routine tiles so it is unmistakable yet hard to hit by accident. It always needs one confirmation.</p>
+      <p style="margin-top:10px">If offline, the sheet does <strong>not</strong> fail — it queues the alert and tells the worker it will fire the instant a connection returns. For an oxygen crash that guarantee matters more than any other message in the app.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- 12 STATES -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">12</span><h2>States</h2><span class="sub">empty · loading skeleton · camera-offline placeholder</span></div>
+  <div class="cols" style="grid-template-columns:1fr 1fr 1fr">
+    <div><div class="subcap">Empty</div><div class="surf">
+      <div class="state"><span class="sic2" data-i="inbox"></span><div class="st bn">আজ কোনো এন্ট্রি নেই</div><div class="sd bn">উপরের টাইল থেকে প্রথম লগ যোগ করুন।</div></div>
+    </div></div>
+    <div><div class="subcap">Loading skeleton</div><div class="surf pad">
+      <div class="sk" style="height:14px;width:45%;margin-bottom:14px"></div>
+      <div class="tiles">
+        <div class="sk-tile"><div class="sk" style="width:44px;height:44px;border-radius:10px"></div><div class="sk" style="height:12px;width:60%"></div></div>
+        <div class="sk-tile"><div class="sk" style="width:44px;height:44px;border-radius:10px"></div><div class="sk" style="height:12px;width:60%"></div></div>
+        <div class="sk-tile"><div class="sk" style="width:44px;height:44px;border-radius:10px"></div><div class="sk" style="height:12px;width:60%"></div></div>
+      </div>
+    </div></div>
+    <div><div class="subcap">Camera offline</div><div class="surf pad">
+      <div class="cam-off"><span data-i="video-off"></span><span class="ct bn">ক্যামেরা অফলাইন</span><span class="cd bn">সংযোগ ফিরলে আবার দেখা যাবে</span></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- 13 BADGES -->
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">13</span><h2>Status badges</h2><span class="sub">the worker-relevant vocabulary in Bangla</span></div>
+  <div class="card"><div class="badge-grid">
+    <div class="badge-row"><span class="gl">Task states</span>
+      <span class="badge b-neutral"><span class="dot"></span>নির্ধারিত</span>
+      <span class="badge b-warning"><span class="dot"></span>বাকি</span>
+      <span class="badge b-ok" data-i="check">সম্পন্ন</span>
+      <span class="badge b-critical"><span class="dot"></span>বাদ পড়েছে</span></div>
+    <div class="badge-row"><span class="gl">Feed observation</span>
+      <span class="badge b-ok"><span class="dot"></span>স্বাভাবিক</span>
+      <span class="badge b-warning"><span class="dot"></span>উদ্বৃত্ত</span>
+      <span class="badge b-info"><span class="dot"></span>খালি</span></div>
+    <div class="badge-row"><span class="gl">Sync states</span>
+      <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span>
+      <span class="badge b-ok" data-i="check-circle">সিংক হয়েছে</span>
+      <span class="badge b-warning" data-i="alert-triangle">দ্বন্দ্ব</span>
+      <span class="badge b-critical" data-i="alert-circle">ব্যর্থ</span></div>
+  </div></div>
+</section>
+
+<div class="foot bn">FMS · ফিশ ফার্ম ম্যানেজমেন্ট সিস্টেম — F-02 ওয়ার্কার মোবাইল ডিজাইন ভাষা। সব রং, টাইপ, স্পেসিং ও স্ট্যাটাস শব্দভাণ্ডার শিপড টোকেন। আইকন: Lucide (inline SVG)।</div>
+
+</div>
+
+<script>
+const ICONS={
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "home":"M3 10.5 12 3l9 7.5M5 9.6V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.6",
+ "utensils":"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "skull":"M12 2a8 8 0 0 0-8 8c0 2.8 1.6 4.4 3 5.5V18a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2.5c1.4-1.1 3-2.7 3-5.5a8 8 0 0 0-8-8zM9 13a1.6 1.6 0 1 0 0-3.2A1.6 1.6 0 0 0 9 13zM15 13a1.6 1.6 0 1 0 0-3.2A1.6 1.6 0 0 0 15 13zM10 19v2M14 19v2",
+ "flask":"M9 3h6M10 3v5.5L5 17a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 17l-5-8.5V3M7.5 14h9",
+ "clipboard":"M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2zM9 13l2 2 4-4",
+ "camera":"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "menu":"M4 6h16M4 12h16M4 18h16",
+ "plus":"M12 5v14M5 12h14",
+ "minus":"M5 12h14",
+ "check":"M20 6 9 17l-5-5",
+ "save":"M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2zM17 21v-8H7v8M7 3v5h8",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "alert-circle":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v4M12 16h.01",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "refresh-cw":"M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6",
+ "wifi-off":"M2 8.82a15 15 0 0 1 4.17-2.65M10.66 5c4.01-.36 8.14.9 11.34 3.76M16.85 11.25a10 10 0 0 1 2.22 1.68M5 12.86a10 10 0 0 1 5.17-2.69M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01M2 2l20 20",
+ "signal":"M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 20V4",
+ "image":"M3 3h18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM21 15l-5-5L5 21",
+ "inbox":"M22 12h-6l-2 3h-4l-2-3H2M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z",
+ "video-off":"M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34l1 1L23 7v10M2 2l20 20"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

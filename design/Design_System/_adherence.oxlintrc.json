@@ -1,0 +1,367 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/core/**",
+              "components/data/**",
+              "components/feedback/**",
+              "components/forms/**",
+              "components/i18n/**",
+              "components/status/**",
+              "ui_kits/owner_web/**",
+              "ui_kits/partner_web/**",
+              "ui_kits/worker_mobile/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Inter|JetBrains Mono|Noto Sans Bengali))/i]",
+        "message": "Font not provided by the design system. Available: Inter, JetBrains Mono, Noto Sans Bengali."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='AlertBanner'] > JSXAttribute > JSXIdentifier[name!=/^(?:severity|title|children|action|lang|style|key|ref|className|style|children)$/]",
+        "message": "<AlertBanner> doesn't accept that prop. Declared props: severity, title, children, action, lang, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='AlertBanner'] > JSXAttribute[name.name='severity'] > Literal[value!=/^(?:info|warning|critical)$/]",
+        "message": "<AlertBanner> severity must be one of 'info' | 'warning' | 'critical'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='AlertBanner'] > JSXAttribute[name.name='lang'] > Literal[value!=/^(?:en|bn)$/]",
+        "message": "<AlertBanner> lang must be one of 'en' | 'bn'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Badge'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|dot|icon|style|key|ref|className|style|children)$/]",
+        "message": "<Badge> doesn't accept that prop. Declared props: tone, dot, icon, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Badge'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:neutral|brand|ok|info|warning|critical)$/]",
+        "message": "<Badge> tone must be one of 'neutral' | 'brand' | 'ok' | 'info' | 'warning' | 'critical'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|size|icon|iconRight|block|style|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, size, icon, iconRight, block, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|secondary|ghost|danger)$/]",
+        "message": "<Button> variant must be one of 'primary' | 'secondary' | 'ghost' | 'danger'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:sm|md|lg)$/]",
+        "message": "<Button> size must be one of 'sm' | 'md' | 'lg'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Card'] > JSXAttribute > JSXIdentifier[name!=/^(?:padding|interactive|muted|style|key|ref|className|style|children)$/]",
+        "message": "<Card> doesn't accept that prop. Declared props: padding, interactive, muted, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ConnectivityBar'] > JSXAttribute > JSXIdentifier[name!=/^(?:online|pending|lang|style|key|ref|className|style|children)$/]",
+        "message": "<ConnectivityBar> doesn't accept that prop. Declared props: online, pending, lang, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ConnectivityBar'] > JSXAttribute[name.name='lang'] > Literal[value!=/^(?:bn|en)$/]",
+        "message": "<ConnectivityBar> lang must be one of 'bn' | 'en'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DualDate'] > JSXAttribute > JSXIdentifier[name!=/^(?:gregorian|bangla|mode|season|tone|style|key|ref|className|style|children)$/]",
+        "message": "<DualDate> doesn't accept that prop. Declared props: gregorian, bangla, mode, season, tone, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DualDate'] > JSXAttribute[name.name='mode'] > Literal[value!=/^(?:dual|bn)$/]",
+        "message": "<DualDate> mode must be one of 'dual' | 'bn'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DualDate'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:default|inverse)$/]",
+        "message": "<DualDate> tone must be one of 'default' | 'inverse'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Icon'] > JSXAttribute > JSXIdentifier[name!=/^(?:name|size|strokeWidth|color|title|key|ref|className|style|children)$/]",
+        "message": "<Icon> doesn't accept that prop. Declared props: name, size, strokeWidth, color, title."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconButton'] > JSXAttribute > JSXIdentifier[name!=/^(?:icon|label|size|variant|style|key|ref|className|style|children)$/]",
+        "message": "<IconButton> doesn't accept that prop. Declared props: icon, label, size, variant, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconButton'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:sm|md|lg)$/]",
+        "message": "<IconButton> size must be one of 'sm' | 'md' | 'lg'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconButton'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|secondary|ghost)$/]",
+        "message": "<IconButton> variant must be one of 'primary' | 'secondary' | 'ghost'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Input'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|hint|error|icon|suffix|lang|style|containerStyle|key|ref|className|style|children)$/]",
+        "message": "<Input> doesn't accept that prop. Declared props: label, hint, error, icon, suffix, lang, style, containerStyle."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Input'] > JSXAttribute[name.name='lang'] > Literal[value!=/^(?:en|bn)$/]",
+        "message": "<Input> lang must be one of 'en' | 'bn'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Money'] > JSXAttribute > JSXIdentifier[name!=/^(?:amount|bengali|colorNegative|size|weight|style|key|ref|className|style|children)$/]",
+        "message": "<Money> doesn't accept that prop. Declared props: amount, bengali, colorNegative, size, weight, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SelectOption'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|label|key|ref|className|style|children)$/]",
+        "message": "<SelectOption> doesn't accept that prop. Declared props: value, label."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Skeleton'] > JSXAttribute > JSXIdentifier[name!=/^(?:width|height|radius|style|key|ref|className|style|children)$/]",
+        "message": "<Skeleton> doesn't accept that prop. Declared props: width, height, radius, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|value|icon|tone|trend|style|key|ref|className|style|children)$/]",
+        "message": "<StatCard> doesn't accept that prop. Declared props: label, value, icon, tone, trend, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatCard'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:neutral|ok|warning|critical)$/]",
+        "message": "<StatCard> tone must be one of 'neutral' | 'ok' | 'warning' | 'critical'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StateView'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|icon|title|message|action|lang|compact|style|key|ref|className|style|children)$/]",
+        "message": "<StateView> doesn't accept that prop. Declared props: variant, icon, title, message, action, lang, compact, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StateView'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:empty|unavailable|stale|offline)$/]",
+        "message": "<StateView> variant must be one of 'empty' | 'unavailable' | 'stale' | 'offline'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StateView'] > JSXAttribute[name.name='lang'] > Literal[value!=/^(?:en|bn)$/]",
+        "message": "<StateView> lang must be one of 'en' | 'bn'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatusBadge'] > JSXAttribute > JSXIdentifier[name!=/^(?:kind|status|lang|style|key|ref|className|style|children)$/]",
+        "message": "<StatusBadge> doesn't accept that prop. Declared props: kind, status, lang, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatusBadge'] > JSXAttribute[name.name='lang'] > Literal[value!=/^(?:en|bn)$/]",
+        "message": "<StatusBadge> lang must be one of 'en' | 'bn'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SyncBadge'] > JSXAttribute > JSXIdentifier[name!=/^(?:state|lang|showLabel|style|key|ref|className|style|children)$/]",
+        "message": "<SyncBadge> doesn't accept that prop. Declared props: state, lang, showLabel, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SyncBadge'] > JSXAttribute[name.name='state'] > Literal[value!=/^(?:PENDING|SYNCED|CONFLICT|FAILED)$/]",
+        "message": "<SyncBadge> state must be one of 'PENDING' | 'SYNCED' | 'CONFLICT' | 'FAILED'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SyncBadge'] > JSXAttribute[name.name='lang'] > Literal[value!=/^(?:bn|en)$/]",
+        "message": "<SyncBadge> lang must be one of 'bn' | 'en'."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "AlertBanner": {
+        "replaces": []
+      },
+      "Badge": {
+        "replaces": []
+      },
+      "Button": {
+        "replaces": []
+      },
+      "Card": {
+        "replaces": []
+      },
+      "ConnectivityBar": {
+        "replaces": []
+      },
+      "DualDate": {
+        "replaces": []
+      },
+      "Icon": {
+        "replaces": []
+      },
+      "IconButton": {
+        "replaces": []
+      },
+      "Input": {
+        "replaces": []
+      },
+      "Money": {
+        "replaces": []
+      },
+      "SelectOption": {
+        "replaces": []
+      },
+      "Skeleton": {
+        "replaces": []
+      },
+      "StatCard": {
+        "replaces": []
+      },
+      "StateView": {
+        "replaces": []
+      },
+      "StatusBadge": {
+        "replaces": []
+      },
+      "SyncBadge": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--bg",
+      "--border",
+      "--border-strong",
+      "--brand-accent",
+      "--brand-primary",
+      "--brand-primary-dark",
+      "--focus-ring",
+      "--font-bangla",
+      "--font-base",
+      "--font-mono",
+      "--fw-bold",
+      "--fw-medium",
+      "--fw-regular",
+      "--icon-lg",
+      "--icon-md",
+      "--icon-sm",
+      "--lh-normal",
+      "--lh-tight",
+      "--radius-lg",
+      "--radius-md",
+      "--radius-pill",
+      "--radius-sm",
+      "--sev-critical",
+      "--sev-info",
+      "--sev-warning",
+      "--shadow-card",
+      "--shadow-modal",
+      "--space-1",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-6",
+      "--space-8",
+      "--status-danger",
+      "--status-muted",
+      "--status-ok",
+      "--surface",
+      "--surface-card",
+      "--surface-muted",
+      "--surface-page",
+      "--tap-min",
+      "--text-2xl",
+      "--text-body",
+      "--text-inverse",
+      "--text-lg",
+      "--text-md",
+      "--text-meta",
+      "--text-primary",
+      "--text-secondary",
+      "--text-sm",
+      "--text-xl",
+      "--text-xs",
+      "--tint-brand",
+      "--tint-critical",
+      "--tint-info",
+      "--tint-ok",
+      "--tint-warning"
+    ],
+    "tokenKinds": {
+      "--brand-primary": "color",
+      "--brand-primary-dark": "color",
+      "--brand-accent": "color",
+      "--bg": "color",
+      "--surface": "color",
+      "--surface-muted": "color",
+      "--border": "color",
+      "--border-strong": "color",
+      "--text-primary": "font",
+      "--text-secondary": "font",
+      "--text-inverse": "font",
+      "--sev-info": "color",
+      "--sev-warning": "color",
+      "--sev-critical": "color",
+      "--status-ok": "color",
+      "--status-muted": "color",
+      "--status-danger": "color",
+      "--tint-info": "color",
+      "--tint-warning": "color",
+      "--tint-critical": "color",
+      "--tint-ok": "color",
+      "--tint-brand": "color",
+      "--focus-ring": "color",
+      "--text-body": "font",
+      "--text-meta": "font",
+      "--surface-card": "color",
+      "--surface-page": "color",
+      "--font-base": "font",
+      "--font-bangla": "font",
+      "--font-mono": "font",
+      "--text-xs": "font",
+      "--text-sm": "font",
+      "--text-md": "font",
+      "--text-lg": "font",
+      "--text-xl": "font",
+      "--text-2xl": "font",
+      "--fw-regular": "font",
+      "--fw-medium": "font",
+      "--fw-bold": "font",
+      "--lh-tight": "font",
+      "--lh-normal": "font",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-6": "spacing",
+      "--space-8": "spacing",
+      "--tap-min": "spacing",
+      "--radius-sm": "radius",
+      "--radius-md": "radius",
+      "--radius-lg": "radius",
+      "--radius-pill": "radius",
+      "--shadow-card": "shadow",
+      "--shadow-modal": "shadow",
+      "--icon-sm": "spacing",
+      "--icon-md": "spacing",
+      "--icon-lg": "spacing"
+    },
+    "fontFamilies": [
+      "Inter",
+      "JetBrains Mono",
+      "Noto Sans Bengali"
+    ]
+  }
+}

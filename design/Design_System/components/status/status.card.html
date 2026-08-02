@@ -1,0 +1,28 @@
+<!-- @dsCard group="Components" viewport="700x300" name="Status & Sync badges" subtitle="Domain status vocab + offline sync states" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--bg);font-family:var(--font-base);padding:20px;color:var(--text-primary)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.lbl{font-size:12px;color:var(--text-secondary);width:100%;margin-bottom:-4px;font-weight:500}</style>
+</head>
+<body>
+<div id="root"></div><script type="text/babel">
+const NS = window.FMSAquacultureDesignSystem_dbe44a;
+const { StatusBadge, SyncBadge } = NS;
+function Grp({title, children}){return (<div style={{marginBottom:12}}><div className="lbl" style={{marginBottom:6}}>{title}</div><div className="row" style={{margin:0}}>{children}</div></div>);}
+function Demo(){return (<div>
+  <Grp title="Batch"><StatusBadge kind="batch" status="ACTIVE"/><StatusBadge kind="batch" status="HARVESTING"/><StatusBadge kind="batch" status="CLOSED"/></Grp>
+  <Grp title="Task"><StatusBadge kind="task" status="SCHEDULED"/><StatusBadge kind="task" status="DUE"/><StatusBadge kind="task" status="DONE"/><StatusBadge kind="task" status="MISSED"/></Grp>
+  <Grp title="Alert severity / state"><StatusBadge kind="severity" status="INFO"/><StatusBadge kind="severity" status="WARNING"/><StatusBadge kind="severity" status="CRITICAL"/><StatusBadge kind="alert" status="RAISED"/><StatusBadge kind="alert" status="ACKNOWLEDGED"/><StatusBadge kind="alert" status="RESOLVED"/></Grp>
+  <Grp title="Feed / grade"><StatusBadge kind="feed" status="NORMAL"/><StatusBadge kind="feed" status="LEFTOVER"/><StatusBadge kind="feed" status="EMPTY"/><StatusBadge kind="grade" status="EXPORT"/><StatusBadge kind="grade" status="LOCAL"/></Grp>
+  <Grp title="Sync (mobile, Bangla)"><SyncBadge state="PENDING"/><SyncBadge state="SYNCED"/><SyncBadge state="CONFLICT"/><SyncBadge state="FAILED"/></Grp>
+</div>);}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo/>);
+</script>
+</body>
+</html>

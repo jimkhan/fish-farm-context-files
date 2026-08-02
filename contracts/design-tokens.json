@@ -2,9 +2,10 @@
   "$schema": "https://design-tokens.github.io/community-group/format/",
   "$meta": {
     "project": "Fish Farm Management System (FMS)",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "consumedBy": ["fish-farm-web", "fish-farm-mobile-app"],
-    "notes": "Single-brand tokens shared by web (Tailwind config) and mobile (RN theme). Alert-severity palette mirrors GLOSSARY AlertSeverity. Fonts include a Bangla-capable stack for Bengali numerals/dates (NFR-002). Values are stubs to be refined during UI module detailing (Phase 5)."
+    "source": "design/Design_System/tokens/",
+    "notes": "Single-brand tokens shared by web (Tailwind config) and mobile (RN theme). Mirrors the shipped design system in design/Design_System/tokens/. Alert-severity palette mirrors GLOSSARY AlertSeverity. Tint colors are the calm, low-saturation badge/banner fills. Fonts include a Bangla-capable stack for Bengali numerals/dates (NFR-002)."
   },
   "color": {
     "brand": {
@@ -15,7 +16,9 @@
     "neutral": {
       "bg": { "value": "#F8FAFC" },
       "surface": { "value": "#FFFFFF" },
+      "surfaceMuted": { "value": "#F1F5F9" },
       "border": { "value": "#E2E8F0" },
+      "borderStrong": { "value": "#CBD5E1" },
       "textPrimary": { "value": "#0F172A" },
       "textSecondary": { "value": "#475569" },
       "textInverse": { "value": "#FFFFFF" }
@@ -29,6 +32,16 @@
       "ok": { "value": "#16A34A" },
       "muted": { "value": "#94A3B8" },
       "danger": { "value": "#DC2626" }
+    },
+    "tint": {
+      "info": { "value": "#EFF6FF", "description": "Calm badge/banner fill for INFO" },
+      "warning": { "value": "#FFFBEB", "description": "Calm badge/banner fill for WARNING" },
+      "critical": { "value": "#FEF2F2", "description": "Calm badge/banner fill for CRITICAL" },
+      "ok": { "value": "#F0FDF4", "description": "Calm badge/banner fill for OK/success" },
+      "brand": { "value": "#ECFEFF", "description": "Calm brand-tinted surface" }
+    },
+    "focus": {
+      "ring": { "value": "#0891B2", "description": "WCAG-visible focus ring (brand accent), 2px offset" }
     }
   },
   "typography": {

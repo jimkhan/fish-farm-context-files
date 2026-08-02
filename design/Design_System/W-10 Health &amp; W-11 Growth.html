@@ -1,0 +1,1046 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · Health &amp; Growth (Owner)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;--tint-muted:#F1F5F9;
+  --focus:#0891B2;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --font:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.bn{font-family:var(--bn)}
+.tk{font-family:var(--bn)}
+a{color:var(--brand);text-decoration:none}a:hover{color:var(--brand-dark)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:var(--r-sm)}
+
+/* app bar */
+.appbar{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;gap:16px;padding:0 20px}
+.mark{display:flex;align-items:center;gap:9px}
+.mark .logo{width:30px;height:30px;border-radius:8px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.5px}
+.switcher{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text)}
+.switcher svg{width:16px;height:16px;color:var(--text-2)}
+.abspacer{flex:1}
+.iconbtn{position:relative;width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+.iconbtn:hover{background:var(--surface-muted);color:var(--text)}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn .cnt{position:absolute;top:4px;right:4px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--critical);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.userchip{display:flex;align-items:center;gap:10px;padding:4px 10px 4px 4px;border-radius:var(--r-pill);border:1px solid var(--border)}
+.userchip .av{width:32px;height:32px;border-radius:50%;background:var(--brand-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.userchip .un{font-size:13px;font-weight:600;line-height:1.2}
+.userchip .ur{font-size:11px;color:var(--text-2)}
+
+/* shell */
+.shell{display:grid;grid-template-columns:248px 1fr;min-height:calc(100vh - 60px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:16px 12px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.sb-proj{padding:8px 10px 14px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sb-proj .pn{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px}
+.sb-proj .pl{font-size:12px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:5px}
+.sb-proj .pl svg{width:12px;height:12px}
+.navgroup{margin-bottom:14px}
+.navgroup .gh{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:0 10px;margin-bottom:6px}
+.navitem{display:flex;align-items:center;gap:11px;height:40px;padding:0 10px;border-radius:var(--r-md);font-size:14px;font-weight:500;color:var(--text-2);position:relative}
+.navitem:hover{background:var(--surface-muted);color:var(--text)}
+.navitem svg{width:20px;height:20px;flex-shrink:0}
+.navitem .nb{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:99px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.navitem .nb.crit{background:var(--critical);color:#fff}
+.navitem .nb.warn{background:var(--tint-warning);color:#92400E}
+.navitem.active{background:var(--tint-brand);color:var(--brand-dark);font-weight:700}
+.navitem.active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--brand)}
+.navitem.active svg{color:var(--brand)}
+
+/* main */
+.main{padding:24px 28px 60px;min-width:0}
+.maintag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--tint-brand);padding:5px 12px;border-radius:var(--r-pill);margin-bottom:16px}
+
+/* header */
+.phead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.phead h1{font-size:26px;font-weight:700;letter-spacing:-.5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.phead .meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--text-2)}
+.phead .meta .m{display:flex;align-items:center;gap:6px}
+.phead .meta .m svg{width:15px;height:15px;color:var(--muted)}
+.phead .acts{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:1px solid transparent}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--brand);border-color:var(--border-strong)}.btn.secondary:hover{background:var(--surface-muted)}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:12px;font-weight:600;white-space:nowrap}
+.badge svg{width:13px;height:13px}
+.dot{width:7px;height:7px;border-radius:50%}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-muted{background:var(--surface-muted);color:var(--text-2)}.b-muted .dot{background:var(--muted)}
+.b-crit{background:var(--tint-critical);color:#991B1B}.b-crit .dot{background:var(--critical)}
+.b-info{background:var(--tint-info);color:#075985}.b-info .dot{background:var(--info)}
+.b-warn{background:var(--tint-warning);color:#92400E}.b-warn .dot{background:var(--warning)}
+.tbadge{font-size:11px;font-weight:700;letter-spacing:.03em;padding:3px 8px;border-radius:6px;background:var(--surface-muted);color:var(--text-2);border:1px solid var(--border);white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.tbadge svg{width:12px;height:12px}
+.cause-oxygen{background:#E0F2FE;color:#075985;border-color:#BAE0F5}
+.cause-disease{background:#FCE7F3;color:#9D174D;border-color:#F9C9E0}
+.cause-predation{background:#FEF3C7;color:#92400E;border-color:#FCD8A0}
+.cause-handling{background:#EDE9FE;color:#5B21B6;border-color:#DDD6FE}
+.cause-unknown{background:var(--surface-muted);color:var(--text-2)}
+.sp-golda{background:#E0F2FE;color:#075985;border-color:#BAE0F5}
+.sp-rui{background:var(--tint-brand);color:var(--brand-dark);border-color:#A5DCE4}
+.sp-parse{background:#EEF2FF;color:#3730A3;border-color:#C7D2FE}
+
+/* filters */
+.filters{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:13px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);margin-bottom:20px}
+.fgroup{display:flex;align-items:center;gap:10px}
+.fglab{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.selctl{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text);background:var(--surface)}
+.selctl svg{width:15px;height:15px;color:var(--text-2)}
+.seg{display:inline-flex;background:var(--surface-muted);border-radius:var(--r-md);padding:3px}
+.seg button{height:32px;padding:0 15px;border-radius:7px;font-size:13px;font-weight:600;color:var(--text-2)}
+.seg button.on{background:var(--surface);color:var(--brand-dark);box-shadow:var(--sh-card)}
+.fspacer{flex:1}
+
+/* KPI */
+.kpirow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px;display:flex;flex-direction:column;min-height:150px}
+.kpi .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.kpi .lab{font-size:13px;font-weight:600;color:var(--text-2)}
+.kpi .ico{width:32px;height:32px;border-radius:var(--r-md);background:var(--surface-muted);color:var(--text-2);display:flex;align-items:center;justify-content:center}
+.kpi .ico svg{width:19px;height:19px}
+.kpi .val{font-size:30px;font-weight:700;letter-spacing:-.5px;margin-top:auto;line-height:1.05}
+.kpi .val .u{font-size:15px;color:var(--text-2);font-weight:500}
+.kpi .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.delta{display:inline-flex;align-items:center;gap:4px;width:fit-content;font-size:13px;font-weight:600;padding:3px 9px;border-radius:var(--r-pill);font-variant-numeric:tabular-nums}
+.delta.up{color:var(--ok);background:var(--tint-ok)}
+.delta.down{color:var(--danger);background:var(--tint-critical)}
+.delta.upbad{color:var(--danger);background:var(--tint-critical)}
+.delta.downgood{color:var(--ok);background:var(--tint-ok)}
+.delta.flat{color:var(--text-2);background:var(--surface-muted)}
+.delta .cx{font-size:11px}
+.kpi .subnote{font-size:12px;color:var(--text-2)}
+.kpi .subnote .deriv{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)}
+.kpi.warnkpi{background:var(--tint-warning);border-color:#FCD8A0}
+.kpi.warnkpi .lab{color:#92400E}.kpi.warnkpi .ico{background:var(--warning);color:#fff}.kpi.warnkpi .val{color:#B45309}
+.kpi.warnkpi .subnote{color:#92400E;font-weight:600}
+.goodhint{font-size:11px;font-weight:700;color:var(--ok);background:var(--tint-ok);border-radius:var(--r-pill);padding:2px 8px}
+
+/* advisory (amber anomaly) */
+.advisory{background:var(--tint-warning);border:1px solid #FCD8A0;border-left:4px solid var(--warning);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:22px;display:flex;gap:16px}
+.advisory .ai{width:44px;height:44px;border-radius:var(--r-pill);background:var(--warning);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.advisory .ai svg{width:24px;height:24px}
+.advisory .aw{flex:1;min-width:0}
+.advisory .ate{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.advisory .att{font-size:16px;font-weight:700;color:#92400E}
+.distinct{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#92400E;background:var(--surface);border:1px solid #FCD8A0;padding:3px 10px;border-radius:var(--r-pill)}
+.distinct svg{width:13px;height:13px}
+.advisory .abd{font-size:14px;color:#7c3a09;margin-top:7px;line-height:1.55;max-width:840px}
+.trendnums{display:flex;align-items:center;gap:8px;margin:13px 0 4px;flex-wrap:wrap}
+.tn{display:inline-flex;align-items:baseline;gap:3px;font-weight:700;font-variant-numeric:tabular-nums;font-size:15px;color:#92400E;background:var(--surface);border:1px solid #FCD8A0;border-radius:var(--r-md);padding:5px 10px}
+.tn.crit{color:var(--critical);border-color:#FCA5A5;background:var(--tint-critical)}
+.tn .u{font-size:11px;font-weight:600;opacity:.75}
+.tsep{color:var(--warning);font-weight:700}
+.xlink{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#92400E;background:var(--surface);border:1px solid #FCD8A0;border-radius:var(--r-md);padding:8px 12px;margin-top:10px}
+.xlink svg{width:15px;height:15px}
+.aacts{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.abtn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border-radius:var(--r-md);font-size:13px;font-weight:600}
+.abtn svg{width:16px;height:16px}
+.abtn.primary{background:var(--warning);color:#fff}.abtn.primary:hover{background:#B45309}
+.abtn.ghost{background:var(--surface);color:#92400E;border:1px solid #FCD8A0}.abtn.ghost:hover{background:#FEF3E2}
+
+/* panel */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden;margin-bottom:22px}
+.ph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700}
+.ph svg{width:17px;height:17px}
+.ph .cnt{margin-left:auto;font-size:12px;font-weight:600;color:var(--text-2)}
+.ph .phact{margin-left:auto}
+.editbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--border-strong);color:var(--brand);font-size:13px;font-weight:600;background:var(--surface)}
+.editbtn:hover{background:var(--surface-muted)}
+.editbtn svg{width:15px;height:15px}
+
+/* chart */
+.legend{display:flex;gap:18px;flex-wrap:wrap;padding:14px 16px 4px;font-size:12px;color:var(--text-2)}
+.legend .lg{display:flex;align-items:center;gap:7px}
+.lg .swatch{width:14px;height:3px;border-radius:2px}
+.lg .dotm{width:10px;height:10px;border-radius:50%;border:2px solid #fff}
+.chart-wrap{padding:6px 12px 14px}
+.chart-wrap svg{width:100%;height:auto}
+
+/* tables */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:11px 16px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface)}
+.dtable th.num{text-align:right}
+.dtable th .sortable{display:inline-flex;align-items:center;gap:5px}
+.dtable th svg{width:12px;height:12px;opacity:.6}
+.dtable td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+.dtable td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.dtable tr:last-child td{border-bottom:none}
+.dtable .ts{font-variant-numeric:tabular-nums;white-space:nowrap}
+.dtable .tsb{font-size:12px;color:var(--text-2);font-family:var(--bn)}
+.dtable .strong{font-weight:700}
+.dtable tr.spikerow{background:var(--tint-warning)}
+.photo-ind{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--brand-dark)}
+.photo-ind svg{width:14px;height:14px}
+.photo-none{color:var(--muted);font-size:12px}
+.src{display:inline-flex;align-items:center;gap:8px;font-size:13px}
+.src .sa{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.src .worker{background:var(--brand-dark);color:#fff}
+.src .auto{background:var(--surface-muted);color:var(--text-2)}
+.src .auto svg{width:13px;height:13px}
+.offbadge{font-size:11px;font-weight:600;color:#92400E;background:var(--tint-warning);border-radius:var(--r-pill);padding:1px 8px;margin-left:4px}
+.pager{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-2)}
+.pgset{display:flex;gap:6px}
+.pgbtn{min-width:32px;height:32px;padding:0 8px;border-radius:var(--r-md);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--text-2);background:var(--surface)}
+.pgbtn.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.pgbtn svg{width:14px;height:14px}
+
+/* treatments */
+.treatlist{padding:16px;display:flex;flex-direction:column;gap:14px}
+.treat{border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.treat.active{border-color:#FCA5A5}
+.treat-top{display:flex;align-items:flex-start;gap:14px;padding:14px 16px}
+.treat.active .treat-top{background:var(--tint-critical)}
+.treat .tico{width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.treat.active .tico{background:var(--critical);color:#fff}
+.treat.cleared .tico{background:var(--tint-ok);color:var(--ok)}
+.treat .tico svg{width:22px;height:22px}
+.treat .tname{font-size:16px;font-weight:700}
+.treat .tsub{font-size:13px;color:var(--text-2);margin-top:2px}
+.treat .tspacer{flex:1}
+.treat-facts{display:flex;gap:26px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--border);background:var(--surface)}
+.tf .fl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.tf .fv{font-size:14px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.tf .fv .bn{font-family:var(--bn)}
+.withdraw{display:flex;align-items:center;gap:12px;padding:13px 16px;border-top:1px solid #FCA5A5;background:var(--critical);color:#fff}
+.withdraw svg{width:20px;height:20px;flex-shrink:0}
+.withdraw .wt{font-size:14px;font-weight:700}
+.withdraw .wd{font-size:12px;color:rgba(255,255,255,.9);margin-top:1px}
+.withdraw .wdays{margin-left:auto;text-align:center;background:rgba(255,255,255,.16);border-radius:var(--r-md);padding:6px 12px;flex-shrink:0}
+.withdraw .wdays .n{font-size:20px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.withdraw .wdays .l{font-size:10px;text-transform:uppercase;letter-spacing:.04em;opacity:.85}
+.cleared-note{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:var(--tint-ok);color:#166534;font-size:13px;font-weight:600}
+.cleared-note svg{width:16px;height:16px}
+
+/* derivation box (FCR / survival) */
+.derivgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px}
+.derivcard{border:1px solid var(--border);border-radius:var(--r-md);padding:16px}
+.derivcard .dh{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.derivcard .dh .db{margin-left:auto;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.derivcard .dh .db .u{font-size:12px;color:var(--text-2);font-weight:500}
+.calc{display:flex;flex-direction:column;gap:8px}
+.calcrow{display:flex;align-items:center;font-size:13px}
+.calcrow .cl{color:var(--text-2)}
+.calcrow .cv{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
+.calcrow.result{border-top:1px dashed var(--border-strong);padding-top:9px;margin-top:2px;font-weight:700}
+.calcrow.result .cv{color:var(--brand-dark);font-size:15px}
+.calc-note{font-size:12px;color:var(--text-2);margin-top:10px;display:flex;gap:7px;align-items:flex-start}
+.calc-note svg{width:14px;height:14px;color:var(--muted);flex-shrink:0;margin-top:1px}
+
+/* not-computable state */
+.notcomp{border:1px dashed var(--border-strong);border-radius:var(--r-md);padding:16px;display:flex;gap:14px;align-items:flex-start;background:var(--surface-muted)}
+.notcomp .ni{width:40px;height:40px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.notcomp .ni svg{width:20px;height:20px}
+.notcomp .nt{font-size:14px;font-weight:700}
+.notcomp .nd{font-size:13px;color:var(--text-2);margin-top:3px;max-width:520px}
+.notcomp .nbtn{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--border-strong);color:var(--brand);font-size:13px;font-weight:600;margin-top:10px}
+.notcomp .nbtn svg{width:15px;height:15px}
+.metric-na{color:var(--muted);font-weight:600}
+
+/* degraded / empty / skeleton */
+.degraded{background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--r-lg);padding:26px;display:flex;align-items:center;gap:14px;min-height:180px;justify-content:center}
+.degraded .di{width:46px;height:46px;border-radius:var(--r-pill);background:var(--tint-warning);color:var(--warning);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.degraded .di svg{width:24px;height:24px}
+.degraded .dt{font-size:14px;font-weight:700}
+.degraded .dd{font-size:13px;color:var(--text-2);margin-top:2px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:52px 24px}
+.empty .ei{width:64px;height:64px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--muted);display:flex;align-items:center;justify-content:center}
+.empty .ei svg{width:32px;height:32px}
+.empty.good .ei{background:var(--tint-ok);color:var(--ok)}
+.empty .et{font-size:17px;font-weight:700}
+.empty .ed{font-size:14px;color:var(--text-2);max-width:420px}
+.empty .eacts{display:flex;gap:10px;margin-top:6px}
+.empty .goodpill{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#166534;background:var(--tint-ok);border:1px solid #BBF7D0;padding:7px 14px;border-radius:var(--r-pill);margin-top:2px}
+.empty .goodpill svg{width:15px;height:15px}
+@keyframes shimmer{100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E2E8F0 0%,#EEF3F8 50%,#E2E8F0 100%);background-size:200% 100%;background-position:200% 0;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-sm)}
+.sk-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px;min-height:150px;display:flex;flex-direction:column;gap:12px}
+.sk-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.sk-row:last-child{border-bottom:none}
+.ro-ind{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--text-2);font-size:12px;font-weight:600}
+.ro-ind svg{width:14px;height:14px}
+
+/* screen + variant framing */
+.screenband{background:var(--brand-dark);color:#fff;border-radius:var(--r-lg);padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px}
+.screenband .sn{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7DD3E0;background:rgba(255,255,255,.08);padding:5px 12px;border-radius:var(--r-pill)}
+.screenband h2{font-size:22px;font-weight:700}
+.screenband p{font-size:13px;color:rgba(255,255,255,.82);margin-top:2px}
+.bigsep{height:2px;background:var(--border);margin:52px 0 0}
+.divider{height:1px;background:var(--border);margin:36px 0 0}
+.slab{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:26px 0 0}
+.variant{margin-top:34px}
+.vhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.vhead .vtag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--text);padding:4px 10px;border-radius:var(--r-pill)}
+.vhead .vtag.amber{background:var(--warning)}
+.vhead h3{font-size:16px;font-weight:700}
+.vsub{font-size:14px;color:var(--text-2);margin-bottom:16px;max-width:840px}
+.vbox{border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;background:var(--bg)}
+.rationale{background:var(--tint-brand);border:1px solid #A5DCE4;border-radius:var(--r-md);padding:12px 14px;font-size:13px;color:var(--brand-dark);margin-bottom:20px;display:flex;gap:10px}
+.rationale svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.rationale b{font-weight:700}
+
+@media(max-width:1100px){.kpirow{grid-template-columns:1fr 1fr}.derivgrid{grid-template-columns:1fr}}
+@media(max-width:820px){.shell{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+
+<!-- APP BAR -->
+<div class="appbar">
+  <div class="mark"><span class="logo">FMS</span></div>
+  <button class="switcher"><span data-i="layers"></span>Meghna Gher<span data-i="chevron-down"></span></button>
+  <div class="abspacer"></div>
+  <button class="iconbtn" aria-label="Alerts"><span data-i="bell"></span><span class="cnt">2</span></button>
+  <button class="iconbtn" aria-label="Settings"><span data-i="settings"></span></button>
+  <div class="userchip"><span class="av">RK</span><div><div class="un">Rahima Khatun</div><div class="ur">Owner</div></div></div>
+</div>
+
+<div class="shell">
+  <!-- SIDEBAR (Health active) -->
+  <aside class="sidebar">
+    <div class="sb-proj">
+      <div class="pn"><span class="badge b-ok" style="height:auto;padding:0"><span class="dot"></span></span>Meghna Gher</div>
+      <div class="pl"><span data-i="map-pin"></span>Debidwar, Cumilla · 4 ponds</div>
+    </div>
+    <div class="navgroup"><div class="gh">Operations</div>
+      <a class="navitem"><span data-i="layout"></span>Overview</a>
+      <a class="navitem"><span data-i="grid"></span>Ponds</a>
+      <a class="navitem"><span data-i="droplet"></span>Water<span class="nb crit">2</span></a>
+      <a class="navitem"><span data-i="utensils"></span>Feed</a>
+      <a class="navitem"><span data-i="check-square"></span>Tasks<span class="nb warn">3</span></a>
+    </div>
+    <div class="navgroup"><div class="gh">Stock &amp; Growth</div>
+      <a class="navitem"><span data-i="package"></span>Inventory</a>
+      <a class="navitem active" href="#health"><span data-i="heart-pulse"></span>Health</a>
+      <a class="navitem" href="#growth"><span data-i="trending-up"></span>Growth</a>
+      <a class="navitem"><span data-i="scale"></span>Harvest</a>
+    </div>
+    <div class="navgroup"><div class="gh">Business</div>
+      <a class="navitem"><span data-i="wallet"></span>Finance</a>
+      <a class="navitem"><span data-i="file-text"></span>Reports</a>
+    </div>
+    <div class="navgroup"><div class="gh">Monitoring</div>
+      <a class="navitem"><span data-i="camera"></span>Camera</a>
+      <a class="navitem"><span data-i="cloud"></span>Weather</a>
+    </div>
+    <div class="navgroup"><div class="gh">Admin · owner only</div>
+      <a class="navitem"><span data-i="users"></span>Members</a>
+      <a class="navitem"><span data-i="settings"></span>Settings</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ═══════════════ SCREEN 1 · HEALTH ═══════════════ -->
+    <div id="health" class="maintag"><span data-i="heart-pulse"></span>W-10 · /projects/meghna-gher/health · Owner</div>
+    <div class="screenband">
+      <span class="sn">Screen 1</span>
+      <div><h2>Health</h2><p>Are fish dying abnormally, and is anything under treatment? The mortality-spike advisory mirrors W-07’s dawn-DO advisory — and cross-links to it, since the DO crash is the likely cause.</p></div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="phead">
+      <div>
+        <h1>Health <span class="badge b-warn"><span class="dot"></span>MORTALITY SPIKE · A2</span></h1>
+        <div class="meta">
+          <span class="m"><span data-i="grid"></span>Pond A2 · SPF Golda + Rui carp</span>
+          <span class="m"><span data-i="user"></span>Worker: Karim Uddin</span>
+          <span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span>
+        </div>
+      </div>
+      <div class="acts">
+        <button class="btn secondary"><span data-i="download"></span>Export CSV</button>
+        <button class="btn primary"><span data-i="syringe"></span>Record treatment</button>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <div class="fgroup"><span class="fglab">Pond / batch</span>
+        <button class="selctl"><span data-i="grid"></span>Pond A2<span data-i="chevron-down"></span></button>
+      </div>
+      <div class="fgroup"><span class="fglab">Cause</span>
+        <button class="selctl">All causes<span data-i="chevron-down"></span></button>
+      </div>
+      <div class="fspacer"></div>
+      <div class="fgroup"><span class="fglab">Window</span>
+        <div class="seg"><button>7d</button><button class="on">14d</button><button>30d</button></div>
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpirow">
+      <div class="kpi warnkpi">
+        <div class="top"><span class="lab">Mortality this week</span><span class="ico" data-i="fish-off"></span></div>
+        <div class="val">34 <span class="u">fish</span></div>
+        <div class="foot"><span class="delta upbad"><span class="cx">▲</span>19 vs last week (15)</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Cumulative mortality</span><span class="ico" data-i="percent"></span></div>
+        <div class="val">8.0<span class="u">%</span></div>
+        <div class="foot"><span class="subnote"><span class="deriv">3,360</span> of <span class="deriv">42,000</span> stocked</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Active treatments</span><span class="ico" data-i="syringe"></span></div>
+        <div class="val">1</div>
+        <div class="foot"><span class="subnote">Oxytetracycline · Pond A2 · in withdrawal</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Survival estimate</span><span class="ico" data-i="heart-pulse"></span></div>
+        <div class="val">92<span class="u">%</span></div>
+        <div class="foot"><span class="subnote"><span class="deriv">38,640</span> alive · 100% − 8.0%</span></div>
+      </div>
+    </div>
+
+    <!-- MORTALITY SPIKE ADVISORY -->
+    <div class="advisory">
+      <span class="ai" data-i="fish-off"></span>
+      <div class="aw">
+        <div class="ate">
+          <span class="att">Mortality spike detected — Pond A2</span>
+          <span class="distinct"><span data-i="activity"></span>Anomaly · not a fixed threshold</span>
+        </div>
+        <div class="abd">Karim logged <b>12 dead fish</b> in Pond A2 this morning against a 3-day average of <b>3</b> — a 4× jump. The detector fires when a day’s count exceeds 3× the trailing 3-day average (minimum 5 fish), so it catches a sudden rise before it becomes a cumulative-rate problem.</div>
+        <div class="trendnums">
+          <span class="tn">3<span class="u">Sat</span></span><span class="tsep">→</span>
+          <span class="tn">2<span class="u">Sun</span></span><span class="tsep">→</span>
+          <span class="tn">4<span class="u">Mon</span></span><span class="tsep">→</span>
+          <span class="tn crit">12<span class="u">today</span></span>
+        </div>
+        <a class="xlink"><span data-i="droplet"></span>Likely cause: Pond A2 dissolved oxygen crashed to 2.1 mg/L this morning — the system linked these two signals for you.</a>
+        <div class="aacts">
+          <button class="abtn primary"><span data-i="trending-up"></span>View water trend</button>
+          <button class="abtn ghost"><span data-i="syringe"></span>Record a treatment</button>
+          <button class="abtn ghost"><span data-i="bell-ring"></span>Notify worker</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MORTALITY CHART -->
+    <div class="panel">
+      <div class="ph"><span data-i="bar-chart"></span>Daily mortality<span class="cnt">14-day · fish/day per pond</span></div>
+      <div class="legend">
+        <span class="lg"><span class="swatch" style="background:#DC2626;height:10px;width:10px;border-radius:2px"></span>Pond A2</span>
+        <span class="lg"><span class="swatch" style="background:#94A3B8"></span>Pond J1</span>
+        <span class="lg"><span class="swatch" style="background:#CBD5E1"></span>Pond B3 · C1</span>
+        <span class="lg"><span class="dotm" style="background:#DC2626"></span>Spike day</span>
+      </div>
+      <div class="chart-wrap">
+        <svg viewBox="0 0 680 240" role="img" aria-label="Daily mortality 14-day chart, Pond A2 spike marked">
+          <g stroke="#E2E8F0" stroke-width="1">
+            <line x1="34" y1="20" x2="668" y2="20"/><line x1="34" y1="64" x2="668" y2="64"/><line x1="34" y1="108" x2="668" y2="108"/><line x1="34" y1="152" x2="668" y2="152"/><line x1="34" y1="196" x2="668" y2="196"/>
+          </g>
+          <g font-family="Inter" font-size="10" fill="#94A3B8" text-anchor="end">
+            <text x="28" y="24">12</text><text x="28" y="68">9</text><text x="28" y="112">6</text><text x="28" y="156">3</text><text x="28" y="200">0</text>
+          </g>
+          <!-- A2 bars (spike at end). scale 12=176px from y196 -->
+          <g fill="#DC2626" opacity="0.88">
+            <rect x="52" y="167" width="14" height="29"/><rect x="96" y="181" width="14" height="15"/><rect x="140" y="167" width="14" height="29"/>
+            <rect x="184" y="152" width="14" height="44"/><rect x="228" y="167" width="14" height="29"/><rect x="272" y="167" width="14" height="29"/>
+            <rect x="316" y="152" width="14" height="44"/><rect x="360" y="167" width="14" height="29"/><rect x="404" y="181" width="14" height="15"/>
+            <rect x="448" y="167" width="14" height="29"/><rect x="492" y="152" width="14" height="44"/><rect x="536" y="167" width="14" height="29"/>
+            <rect x="580" y="152" width="14" height="44"/>
+          </g>
+          <!-- spike today -->
+          <rect x="624" y="20" width="14" height="176" fill="#DC2626"/>
+          <circle cx="631" cy="14" r="5" fill="#DC2626" stroke="#fff" stroke-width="2"/>
+          <text x="631" y="-2" font-family="Inter" font-size="10" font-weight="700" fill="#DC2626" text-anchor="middle" dy="6">12</text>
+          <!-- other ponds muted line -->
+          <polyline points="59,189 103,189 147,196 191,189 235,196 279,189 323,196 367,189 411,196 455,189 499,196 543,189 587,196 631,189" fill="none" stroke="#94A3B8" stroke-width="1.5"/>
+          <g font-family="Inter" font-size="9" fill="#94A3B8" text-anchor="middle">
+            <text x="59" y="212">07-08</text><text x="235" y="212">07-12</text><text x="411" y="212">07-16</text><text x="631" y="212" font-weight="700" fill="#DC2626">07-21</text>
+          </g>
+          <g font-family="Noto Sans Bengali" font-size="9" fill="#CBD5E1" text-anchor="middle">
+            <text x="59" y="226">২২ আষাঢ়</text><text x="631" y="226" fill="#DC2626">৫ শ্রাবণ</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- MORTALITY LOG -->
+    <div class="panel">
+      <div class="ph"><span data-i="list"></span>Mortality log<span class="cnt">Latest first · this week</span></div>
+      <table class="dtable">
+        <thead><tr>
+          <th><span class="sortable">Timestamp <span data-i="chevron-down"></span></span></th>
+          <th>Pond</th><th class="num">Count</th><th>Cause</th><th>Photo</th><th>Logged by</th>
+        </tr></thead>
+        <tbody>
+          <tr class="spikerow">
+            <td><div class="ts">2026-07-21 06:40</div><div class="tsb">৫ শ্রাবণ ১৪৩৩</div></td>
+            <td class="strong">A2</td>
+            <td class="num">12</td>
+            <td><span class="tbadge cause-oxygen"><span data-i="droplet"></span>OXYGEN</span></td>
+            <td><span class="photo-ind"><span data-i="image"></span>3 photos</span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-20 07:10</div><div class="tsb">৪ শ্রাবণ ১৪৩৩</div></td>
+            <td class="strong">A2</td>
+            <td class="num">4</td>
+            <td><span class="tbadge cause-unknown">UNKNOWN</span></td>
+            <td><span class="photo-ind"><span data-i="image"></span>1 photo</span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin <span class="offbadge">synced offline</span></span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-19 06:55</div><div class="tsb">৩ শ্রাবণ ১৪৩৩</div></td>
+            <td class="strong">A2</td>
+            <td class="num">3</td>
+            <td><span class="tbadge cause-disease"><span data-i="activity"></span>DISEASE</span></td>
+            <td><span class="photo-ind"><span data-i="image"></span>2 photos</span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-18 17:30</div><div class="tsb">২ শ্রাবণ ১৪৩৩</div></td>
+            <td class="strong">J1</td>
+            <td class="num">2</td>
+            <td><span class="tbadge cause-predation"><span data-i="bird"></span>PREDATION</span></td>
+            <td><span class="photo-none">—</span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-17 08:05</div><div class="tsb">১ শ্রাবণ ১৪৩৩</div></td>
+            <td class="strong">B3</td>
+            <td class="num">1</td>
+            <td><span class="tbadge cause-handling"><span data-i="hand"></span>HANDLING</span></td>
+            <td><span class="photo-none">—</span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pager">
+        <span>Showing 5 of 12 entries · <b style="color:var(--text)">34 fish</b> this week across all ponds</span>
+        <div class="pgset">
+          <button class="pgbtn" aria-label="Previous"><span data-i="chevron-left"></span></button>
+          <button class="pgbtn on">1</button><button class="pgbtn">2</button><button class="pgbtn">3</button>
+          <button class="pgbtn" aria-label="Next"><span data-i="chevron-right"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TREATMENTS -->
+    <div class="panel">
+      <div class="ph"><span data-i="syringe"></span>Treatments<button class="editbtn phact"><span data-i="plus"></span>Record treatment</button></div>
+      <div class="treatlist">
+        <!-- ACTIVE -->
+        <div class="treat active">
+          <div class="treat-top">
+            <span class="tico" data-i="syringe"></span>
+            <div><div class="tname">Oxytetracycline (OTC)</div><div class="tsub">Pond A2 · SPF Golda + Rui carp · antibiotic for bacterial infection</div></div>
+            <div class="tspacer"></div>
+            <span class="badge b-crit"><span class="dot"></span>ACTIVE · IN WITHDRAWAL</span>
+          </div>
+          <div class="treat-facts">
+            <div class="tf"><div class="fl">Dose</div><div class="fv">75 mg/kg · 5 days</div></div>
+            <div class="tf"><div class="fl">Applied</div><div class="fv">2026-07-19 <span class="bn">(৩ শ্রাবণ)</span></div></div>
+            <div class="tf"><div class="fl">Withdrawal period</div><div class="fv">21 days</div></div>
+            <div class="tf"><div class="fl">Export-safe date</div><div class="fv">2026-08-09 <span class="bn">(২৪ শ্রাবণ)</span></div></div>
+          </div>
+          <div class="withdraw">
+            <span data-i="alert-triangle"></span>
+            <div><div class="wt">EXPORT-grade harvest not permitted until 2026-08-09 (২৪ শ্রাবণ ১৪৩৩)</div><div class="wd">Fish from Pond A2 must not enter the export chain during the withdrawal window. Local-market harvest rules may differ — check before selling.</div></div>
+            <div class="wdays"><div class="n">19</div><div class="l">days left</div></div>
+          </div>
+        </div>
+        <!-- CLEARED -->
+        <div class="treat cleared">
+          <div class="treat-top">
+            <span class="tico" data-i="check-circle"></span>
+            <div><div class="tname">Povidone-iodine dip</div><div class="tsub">Pond B3 · SPF Golda prawn · external parasite prophylaxis</div></div>
+            <div class="tspacer"></div>
+            <span class="badge b-ok"><span class="dot"></span>CLEARED</span>
+          </div>
+          <div class="treat-facts">
+            <div class="tf"><div class="fl">Dose</div><div class="fv">10 ppm · single dip</div></div>
+            <div class="tf"><div class="fl">Applied</div><div class="fv">2026-06-25 <span class="bn">(১১ আষাঢ়)</span></div></div>
+            <div class="tf"><div class="fl">Withdrawal period</div><div class="fv">15 days</div></div>
+            <div class="tf"><div class="fl">Export-safe date</div><div class="fv">2026-07-10 <span class="bn">(২৬ আষাঢ়)</span></div></div>
+          </div>
+          <div class="cleared-note"><span data-i="check-circle"></span>Withdrawal complete since 2026-07-10 (২৬ আষাঢ় ১৪৩৩) — Pond B3 is export-eligible on health grounds.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HEALTH VARIANTS -->
+    <div class="divider"></div>
+    <p class="slab">Health · documented variants</p>
+
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Empty</span><h3>No mortalities — good news</h3></div>
+      <p class="vsub">A pond with zero recorded deaths this window. Framed as a reassuring, healthy state — not a sad empty box — the same philosophy as W-07’s “no pattern detected”.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="list"></span>Mortality log<span class="cnt">Pond C1 · 14 days</span></div>
+          <div class="empty good">
+            <span class="ei" data-i="heart-pulse"></span>
+            <div class="et">No mortalities in Pond C1</div>
+            <div class="ed">No dead fish have been recorded here in the last 14 days. Cumulative mortality for this batch is 1.2% — well within a healthy range.</div>
+            <span class="goodpill"><span data-i="shield-check"></span>Batch healthy · monitor active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Degraded</span><h3>Health service down</h3></div>
+      <p class="vsub">The health-analytics service is unreachable; the mortality chart falls back to the degraded widget while the log and treatments (regulatory data) still render.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="bar-chart"></span>Daily mortality<span class="cnt">Pond A2</span></div>
+          <div class="degraded"><span class="di" data-i="alert-triangle"></span><div><div class="dt">Mortality chart is temporarily unavailable.</div><div class="dd">The rest of this page is unaffected — the mortality log and treatment withdrawal dates below are live. Withdrawal dates are always shown, even when analytics are down.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Loading</span><h3>Skeleton state</h3></div>
+      <p class="vsub">Shimmer skeletons for KPI row and log.</p>
+      <div class="vbox">
+        <div class="kpirow" style="margin-bottom:20px">
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:55%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:55%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:55%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:55%;margin-top:auto"></div><div class="sk" style="height:16px;width:70%"></div></div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="sk-row"><div style="flex:1"><div class="sk" style="height:13px;width:30%;margin-bottom:7px"></div><div class="sk" style="height:11px;width:20%"></div></div><div class="sk" style="width:80px;height:24px;border-radius:99px"></div></div>
+          <div class="sk-row"><div style="flex:1"><div class="sk" style="height:13px;width:28%;margin-bottom:7px"></div><div class="sk" style="height:11px;width:18%"></div></div><div class="sk" style="width:80px;height:24px;border-radius:99px"></div></div>
+          <div class="sk-row"><div style="flex:1"><div class="sk" style="height:13px;width:32%;margin-bottom:7px"></div><div class="sk" style="height:11px;width:22%"></div></div><div class="sk" style="width:80px;height:24px;border-radius:99px"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Partner</span><h3>Read-only partner</h3></div>
+      <p class="vsub">A partner sees everything — mortality, causes, and crucially the treatments with their withdrawal periods and export-safe dates (they need this to plan buying) — but there is no “Record treatment” affordance anywhere.</p>
+      <div class="vbox">
+        <div class="phead" style="margin-bottom:18px;padding-bottom:16px">
+          <div><h1 style="font-size:20px">Health <span class="badge b-warn"><span class="dot"></span>MORTALITY SPIKE · A2</span></h1>
+            <div class="meta"><span class="m"><span data-i="grid"></span>Pond A2</span><span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span></div></div>
+          <span class="ro-ind"><span data-i="eye"></span>Read-only view</span>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="syringe"></span>Treatments<span class="cnt">Managed by owner</span></div>
+          <div class="treatlist">
+            <div class="treat active">
+              <div class="treat-top">
+                <span class="tico" data-i="syringe"></span>
+                <div><div class="tname">Oxytetracycline (OTC)</div><div class="tsub">Pond A2 · antibiotic</div></div>
+                <div class="tspacer"></div>
+                <span class="badge b-crit"><span class="dot"></span>ACTIVE · IN WITHDRAWAL</span>
+              </div>
+              <div class="treat-facts">
+                <div class="tf"><div class="fl">Applied</div><div class="fv">2026-07-19 <span class="bn">(৩ শ্রাবণ)</span></div></div>
+                <div class="tf"><div class="fl">Withdrawal</div><div class="fv">21 days</div></div>
+                <div class="tf"><div class="fl">Export-safe date</div><div class="fv">2026-08-09 <span class="bn">(২৪ শ্রাবণ)</span></div></div>
+              </div>
+              <div class="withdraw">
+                <span data-i="alert-triangle"></span>
+                <div><div class="wt">EXPORT-grade harvest not permitted until 2026-08-09 (২৪ শ্রাবণ ১৪৩৩)</div><div class="wd">Withdrawal window active on Pond A2.</div></div>
+                <div class="wdays"><div class="n">19</div><div class="l">days left</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="cleared-note" style="background:var(--surface-muted);color:var(--text-2)"><span data-i="lock"></span>Treatments are recorded by the project owner. Partner accounts can view them and their withdrawal dates but cannot record new ones.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SCREEN 2 · GROWTH ═══════════════ -->
+    <div class="bigsep"></div>
+    <div id="growth" class="maintag" style="margin-top:40px"><span data-i="trending-up"></span>W-11 · /projects/meghna-gher/growth · Owner</div>
+    <div class="screenband">
+      <span class="sn">Screen 2</span>
+      <div><h2>Growth</h2><p>Are the fish growing well, and how efficiently is feed converting? Every metric here drives a money decision — so derivations are shown openly and metrics that can’t yet be computed say so honestly.</p></div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="phead">
+      <div>
+        <h1>Growth</h1>
+        <div class="meta">
+          <span class="m"><span data-i="grid"></span>Pond A2 · Rui carp batch</span>
+          <span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span>
+        </div>
+      </div>
+      <div class="acts">
+        <button class="btn secondary"><span data-i="download"></span>Export CSV</button>
+        <button class="btn primary"><span data-i="flask"></span>Record sampling</button>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <div class="fgroup"><span class="fglab">Pond / batch</span>
+        <button class="selctl"><span data-i="grid"></span>Pond A2 · Rui carp<span data-i="chevron-down"></span></button>
+      </div>
+      <div class="fspacer"></div>
+      <div class="fgroup"><span class="fglab">Window</span>
+        <div class="seg"><button>30d</button><button class="on">Cycle</button></div>
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpirow">
+      <div class="kpi">
+        <div class="top"><span class="lab">Latest avg weight</span><span class="ico" data-i="scale"></span></div>
+        <div class="val">28.4 <span class="u">g</span></div>
+        <div class="foot"><span class="delta up"><span class="cx">▲</span>4.2 g vs last sampling</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">ADG · avg daily gain</span><span class="ico" data-i="trending-up"></span></div>
+        <div class="val">0.42 <span class="u">g/day</span></div>
+        <div class="foot"><span class="subnote"><span class="deriv">(28.4 − 24.2)</span> ÷ 10 days</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">SGR · specific growth</span><span class="ico" data-i="activity"></span></div>
+        <div class="val">1.6 <span class="u">%/day</span></div>
+        <div class="foot"><span class="subnote">(ln 28.4 − ln 24.2) ÷ 10 × 100</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Pond FCR</span><span class="ico" data-i="utensils"></span></div>
+        <div class="val">1.62 <span class="goodhint">▼ lower is better</span></div>
+        <div class="foot"><span class="subnote"><span class="deriv">405 kg</span> feed ÷ <span class="deriv">250 kg</span> gain</span></div>
+      </div>
+    </div>
+
+    <!-- GROWTH CHART -->
+    <div class="panel">
+      <div class="ph"><span data-i="trending-up"></span>Average weight by species<span class="cnt">Cycle to date · each point a sampling</span></div>
+      <div class="legend">
+        <span class="lg"><span class="swatch" style="background:#0284C7"></span>SPF Golda prawn</span>
+        <span class="lg"><span class="swatch" style="background:#0E7490"></span>Rui carp</span>
+        <span class="lg"><span class="swatch" style="background:#6366F1"></span>Parse mullet</span>
+        <span class="lg"><span class="swatch" style="background:#CBD5E1;border-top:2px dashed #94A3B8;height:0"></span>Rui target</span>
+      </div>
+      <div class="chart-wrap">
+        <svg viewBox="0 0 680 260" role="img" aria-label="Average weight by species over the cycle">
+          <g stroke="#E2E8F0" stroke-width="1">
+            <line x1="40" y1="24" x2="668" y2="24"/><line x1="40" y1="70" x2="668" y2="70"/><line x1="40" y1="116" x2="668" y2="116"/><line x1="40" y1="162" x2="668" y2="162"/><line x1="40" y1="208" x2="668" y2="208"/>
+          </g>
+          <g font-family="Inter" font-size="10" fill="#94A3B8" text-anchor="end">
+            <text x="34" y="28">40</text><text x="34" y="74">30</text><text x="34" y="120">20</text><text x="34" y="166">10</text><text x="34" y="212">0</text>
+          </g>
+          <!-- x: 5 samplings across cycle. scale 40g=184px from y208 -->
+          <!-- Rui target dashed -->
+          <polyline points="70,180 210,150 350,120 490,92 630,64" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <!-- Rui carp (teal): 6.5,12.0,18.5,24.2,28.4 -->
+          <polyline points="70,178 210,153 350,123 490,97 630,77" fill="none" stroke="#0E7490" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <g fill="#0E7490" stroke="#fff" stroke-width="2"><circle cx="70" cy="178" r="4.5"/><circle cx="210" cy="153" r="4.5"/><circle cx="350" cy="123" r="4.5"/><circle cx="490" cy="97" r="4.5"/><circle cx="630" cy="77" r="5.5"/></g>
+          <!-- SPF Golda (blue): 4.0,9.0,15.0,20.5,25.6 -->
+          <polyline points="70,190 210,166 350,139 490,114 630,90" fill="none" stroke="#0284C7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <g fill="#0284C7" stroke="#fff" stroke-width="2"><circle cx="70" cy="190" r="4.5"/><circle cx="210" cy="166" r="4.5"/><circle cx="350" cy="139" r="4.5"/><circle cx="490" cy="114" r="4.5"/><circle cx="630" cy="90" r="4.5"/></g>
+          <!-- Parse mullet (indigo): 5.0,10.5,16.0,21.0,26.0 -->
+          <polyline points="70,185 210,160 350,134 490,111 630,88" fill="none" stroke="#6366F1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <g fill="#6366F1" stroke="#fff" stroke-width="2"><circle cx="70" cy="185" r="4.5"/><circle cx="210" cy="160" r="4.5"/><circle cx="350" cy="134" r="4.5"/><circle cx="490" cy="111" r="4.5"/><circle cx="630" cy="88" r="4.5"/></g>
+          <g font-family="Inter" font-size="10" fill="#94A3B8" text-anchor="middle">
+            <text x="70" y="226">06-01</text><text x="210" y="226">06-21</text><text x="350" y="226">07-01</text><text x="490" y="226">07-11</text><text x="630" y="226" font-weight="700" fill="#0E7490">07-21</text>
+          </g>
+          <g font-family="Noto Sans Bengali" font-size="9" fill="#CBD5E1" text-anchor="middle">
+            <text x="70" y="240">১৮ জ্যৈষ্ঠ</text><text x="350" y="240">১৭ আষাঢ়</text><text x="630" y="240" fill="#0E7490">৫ শ্রাবণ</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- SAMPLING LOG -->
+    <div class="panel">
+      <div class="ph"><span data-i="flask"></span>Sampling log<span class="cnt">Pond A2 · latest first</span></div>
+      <table class="dtable">
+        <thead><tr>
+          <th><span class="sortable">Timestamp <span data-i="chevron-down"></span></span></th>
+          <th>Pond</th><th>Species</th><th class="num">Sample size</th><th class="num">Avg weight</th><th>Sampled by</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="ts">2026-07-21 10:20</div><div class="tsb">৫ শ্রাবণ ১৪৩৩</div></td>
+            <td class="strong">A2</td><td><span class="tbadge sp-rui">Rui carp</span></td>
+            <td class="num">30</td><td class="num">28.4 g</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-11 10:05</div><div class="tsb">২৭ আষাঢ় ১৪৩৩</div></td>
+            <td class="strong">A2</td><td><span class="tbadge sp-rui">Rui carp</span></td>
+            <td class="num">30</td><td class="num">24.2 g</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-21 10:40</div><div class="tsb">৫ শ্রাবণ ১৪৩৩</div></td>
+            <td class="strong">A2</td><td><span class="tbadge sp-golda">SPF Golda</span></td>
+            <td class="num">25</td><td class="num">25.6 g</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-01 09:50</div><div class="tsb">১৭ আষাঢ় ১৪৩৩</div></td>
+            <td class="strong">A2</td><td><span class="tbadge sp-rui">Rui carp</span></td>
+            <td class="num">28</td><td class="num">18.5 g</td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pager">
+        <span>Showing 4 of 14 samplings</span>
+        <div class="pgset">
+          <button class="pgbtn" aria-label="Previous"><span data-i="chevron-left"></span></button>
+          <button class="pgbtn on">1</button><button class="pgbtn">2</button>
+          <button class="pgbtn" aria-label="Next"><span data-i="chevron-right"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FCR & SURVIVAL DERIVATION -->
+    <div class="panel">
+      <div class="ph"><span data-i="calculator"></span>FCR &amp; survival — how these are computed<span class="cnt">Pond A2 · cycle to date</span></div>
+      <div class="derivgrid">
+        <div class="derivcard">
+          <div class="dh"><span data-i="utensils"></span>Feed conversion ratio<span class="db">1.62</span></div>
+          <div class="calc">
+            <div class="calcrow"><span class="cl">Total feed consumed (cycle)</span><span class="cv">405 kg</span></div>
+            <div class="calcrow"><span class="cl">Biomass at last sampling</span><span class="cv">670 kg</span></div>
+            <div class="calcrow"><span class="cl">Biomass at stocking</span><span class="cv">420 kg</span></div>
+            <div class="calcrow"><span class="cl">Biomass gain</span><span class="cv">250 kg</span></div>
+            <div class="calcrow result"><span class="cl">FCR = feed ÷ gain = 405 ÷ 250</span><span class="cv">1.62</span></div>
+          </div>
+          <div class="calc-note"><span data-i="info"></span>Lower is better — 1.62 means 1.62 kg of feed produced 1 kg of fish. Requires a positive biomass gain to be meaningful.</div>
+        </div>
+        <div class="derivcard">
+          <div class="dh"><span data-i="heart-pulse"></span>Survival rate<span class="db">92<span class="u">%</span></span></div>
+          <div class="calc">
+            <div class="calcrow"><span class="cl">Stocked (cycle start)</span><span class="cv">42,000</span></div>
+            <div class="calcrow"><span class="cl">Cumulative mortality</span><span class="cv">− 3,360</span></div>
+            <div class="calcrow"><span class="cl">Estimated alive</span><span class="cv">38,640</span></div>
+            <div class="calcrow result"><span class="cl">Survival = 38,640 ÷ 42,000</span><span class="cv">92.0%</span></div>
+          </div>
+          <div class="calc-note"><span data-i="info"></span>Shared with the Health screen’s survival estimate — same inputs, one source of truth.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROWTH VARIANTS -->
+    <div class="divider"></div>
+    <p class="slab">Growth · documented variants</p>
+
+    <div class="variant">
+      <div class="vhead"><span class="vtag amber">Not computable</span><h3>Only one sampling — ADG / SGR / FCR withheld</h3></div>
+      <p class="vsub">The null-safety rule: ADG and SGR need at least two samplings; FCR needs a positive biomass gain. Rather than print 0, “—”, or a fake trend, each metric states the reason it can’t be computed and offers the action that unblocks it.</p>
+      <div class="vbox">
+        <div class="kpirow" style="margin-bottom:20px">
+          <div class="kpi">
+            <div class="top"><span class="lab">Latest avg weight</span><span class="ico" data-i="scale"></span></div>
+            <div class="val">6.5 <span class="u">g</span></div>
+            <div class="foot"><span class="subnote">First sampling · 2026-07-20 (৪ শ্রাবণ)</span></div>
+          </div>
+          <div class="kpi">
+            <div class="top"><span class="lab">ADG · avg daily gain</span><span class="ico" data-i="trending-up"></span></div>
+            <div class="val metric-na" style="font-size:19px;margin-top:auto">Not computable yet</div>
+            <div class="foot"><span class="subnote">Needs a second sampling</span></div>
+          </div>
+          <div class="kpi">
+            <div class="top"><span class="lab">SGR · specific growth</span><span class="ico" data-i="activity"></span></div>
+            <div class="val metric-na" style="font-size:19px;margin-top:auto">Not computable yet</div>
+            <div class="foot"><span class="subnote">Needs a second sampling</span></div>
+          </div>
+          <div class="kpi">
+            <div class="top"><span class="lab">Pond FCR</span><span class="ico" data-i="utensils"></span></div>
+            <div class="val metric-na" style="font-size:19px;margin-top:auto">Not computable yet</div>
+            <div class="foot"><span class="subnote">Needs measurable biomass gain</span></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="calculator"></span>Why these are withheld<span class="cnt">Pond C1 · Parse mullet · stocked 12 days ago</span></div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+            <div class="notcomp">
+              <span class="ni" data-i="trending-up"></span>
+              <div><div class="nt">ADG &amp; SGR need two samplings</div><div class="nd">This batch has been sampled once (6.5 g on 2026-07-20). A growth rate is the change between two points in time — with a single point there is no interval to measure, so showing “0” or a trend line would be fabricated.</div>
+                <button class="nbtn"><span data-i="check-square"></span>Create second sampling task</button></div>
+            </div>
+            <div class="notcomp">
+              <span class="ni" data-i="utensils"></span>
+              <div><div class="nt">FCR needs a positive biomass gain</div><div class="nd">Feed has been logged (38 kg) but there is no second biomass measurement yet, so gain is unknown. FCR = feed ÷ gain is left blank rather than dividing by an assumed number.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant">
+      <div class="vhead"><span class="vtag amber">Growth anomaly</span><h3>Average weight dropped — negative ADG</h3></div>
+      <p class="vsub">Shrinking fish is a real signal (stress, disease, sampling error, or a bad handling event), so a negative ADG is surfaced as an amber anomaly — not hidden and not shown as a cheerful ▲.</p>
+      <div class="vbox">
+        <div class="kpirow" style="margin-bottom:20px">
+          <div class="kpi warnkpi">
+            <div class="top"><span class="lab">Latest avg weight</span><span class="ico" data-i="scale"></span></div>
+            <div class="val">29.4 <span class="u">g</span></div>
+            <div class="foot"><span class="delta down"><span class="cx">▼</span>1.6 g vs last sampling</span></div>
+          </div>
+          <div class="kpi warnkpi">
+            <div class="top"><span class="lab">ADG · avg daily gain</span><span class="ico" data-i="trending-down"></span></div>
+            <div class="val">−0.16 <span class="u">g/day</span></div>
+            <div class="foot"><span class="subnote">(29.4 − 31.0) ÷ 10 days · negative</span></div>
+          </div>
+          <div class="kpi">
+            <div class="top"><span class="lab">SGR · specific growth</span><span class="ico" data-i="activity"></span></div>
+            <div class="val">−0.53 <span class="u">%/day</span></div>
+            <div class="foot"><span class="subnote">Below zero — batch lost weight</span></div>
+          </div>
+          <div class="kpi">
+            <div class="top"><span class="lab">Pond FCR</span><span class="ico" data-i="utensils"></span></div>
+            <div class="val metric-na" style="font-size:19px;margin-top:auto">Not computable</div>
+            <div class="foot"><span class="subnote">Biomass gain is negative</span></div>
+          </div>
+        </div>
+        <div class="advisory" style="margin-bottom:0">
+          <span class="ai" data-i="trending-down"></span>
+          <div class="aw">
+            <div class="ate"><span class="att">Average weight dropped — Pond B3, SPF Golda</span><span class="distinct"><span data-i="activity"></span>Anomaly · investigate</span></div>
+            <div class="abd">The latest sampling came in <b>lighter</b> than the previous one (31.0 g → 29.4 g over 10 days). Fish don’t normally shrink — likely causes are a stress event, disease, under-feeding, or a non-representative sample. FCR is withheld because biomass gain is negative.</div>
+            <div class="trendnums"><span class="tn">31.0<span class="u">g · 07-11</span></span><span class="tsep">→</span><span class="tn crit">29.4<span class="u">g · 07-21</span></span></div>
+            <div class="aacts">
+              <button class="abtn primary"><span data-i="flask"></span>Re-sample to confirm</button>
+              <button class="abtn ghost"><span data-i="heart-pulse"></span>Check health log</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Empty</span><h3>Never sampled</h3></div>
+      <p class="vsub">A freshly stocked batch with no samplings at all — no growth data can exist yet. The empty state explains the dependency and offers the first sampling.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="trending-up"></span>Average weight<span class="cnt">Pond C1 · Parse mullet</span></div>
+          <div class="empty">
+            <span class="ei" data-i="flask"></span>
+            <div class="et">No samplings yet</div>
+            <div class="ed">Pond C1 was stocked 3 days ago and hasn’t been sampled. Growth, ADG, SGR and FCR all begin once the first sampling is recorded — the second unlocks the rates.</div>
+            <div class="eacts"><button class="btn primary"><span data-i="check-square"></span>Create sampling task</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Degraded</span><h3>Growth service down</h3></div>
+      <p class="vsub">The growth-analytics service is unreachable; the chart falls back to the degraded widget while KPI shells and the sampling log hold.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="trending-up"></span>Average weight by species<span class="cnt">Pond A2</span></div>
+          <div class="degraded"><span class="di" data-i="alert-triangle"></span><div><div class="dt">Growth chart is temporarily unavailable.</div><div class="dd">The rest of this page is unaffected — the sampling log below is live. Recorded samplings are never lost.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Partner</span><h3>Read-only partner</h3></div>
+      <p class="vsub">Full growth data and the FCR/survival derivations are visible — a partner needs these to value the crop — but there is no “Record sampling” affordance.</p>
+      <div class="vbox">
+        <div class="phead" style="margin-bottom:18px;padding-bottom:16px">
+          <div><h1 style="font-size:20px">Growth</h1>
+            <div class="meta"><span class="m"><span data-i="grid"></span>Pond A2 · Rui carp</span><span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span></div></div>
+          <span class="ro-ind"><span data-i="eye"></span>Read-only view</span>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="calculator"></span>FCR &amp; survival<span class="cnt">Managed by owner · view only</span></div>
+          <div class="derivgrid">
+            <div class="derivcard">
+              <div class="dh"><span data-i="utensils"></span>Feed conversion ratio<span class="db">1.62</span></div>
+              <div class="calc">
+                <div class="calcrow"><span class="cl">Total feed consumed</span><span class="cv">405 kg</span></div>
+                <div class="calcrow"><span class="cl">Biomass gain</span><span class="cv">250 kg</span></div>
+                <div class="calcrow result"><span class="cl">FCR = 405 ÷ 250</span><span class="cv">1.62</span></div>
+              </div>
+            </div>
+            <div class="derivcard">
+              <div class="dh"><span data-i="heart-pulse"></span>Survival rate<span class="db">92<span class="u">%</span></span></div>
+              <div class="calc">
+                <div class="calcrow"><span class="cl">Stocked</span><span class="cv">42,000</span></div>
+                <div class="calcrow"><span class="cl">Mortality</span><span class="cv">− 3,360</span></div>
+                <div class="calcrow result"><span class="cl">Survival = 38,640 ÷ 42,000</span><span class="cv">92.0%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const ICONS={
+ "layers":"M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+ "chevron-down":"M6 9l6 6 6-6","chevron-left":"M15 18l-6-6 6-6","chevron-right":"M9 18l6-6-6-6",
+ "bell":"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",
+ "bell-ring":"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0M2 8c0-2.2.7-4.3 2-6M20 2c1.3 1.7 2 3.8 2 6",
+ "settings":"M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z",
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "layout":"M3 3h18v18H3zM3 9h18M9 21V9",
+ "grid":"M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "utensils":"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ "check-square":"M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11",
+ "package":"M16.5 9.4 7.5 4.21M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12",
+ "heart-pulse":"M20.42 4.58a5.4 5.4 0 0 0-7.65 0L12 5.36l-.77-.78a5.4 5.4 0 0 0-7.65 7.65l.78.78L12 21l7.64-7.99.78-.78a5.4 5.4 0 0 0 0-7.65zM3.5 12h4l1.5-3 3 6 1.5-3h4",
+ "trending-up":"M22 7l-8.5 8.5-5-5L2 17M16 7h6v6",
+ "trending-down":"M22 17l-8.5-8.5-5 5L2 7M16 17h6v-6",
+ "scale":"M12 3v18M7 21h10M6.5 7 3 14a3.5 3.5 0 0 0 7 0L6.5 7zM17.5 7 14 14a3.5 3.5 0 0 0 7 0l-3.5-7zM3 7h18",
+ "wallet":"M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4z",
+ "file-text":"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8",
+ "camera":"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "cloud":"M17.5 19a4.5 4.5 0 1 0 0-9h-1.26A8 8 0 1 0 4 15.25",
+ "users":"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+ "user":"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "activity":"M22 12h-4l-3 9L9 3l-3 9H2",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "cpu":"M4 4h16v16H4zM9 9h6v6H9zM9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "check":"M20 6 9 17l-5-5",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "x":"M18 6 6 18M6 6l12 12",
+ "fish-off":"M3 12c2.5-4.5 9.5-4.5 12 0-2.5 4.5-9.5 4.5-12 0zM15 12l5-3.2v6.4L15 12M6.6 10.4h.01M3 3l18 18",
+ "syringe":"M18 2l4 4M17 7l3-3M9 11l6 6M6 20l-2 2M3 21l3-3M15 5l4 4L9 19l-4 1 1-4z",
+ "percent":"M19 5 5 19M6.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM17.5 20a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
+ "image":"M3 3h18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM21 15l-5-5L5 21",
+ "bird":"M16 7h.01M3 20c0-3 3-8 9-8s9 5 9 8M14 12l-3.5 8M10 8c0-2 2-4 5-4s4 3 4 3l2 1-3 1M9 8H4",
+ "hand":"M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15",
+ "flask":"M9 3h6M10 3v5.5L5 17a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 17l-5-8.5V3M7.5 14h9",
+ "calculator":"M4 2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM8 6h8v4H8zM8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01",
+ "bar-chart":"M12 20V10M18 20V4M6 20v-4",
+ "list":"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
+ "download":"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
+ "plus":"M12 5v14M5 12h14",
+ "edit-3":"M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z",
+ "sliders":"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
+ "shield-check":"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4",
+ "eye":"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "lock":"M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4",
+ "info":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

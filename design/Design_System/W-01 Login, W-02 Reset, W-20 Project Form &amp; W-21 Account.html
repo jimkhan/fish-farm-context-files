@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · Auth, Project Form &amp; Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;--tint-muted:#F1F5F9;
+  --focus:#0891B2;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --font:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input{font-family:inherit}
+.bn{font-family:var(--bn)}
+a{color:var(--brand);text-decoration:none}a:hover{color:var(--brand-dark)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:var(--r-sm)}
+
+/* doc wrapper for the spec sheet */
+.doc{max-width:1060px;margin:0 auto;padding:30px 28px 90px}
+
+/* app bar (screens 3-4) */
+.appbar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);height:60px;display:flex;align-items:center;gap:16px;padding:0 18px;margin-bottom:20px;box-shadow:var(--sh-card)}
+.mark{display:flex;align-items:center;gap:9px}
+.mark .logo{width:30px;height:30px;border-radius:8px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.5px}
+.switcher{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text)}
+.switcher svg{width:16px;height:16px;color:var(--text-2)}
+.abspacer{flex:1}
+.iconbtn{position:relative;width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+.iconbtn:hover{background:var(--surface-muted);color:var(--text)}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn .cnt{position:absolute;top:4px;right:4px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--critical);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.userchip{display:flex;align-items:center;gap:10px;padding:4px 10px 4px 4px;border-radius:var(--r-pill);border:1px solid var(--border)}
+.userchip.on{border-color:var(--brand);background:var(--tint-brand)}
+.userchip .av{width:32px;height:32px;border-radius:50%;background:var(--brand-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.userchip .un{font-size:13px;font-weight:600;line-height:1.2}
+.userchip .ur{font-size:11px;color:var(--text-2)}
+
+/* headings */
+.phead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.phead h1{font-size:26px;font-weight:700;letter-spacing:-.5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.phead .meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--text-2)}
+.phead .meta .m{display:flex;align-items:center;gap:6px}
+.phead .meta .m svg{width:15px;height:15px;color:var(--muted)}
+.phead .acts{display:flex;gap:10px;align-items:center}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:1px solid transparent}
+.btn svg{width:18px;height:18px}
+.btn.block{width:100%}
+.btn.primary{background:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--brand);border-color:var(--border-strong)}.btn.secondary:hover{background:var(--surface-muted)}
+.btn.ghost{background:transparent;color:var(--text-2);border-color:var(--border-strong)}.btn.ghost:hover{background:var(--surface-muted)}
+.btn.danger{background:var(--surface);color:var(--critical);border-color:#FCA5A5}.btn.danger:hover{background:var(--tint-critical)}
+.btn.sm{height:38px;padding:0 14px;font-size:13px}
+.btn.disabled{opacity:.5;pointer-events:none}
+.btn .spin{width:17px;height:17px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:12px;font-weight:600;white-space:nowrap}
+.badge svg{width:13px;height:13px}
+.dot{width:7px;height:7px;border-radius:50%}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-muted{background:var(--surface-muted);color:var(--text-2)}.b-muted .dot{background:var(--muted)}
+.b-crit{background:var(--tint-critical);color:#991B1B}.b-crit .dot{background:var(--critical)}
+.b-info{background:var(--tint-info);color:#075985}.b-info .dot{background:var(--info)}
+.b-warn{background:var(--tint-warning);color:#92400E}.b-warn .dot{background:var(--warning)}
+.rolechip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-sm);font-size:11px;font-weight:700;letter-spacing:.03em}
+.rolechip svg{width:13px;height:13px}
+.r-owner{background:var(--tint-brand);color:var(--brand-dark);border:1px solid #A5DCE4}
+.r-worker{background:var(--tint-warning);color:#92400E;border:1px solid #FCD8A0}
+.r-partner{background:var(--surface-muted);color:var(--text-2);border:1px solid var(--border-strong)}
+
+/* ═══ AUTH (public) ═══ */
+.stage{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:44px 24px;display:flex;justify-content:center;background-image:radial-gradient(circle at 1px 1px,#E2E8F0 1px,transparent 0);background-size:22px 22px}
+.authcard{width:100%;max-width:404px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-lift);padding:32px 30px}
+.brandrow{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;margin-bottom:26px}
+.brandrow .lg{width:56px;height:56px;border-radius:14px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;letter-spacing:.5px;box-shadow:0 6px 16px rgba(14,116,144,.28)}
+.brandrow .nm{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.brandrow .tl{font-size:13px;color:var(--text-2);max-width:300px;line-height:1.5}
+.authtitle{font-size:18px;font-weight:700;margin-bottom:4px}
+.authsub{font-size:13px;color:var(--text-2);margin-bottom:20px;line-height:1.5}
+
+/* fields */
+.field{margin-bottom:16px}
+.field .fl{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:7px}
+.field .fl .req{color:var(--critical);font-weight:700}
+.field .fl a{font-size:12.5px;font-weight:600}
+.inp{display:flex;align-items:center;height:46px;border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface);padding:0 13px;gap:10px;transition:border-color .12s}
+.inp svg{width:17px;height:17px;color:var(--muted);flex-shrink:0}
+.inp input{border:none;outline:none;width:100%;height:100%;font-size:14.5px;color:var(--text);background:transparent}
+.inp input::placeholder{color:var(--muted)}
+.inp .val{font-size:14.5px;color:var(--text)}
+.inp .ph{font-size:14.5px;color:var(--muted)}
+.inp .reveal{margin-left:auto;color:var(--text-2);flex-shrink:0}
+.inp .reveal svg{width:17px;height:17px}
+.inp.focused{border-color:var(--focus);box-shadow:0 0 0 3px rgba(8,145,178,.18)}
+.inp.filled{border-color:var(--border-strong)}
+.inp.valid{border-color:#86EFAC}
+.inp.error{border-color:var(--critical);background:#FFFCFC}
+.inp.error svg{color:var(--critical)}
+.inp.locked{background:var(--surface-muted);border-style:dashed;color:var(--text-2)}
+.help{font-size:12px;color:var(--text-2);margin-top:7px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.help svg{width:13px;height:13px;color:var(--muted);flex-shrink:0;margin-top:2px}
+.errmsg{font-size:12.5px;color:#991B1B;font-weight:600;margin-top:7px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.errmsg svg{width:14px;height:14px;color:var(--critical);flex-shrink:0;margin-top:1px}
+.oktick{color:var(--ok);margin-left:auto}
+.oktick svg{width:16px;height:16px}
+
+/* alert banners */
+.alertbox{border-radius:var(--r-md);padding:12px 14px;display:flex;gap:11px;margin-bottom:20px;align-items:flex-start}
+.alertbox svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.alertbox .at{font-size:13px;font-weight:700}
+.alertbox .ad{font-size:12.5px;margin-top:3px;line-height:1.5}
+.ab-crit{background:var(--tint-critical);border:1px solid #FCA5A5}.ab-crit svg{color:var(--critical)}.ab-crit .at{color:#991B1B}.ab-crit .ad{color:#7f1d1d}
+.ab-warn{background:var(--tint-warning);border:1px solid #FCD8A0}.ab-warn svg{color:var(--warning)}.ab-warn .at{color:#92400E}.ab-warn .ad{color:#7c3a09}
+.ab-info{background:var(--tint-info);border:1px solid #A5CCE8}.ab-info svg{color:var(--info)}.ab-info .at{color:#075985}.ab-info .ad{color:#0c5a6b}
+
+.authfoot{font-size:12.5px;color:var(--text-2);text-align:center;margin-top:20px;padding-top:18px;border-top:1px solid var(--border);line-height:1.55}
+.authfoot svg{width:14px;height:14px;color:var(--muted);display:inline-block;vertical-align:-2px;margin-right:4px}
+.backlink{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;margin-top:18px}
+.backlink svg{width:15px;height:15px}
+
+/* success check */
+.bigcheck{width:64px;height:64px;border-radius:var(--r-pill);background:var(--tint-ok);color:var(--ok);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.bigcheck svg{width:34px;height:34px}
+.bigmail{background:var(--tint-info);color:var(--info)}
+.bigwarn{background:var(--tint-warning);color:var(--warning)}
+.centertext{text-align:center}
+.centertext .ct{font-size:18px;font-weight:700;margin-bottom:6px}
+.centertext .cd{font-size:13px;color:var(--text-2);line-height:1.55;max-width:320px;margin:0 auto}
+
+/* password requirements */
+.pwreq{background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;margin-bottom:16px}
+.pwreq .pt{font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px}
+.pwreq ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.pwreq li{font-size:12.5px;color:var(--text-2);display:flex;align-items:center;gap:8px}
+.pwreq li svg{width:14px;height:14px;flex-shrink:0}
+.pwreq li.met{color:#166534}.pwreq li.met svg{color:var(--ok)}
+.pwreq li.unmet svg{color:var(--muted)}
+
+/* ═══ PROJECT FORM (screen 3) ═══ */
+.formcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden;margin-bottom:20px}
+.fsec{padding:20px 22px;border-bottom:1px solid var(--border)}
+.fsec:last-child{border-bottom:none}
+.fsec-h{display:flex;align-items:center;gap:11px;margin-bottom:4px}
+.fsec-h .fi{width:34px;height:34px;border-radius:var(--r-md);background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fsec-h .fi svg{width:18px;height:18px}
+.fsec-h .ft{font-size:15px;font-weight:700}
+.fsec-h .step{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-left:auto}
+.fsec-d{font-size:12.5px;color:var(--text-2);margin:0 0 16px 45px;line-height:1.5;max-width:640px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fgrid .span2{grid-column:1 / -1}
+@media(max-width:720px){.fgrid{grid-template-columns:1fr}}
+.seg{display:inline-flex;background:var(--surface-muted);border-radius:var(--r-md);padding:3px}
+.seg button{height:38px;padding:0 16px;border-radius:7px;font-size:13px;font-weight:600;color:var(--text-2)}
+.seg button.on{background:var(--surface);color:var(--brand-dark);box-shadow:var(--sh-card)}
+.unitsuffix{font-size:12px;color:var(--text-2);white-space:nowrap}
+.fixedchip{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 14px;border:1px dashed var(--border-strong);border-radius:var(--r-md);background:var(--surface-muted);font-size:14px;font-weight:600;color:var(--text-2)}
+.fixedchip svg{width:16px;height:16px;color:var(--muted)}
+.fixedchip .lockmini{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+.fixedchip .lockmini svg{width:12px;height:12px}
+.atomnote{display:flex;gap:11px;padding:14px 16px;background:var(--tint-brand);border:1px solid #A5DCE4;border-radius:var(--r-md);margin-bottom:16px}
+.atomnote svg{width:18px;height:18px;color:var(--brand);flex-shrink:0;margin-top:1px}
+.atomnote .an{font-size:13px;color:var(--brand-dark);line-height:1.5}
+.atomnote b{font-weight:700}
+.formfoot{display:flex;align-items:center;gap:12px;padding:18px 22px;background:var(--surface-muted);border-top:1px solid var(--border)}
+.formfoot .ff-sp{flex:1}
+.errsummary{background:var(--tint-critical);border:1px solid #FCA5A5;border-radius:var(--r-md);padding:14px 16px;margin-bottom:16px}
+.errsummary .es-t{font-size:13px;font-weight:700;color:#991B1B;display:flex;align-items:center;gap:8px}
+.errsummary .es-t svg{width:16px;height:16px}
+.errsummary ul{list-style:none;margin-top:9px;display:flex;flex-direction:column;gap:5px}
+.errsummary li{font-size:12.5px;color:#7f1d1d;display:flex;align-items:center;gap:8px}
+.errsummary li svg{width:13px;height:13px;color:var(--critical);flex-shrink:0}
+.errsummary a{color:#991B1B;font-weight:700;text-decoration:underline}
+
+/* ═══ ACCOUNT (screen 4) ═══ */
+.acctcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden;margin-bottom:20px}
+.acct-head{display:flex;align-items:center;gap:16px;padding:22px}
+.acct-head .aav{width:60px;height:60px;border-radius:50%;background:var(--brand-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;flex-shrink:0}
+.acct-head .an{font-size:20px;font-weight:700}
+.acct-head .ae{font-size:13.5px;color:var(--text-2);margin-top:2px;display:flex;align-items:center;gap:7px}
+.acct-head .ae svg{width:14px;height:14px;color:var(--muted)}
+.acct-head .acr{font-size:12.5px;color:var(--text-2);margin-top:6px;display:flex;align-items:center;gap:7px}
+.acct-head .acr svg{width:14px;height:14px;color:var(--muted)}
+.acct-head .aact{margin-left:auto;display:flex;gap:10px}
+.ph{display:flex;align-items:center;gap:10px;padding:14px 18px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-size:14px;font-weight:700;background:var(--surface-muted)}
+.ph svg{width:17px;height:17px;color:var(--text-2)}
+.ph .cnt{margin-left:auto;font-size:12px;font-weight:600;color:var(--text-2)}
+.memrow{display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid var(--border)}
+.memrow:last-child{border-bottom:none}
+.memrow .mi{width:40px;height:40px;border-radius:var(--r-md);background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.memrow .mi svg{width:20px;height:20px}
+.memrow .mi.closed{background:var(--surface-muted);color:var(--muted)}
+.memrow .mn{font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:9px}
+.memrow .ml{font-size:12.5px;color:var(--text-2);margin-top:2px;display:flex;align-items:center;gap:6px}
+.memrow .ml svg{width:13px;height:13px;color:var(--muted)}
+.memrow .mr{margin-left:auto;display:flex;align-items:center;gap:10px}
+.rolenote{padding:13px 18px;background:var(--tint-info);border-top:1px solid var(--border);font-size:12.5px;color:#0c5a6b;display:flex;align-items:flex-start;gap:9px;line-height:1.5}
+.rolenote svg{width:15px;height:15px;color:var(--info);flex-shrink:0;margin-top:1px}
+.workernote{background:var(--tint-warning);color:#7c3a09}
+.workernote svg{color:var(--warning)}
+
+/* framing */
+.bigsep{height:2px;background:var(--border);margin:52px 0 0}
+.divider{height:1px;background:var(--border);margin:36px 0 0}
+.slab{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:26px 0 0}
+.maintag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--tint-brand);padding:5px 12px;border-radius:var(--r-pill);margin-bottom:16px}
+.screenband{background:var(--brand-dark);color:#fff;border-radius:var(--r-lg);padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px}
+.screenband .sn{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7DD3E0;background:rgba(255,255,255,.08);padding:5px 12px;border-radius:var(--r-pill);white-space:nowrap}
+.screenband h2{font-size:22px;font-weight:700}
+.screenband p{font-size:13px;color:rgba(255,255,255,.82);margin-top:2px;max-width:840px}
+.screenband .pub{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.14);padding:5px 12px;border-radius:var(--r-pill);white-space:nowrap}
+.variant{margin-top:32px}
+.vhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.vhead .vtag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--text);padding:4px 10px;border-radius:var(--r-pill)}
+.vhead .vtag.amber{background:var(--warning)}
+.vhead .vtag.crit{background:var(--critical)}
+.vhead .vtag.info{background:var(--info)}
+.vhead .vtag.ok{background:var(--ok)}
+.vhead h3{font-size:16px;font-weight:700}
+.vsub{font-size:14px;color:var(--text-2);margin-bottom:16px;max-width:860px}
+.vgrid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.vgrid2{grid-template-columns:1fr}}
+.rationale{background:var(--tint-brand);border:1px solid #A5DCE4;border-radius:var(--r-md);padding:12px 14px;font-size:13px;color:var(--brand-dark);margin-bottom:20px;display:flex;gap:10px}
+.rationale svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.rationale b{font-weight:700}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- ═══════════════ SCREEN 1 · LOGIN ═══════════════ -->
+  <div class="maintag"><span data-i="log-in"></span>W-01 · /login · Public</div>
+  <div class="screenband">
+    <span class="sn">Screen 1</span>
+    <div><h2>Login</h2><p>The first thing anyone sees — calm, credible and unfussy, a working tool rather than a consumer app. Public: no app bar, no sidebar, no project context. There is no public sign-up; accounts are created by a project owner inviting someone.</p></div>
+    <span class="pub"><span data-i="globe" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:5px"></span>Pre-login</span>
+  </div>
+
+  <!-- DEFAULT -->
+  <div class="stage">
+    <div class="authcard">
+      <div class="brandrow">
+        <div class="lg">FMS</div>
+        <div><div class="nm">Fish Farm Management</div></div>
+        <div class="tl">Monitor water, feed, stock and finances across your ghers.</div>
+      </div>
+      <div class="field">
+        <label class="fl" for="li-email">Email</label>
+        <div class="inp"><span data-i="mail"></span><input id="li-email" type="email" placeholder="you@example.com" autocomplete="username" /></div>
+      </div>
+      <div class="field">
+        <label class="fl" for="li-pass">Password <a href="#reset">Forgot password?</a></label>
+        <div class="inp"><span data-i="lock"></span><input id="li-pass" type="password" placeholder="••••••••" autocomplete="current-password" /><button class="reveal" aria-label="Show password"><span data-i="eye"></span></button></div>
+      </div>
+      <button class="btn primary block" style="margin-top:6px">Sign in<span data-i="arrow-right"></span></button>
+      <div class="authfoot"><span data-i="info"></span>No account? FMS accounts are created by invitation — ask a project owner to invite you.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <p class="slab">Login · documented variants</p>
+
+  <div class="vgrid2" style="margin-top:24px">
+    <!-- FILLED / VALID -->
+    <div>
+      <div class="vhead"><span class="vtag ok">Filled · valid</span><h3>Ready to submit</h3></div>
+      <p class="vsub">Valid email, focus ring on the password field in the accent colour.</p>
+      <div class="stage" style="padding:26px 18px">
+        <div class="authcard" style="max-width:100%">
+          <div class="field"><label class="fl" for="lf-email">Email</label><div class="inp valid"><span data-i="mail"></span><span class="val">rahima@example.com</span><span class="oktick" data-i="check-circle"></span></div></div>
+          <div class="field"><label class="fl" for="lf-pass">Password <a href="#reset">Forgot password?</a></label><div class="inp focused"><span data-i="lock"></span><span class="val">••••••••••</span><button class="reveal" aria-label="Show password"><span data-i="eye"></span></button></div></div>
+          <button class="btn primary block" style="margin-top:6px">Sign in<span data-i="arrow-right"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- INVALID CREDENTIALS -->
+    <div>
+      <div class="vhead"><span class="vtag crit">Invalid credentials</span><h3>One non-specific error</h3></div>
+      <p class="vsub">A single, deliberately vague message — it never reveals whether the email exists.</p>
+      <div class="stage" style="padding:26px 18px">
+        <div class="authcard" style="max-width:100%">
+          <div class="alertbox ab-crit"><span data-i="alert-circle"></span><div><div class="at">Email or password is incorrect</div><div class="ad">Please check both and try again. After several attempts you can reset your password.</div></div></div>
+          <div class="field"><label class="fl" for="le-email">Email</label><div class="inp filled"><span data-i="mail"></span><span class="val">rahima@example.com</span></div></div>
+          <div class="field"><label class="fl" for="le-pass">Password <a href="#reset">Forgot password?</a></label><div class="inp error"><span data-i="lock"></span><span class="val">••••••</span><button class="reveal" aria-label="Show password"><span data-i="eye"></span></button></div></div>
+          <button class="btn primary block" style="margin-top:6px">Sign in<span data-i="arrow-right"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMITTING -->
+    <div>
+      <div class="vhead"><span class="vtag">Submitting</span><h3>In-flight</h3></div>
+      <p class="vsub">The button shows progress; fields lock to prevent a double submit.</p>
+      <div class="stage" style="padding:26px 18px">
+        <div class="authcard" style="max-width:100%">
+          <div class="field"><label class="fl">Email</label><div class="inp locked"><span data-i="mail"></span><span class="val">rahima@example.com</span></div></div>
+          <div class="field"><label class="fl">Password</label><div class="inp locked"><span data-i="lock"></span><span class="val">••••••••••</span></div></div>
+          <button class="btn primary block disabled" style="margin-top:6px"><span class="spin"></span>Signing in…</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SESSION EXPIRED -->
+    <div>
+      <div class="vhead"><span class="vtag amber">Session expired</span><h3>Redirected mid-session</h3></div>
+      <p class="vsub">Arrived here after a redirect. A brief, reassuring explanation and a promise to return them where they were.</p>
+      <div class="stage" style="padding:26px 18px">
+        <div class="authcard" style="max-width:100%">
+          <div class="alertbox ab-warn"><span data-i="clock"></span><div><div class="at">Your session has expired</div><div class="ad">For your security you were signed out after a period of inactivity. Sign in again and we'll take you back to where you were.</div></div></div>
+          <div class="field"><label class="fl" for="ls-email">Email</label><div class="inp filled"><span data-i="mail"></span><span class="val">rahima@example.com</span></div></div>
+          <div class="field"><label class="fl" for="ls-pass">Password <a href="#reset">Forgot password?</a></label><div class="inp"><span data-i="lock"></span><span class="ph">••••••••</span><button class="reveal" aria-label="Show password"><span data-i="eye"></span></button></div></div>
+          <button class="btn primary block" style="margin-top:6px">Sign in &amp; continue<span data-i="arrow-right"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════ SCREEN 2 · PASSWORD RESET ═══════════════ -->
+  <div class="bigsep"></div>
+  <div id="reset" class="maintag" style="margin-top:40px"><span data-i="key"></span>W-02 · /reset · Public</div>
+  <div class="screenband">
+    <span class="sn">Screen 2</span>
+    <div><h2>Password reset</h2><p>Two steps: request a link, then set a new password. Security copy is channel-neutral throughout — it never discloses whether an account exists for an address.</p></div>
+    <span class="pub"><span data-i="globe" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:5px"></span>Pre-login</span>
+  </div>
+
+  <div class="vgrid2">
+    <!-- STEP A REQUEST -->
+    <div>
+      <div class="vhead"><span class="vtag">Step A · request</span><h3>Request a reset link</h3></div>
+      <p class="vsub">Just an email and a submit.</p>
+      <div class="stage" style="padding:26px 18px">
+        <div class="authcard" style="max-width:100%">
+          <div class="brandrow" style="margin-bottom:20px"><div class="lg">FMS</div></div>
+          <div class="authtitle">Reset your password</div>
+          <div class="authsub">Enter the email on your account and we'll send a link to set a new password.</div>
+          <div class="field"><label class="fl" for="ra-email">Email</label><div class="inp"><span data-i="mail"></span><input id="ra-email" type="email" placeholder="you@example.com" autocomplete="username" /></div></div>
+          <button class="btn primary block">Send reset link</button>
+          <a class="backlink" href="#"><span data-i="arrow-left"></span>Back to sign in</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- REQUEST SUBMITTED -->
+    <div>
+      <div class="vhead"><span class="vtag info">Submitted</span><h3>Channel-neutral confirmation</h3></div>
+      <p class="vsub">The confirmation never confirms the account exists — the same message shows for every address.</p>
+      <div class="stage" style="padding:26px 18px">
+        <div class="authcard" style="max-width:100%">
+          <div class="bigcheck bigmail" data-i="mail"></div>
+          <div class="centertext"><div class="ct">Check your email</div><div class="cd">If an account exists for <b>rahima@example.com</b>, we've sent reset instructions to that address.</div></div>
+          <div class="alertbox ab-info" style="margin-top:20px"><span data-i="clock"></span><div><div class="at">The link expires in 30 minutes</div><div class="ad">Didn't get it? Check spam, or request another below — any earlier link stops working once a new one is sent.</div></div></div>
+          <button class="btn secondary block">Resend link</button>
+          <a class="backlink" href="#"><span data-i="arrow-left"></span>Back to sign in</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP B CONFIRM -->
+    <div>
+      <div class="vhead"><span class="vtag">Step B · confirm</span><h3>Set a new password</h3></div>
+      <p class="vsub">Reached from the emailed link. Requirements are shown up front, not only after failing.</p>
+      <div class="stage" style="padding:26px 18px">
+        <div class="authcard" style="max-width:100%">
+          <div class="authtitle">Set a new password</div>
+          <div class="authsub">Choose a new password for <b>rahima@example.com</b>.</div>
+          <div class="pwreq">
+            <div class="pt">Your password needs</div>
+            <ul>
+              <li class="unmet"><span data-i="circle"></span>At least 8 characters</li>
+              <li class="unmet"><span data-i="circle"></span>One letter and one number</li>
+            </ul>
+          </div>
+          <div class="field"><label class="fl" for="rb-p1">New password <span class="req">*</span></label><div class="inp"><span data-i="lock"></span><input id="rb-p1" type="password" placeholder="••••••••" autocomplete="new-password" /><button class="reveal" aria-label="Show password"><span data-i="eye"></span></button></div></div>
+          <div class="field"><label class="fl" for="rb-p2">Confirm new password <span class="req">*</span></label><div class="inp"><span data-i="lock"></span><input id="rb-p2" type="password" placeholder="••••••••" autocomplete="new-password" /></div></div>
+          <button class="btn primary block" style="margin-top:6px">Set password &amp; sign in</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VALIDATION -->
+    <div>
+      <div class="vhead"><span class="vtag crit">Validation</span><h3>Too weak · mismatch</h3></div>
+      <p class="vsub">Each rule shows met/unmet live; errors are tied to the field and say what to do.</p>
+      <div class="stage" style="padding:26px 18px">
+        <div class="authcard" style="max-width:100%">
+          <div class="authtitle">Set a new password</div>
+          <div class="authsub">Choose a new password for <b>rahima@example.com</b>.</div>
+          <div class="pwreq">
+            <div class="pt">Your password needs</div>
+            <ul>
+              <li class="met"><span data-i="check-circle"></span>At least 8 characters</li>
+              <li class="unmet"><span data-i="circle"></span>One letter and one number</li>
+            </ul>
+          </div>
+          <div class="field"><label class="fl" for="rv-p1">New password <span class="req">*</span></label><div class="inp error"><span data-i="lock"></span><span class="val">••••••••</span><button class="reveal" aria-label="Show password"><span data-i="eye"></span></button></div><div class="errmsg" role="alert"><span data-i="alert-circle"></span>Add at least one number to strengthen this password.</div></div>
+          <div class="field"><label class="fl" for="rv-p2">Confirm new password <span class="req">*</span></label><div class="inp error"><span data-i="lock"></span><span class="val">••••••</span></div><div class="errmsg" role="alert"><span data-i="alert-circle"></span>The two passwords don't match yet — re-enter to confirm.</div></div>
+          <button class="btn primary block disabled" style="margin-top:6px">Set password &amp; sign in</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPIRED LINK -->
+    <div>
+      <div class="vhead"><span class="vtag amber">Invalid / expired</span><h3>Used or stale link</h3></div>
+      <p class="vsub">The token is stale or already used. Explained plainly, with a route to request another — and still leaking nothing about the account.</p>
+      <div class="stage" style="padding:26px 18px">
+        <div class="authcard" style="max-width:100%">
+          <div class="bigcheck bigwarn" data-i="link-off"></div>
+          <div class="centertext"><div class="ct">This reset link has expired</div><div class="cd">Reset links are valid for 30 minutes and can be used once. This one is no longer valid.</div></div>
+          <button class="btn primary block" style="margin-top:20px">Request a new link</button>
+          <a class="backlink" href="#"><span data-i="arrow-left"></span>Back to sign in</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div>
+      <div class="vhead"><span class="vtag ok">Success</span><h3>Password changed</h3></div>
+      <p class="vsub">Done — with a clear route to sign in.</p>
+      <div class="stage" style="padding:26px 18px">
+        <div class="authcard" style="max-width:100%">
+          <div class="bigcheck" data-i="check-circle"></div>
+          <div class="centertext"><div class="ct">Password updated</div><div class="cd">Your password has been changed. You can now sign in with your new password.</div></div>
+          <button class="btn primary block" style="margin-top:20px">Go to sign in<span data-i="arrow-right"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════ SCREEN 3 · CREATE / EDIT PROJECT ═══════════════ -->
+  <div class="bigsep"></div>
+  <div class="maintag" style="margin-top:40px"><span data-i="folder-plus"></span>W-20 · /projects/new · Owner</div>
+  <div class="screenband">
+    <span class="sn">Screen 3</span>
+    <div><h2>Create / edit project</h2><p>A project and its first pond are created in one form and saved as a single atomic action — either both are created or neither is. Reached from the portfolio, so it uses the app bar but not the project sidebar.</p></div>
+  </div>
+
+  <!-- app bar for authenticated, non-project-scoped -->
+  <div class="appbar">
+    <div class="mark"><span class="logo">FMS</span></div>
+    <button class="switcher"><span data-i="arrow-left"></span>All projects</button>
+    <div class="abspacer"></div>
+    <button class="iconbtn" aria-label="Notifications"><span data-i="bell"></span></button>
+    <div class="userchip"><span class="av">RK</span><div><div class="un">Rahima Khatun</div><div class="ur">Owner</div></div></div>
+  </div>
+
+  <div class="phead">
+    <div><h1>New project</h1><div class="meta"><span class="m"><span data-i="info"></span>Create the project and its first pond together</span></div></div>
+  </div>
+
+  <!-- CREATE · FILLED VALID (primary shown) -->
+  <div class="formcard">
+    <div class="fsec">
+      <div class="fsec-h"><span class="fi" data-i="grid"></span><span class="ft">Project details</span><span class="step">Section 1 of 2</span></div>
+      <p class="fsec-d">Where the farm is and how you measure it. Coordinates key the site weather forecast to your ponds.</p>
+      <div class="fgrid">
+        <div class="field span2"><label class="fl" for="p-name">Project name <span class="req">*</span></label><div class="inp valid"><span data-i="grid"></span><span class="val">Meghna Gher</span><span class="oktick" data-i="check-circle"></span></div></div>
+        <div class="field span2"><label class="fl" for="p-addr">Site address <span class="req">*</span></label><div class="inp filled"><span data-i="map-pin"></span><span class="val">Debidwar, Cumilla, Chattogram Division</span></div></div>
+        <div class="field"><label class="fl" for="p-lat">Latitude <span class="req">*</span></label><div class="inp filled"><span data-i="navigation"></span><span class="val">23.53</span></div></div>
+        <div class="field"><label class="fl" for="p-lng">Longitude <span class="req">*</span></label><div class="inp filled"><span data-i="navigation"></span><span class="val">91.10</span></div><div class="help"><span data-i="cloud"></span>Latitude &amp; longitude drive the site weather forecast on the Weather screen.</div></div>
+        <div class="field"><label class="fl">Land unit</label><div class="seg"><button class="on">Bigha</button><button>Decimal</button><button>Katha</button></div><div class="help"><span data-i="info"></span>Pond areas are entered and shown in this unit.</div></div>
+        <div class="field"><label class="fl">Currency</label><div class="fixedchip">৳ Bangladeshi Taka (BDT)<span class="lockmini"><span data-i="lock"></span>Fixed</span></div></div>
+      </div>
+    </div>
+    <div class="fsec">
+      <div class="fsec-h"><span class="fi" data-i="droplet"></span><span class="ft">First pond</span><span class="step">Section 2 of 2</span></div>
+      <p class="fsec-d">A project needs at least one pond to be useful, so you add the first one here. You can add more ponds any time after the project is created.</p>
+      <div class="fgrid">
+        <div class="field span2"><label class="fl" for="pond-name">Pond name <span class="req">*</span></label><div class="inp valid"><span data-i="droplet"></span><span class="val">Pond A2</span><span class="oktick" data-i="check-circle"></span></div></div>
+        <div class="field"><label class="fl" for="pond-area">Area <span class="req">*</span></label><div class="inp filled"><span data-i="ruler"></span><span class="val">1.5</span><span class="unitsuffix">bigha</span></div></div>
+        <div class="field"><label class="fl" for="pond-depth">Average depth <span class="req">*</span></label><div class="inp filled"><span data-i="ruler"></span><span class="val">1.8</span><span class="unitsuffix">metres</span></div></div>
+        <div class="field span2"><label class="fl" for="pond-note">Note <span style="font-weight:400;color:var(--muted)">(optional)</span></label><div class="inp filled"><span data-i="edit-3"></span><span class="val">SPF Golda + carp polyculture; jetty on the east bank</span></div></div>
+      </div>
+    </div>
+    <div class="formfoot">
+      <div class="atomnote" style="margin-bottom:0;flex:1"><span data-i="git-merge"></span><div class="an"><b>Saved as one action.</b> The project and Pond A2 are created together — if anything in either section is invalid, nothing is created.</div></div>
+      <div style="display:flex;gap:12px;flex-shrink:0">
+        <button class="btn ghost">Cancel</button>
+        <button class="btn primary"><span data-i="check"></span>Create project &amp; pond</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT FORM VARIANTS -->
+  <div class="divider"></div>
+  <p class="slab">Project form · documented variants</p>
+
+  <!-- EMPTY -->
+  <div class="variant">
+    <div class="vhead"><span class="vtag">Create · empty</span><h3>Fresh form</h3></div>
+    <p class="vsub">The starting state — placeholders, bigha preselected, currency fixed, nothing entered yet.</p>
+    <div class="formcard" style="margin-bottom:0">
+      <div class="fsec">
+        <div class="fsec-h"><span class="fi" data-i="grid"></span><span class="ft">Project details</span><span class="step">Section 1 of 2</span></div>
+        <div class="fgrid" style="margin-top:12px">
+          <div class="field span2"><label class="fl">Project name <span class="req">*</span></label><div class="inp"><span data-i="grid"></span><span class="ph">e.g. Meghna Gher</span></div></div>
+          <div class="field span2"><label class="fl">Site address <span class="req">*</span></label><div class="inp"><span data-i="map-pin"></span><span class="ph">Village, upazila, district</span></div></div>
+          <div class="field"><label class="fl">Latitude <span class="req">*</span></label><div class="inp"><span data-i="navigation"></span><span class="ph">e.g. 23.53</span></div></div>
+          <div class="field"><label class="fl">Longitude <span class="req">*</span></label><div class="inp"><span data-i="navigation"></span><span class="ph">e.g. 91.10</span></div></div>
+          <div class="field"><label class="fl">Land unit</label><div class="seg"><button class="on">Bigha</button><button>Decimal</button><button>Katha</button></div></div>
+          <div class="field"><label class="fl">Currency</label><div class="fixedchip">৳ Bangladeshi Taka (BDT)<span class="lockmini"><span data-i="lock"></span>Fixed</span></div></div>
+        </div>
+      </div>
+      <div class="fsec">
+        <div class="fsec-h"><span class="fi" data-i="droplet"></span><span class="ft">First pond</span><span class="step">Section 2 of 2</span></div>
+        <div class="fgrid" style="margin-top:12px">
+          <div class="field span2"><label class="fl">Pond name <span class="req">*</span></label><div class="inp"><span data-i="droplet"></span><span class="ph">e.g. Pond A2</span></div></div>
+          <div class="field"><label class="fl">Area <span class="req">*</span></label><div class="inp"><span data-i="ruler"></span><span class="ph">0.0</span><span class="unitsuffix">bigha</span></div></div>
+          <div class="field"><label class="fl">Average depth <span class="req">*</span></label><div class="inp"><span data-i="ruler"></span><span class="ph">0.0</span><span class="unitsuffix">metres</span></div></div>
+          <div class="field span2"><label class="fl">Note <span style="font-weight:400;color:var(--muted)">(optional)</span></label><div class="inp"><span data-i="edit-3"></span><span class="ph">Anything worth remembering about this pond</span></div></div>
+        </div>
+      </div>
+      <div class="formfoot"><div class="ff-sp"></div><button class="btn ghost">Cancel</button><button class="btn primary"><span data-i="check"></span>Create project &amp; pond</button></div>
+    </div>
+  </div>
+
+  <!-- VALIDATION ERRORS -->
+  <div class="variant">
+    <div class="vhead"><span class="vtag crit">Validation errors</span><h3>Bad latitude · non-positive area</h3></div>
+    <p class="vsub">Two real errors, each tied to its field, with a summary at the top and the submit blocked. Because the save is atomic, an error in either section stops the whole thing.</p>
+    <div class="formcard" style="margin-bottom:0">
+      <div class="fsec">
+        <div class="errsummary">
+          <div class="es-t"><span data-i="alert-triangle"></span>2 things need fixing before this can be created</div>
+          <ul>
+            <li><span data-i="arrow-right"></span><a href="#">Latitude</a> must be between −90 and 90.</li>
+            <li><span data-i="arrow-right"></span><a href="#">Pond area</a> must be greater than 0.</li>
+          </ul>
+        </div>
+        <div class="fsec-h"><span class="fi" data-i="grid"></span><span class="ft">Project details</span><span class="step">Section 1 of 2</span></div>
+        <div class="fgrid" style="margin-top:12px">
+          <div class="field span2"><label class="fl">Project name <span class="req">*</span></label><div class="inp filled"><span data-i="grid"></span><span class="val">Padma Fisheries</span></div></div>
+          <div class="field span2"><label class="fl">Site address <span class="req">*</span></label><div class="inp filled"><span data-i="map-pin"></span><span class="val">Sadarpur, Faridpur</span></div></div>
+          <div class="field"><label class="fl" for="ev-lat">Latitude <span class="req">*</span></label><div class="inp error"><span data-i="navigation"></span><span class="val">123.4</span></div><div class="errmsg" role="alert"><span data-i="alert-circle"></span>Latitude must be between −90 and 90. Check the value from your map.</div></div>
+          <div class="field"><label class="fl">Longitude <span class="req">*</span></label><div class="inp filled"><span data-i="navigation"></span><span class="val">89.85</span></div></div>
+          <div class="field"><label class="fl">Land unit</label><div class="seg"><button class="on">Bigha</button><button>Decimal</button><button>Katha</button></div></div>
+          <div class="field"><label class="fl">Currency</label><div class="fixedchip">৳ BDT<span class="lockmini"><span data-i="lock"></span>Fixed</span></div></div>
+        </div>
+      </div>
+      <div class="fsec">
+        <div class="fsec-h"><span class="fi" data-i="droplet"></span><span class="ft">First pond</span><span class="step">Section 2 of 2</span></div>
+        <div class="fgrid" style="margin-top:12px">
+          <div class="field span2"><label class="fl">Pond name <span class="req">*</span></label><div class="inp filled"><span data-i="droplet"></span><span class="val">North Pond</span></div></div>
+          <div class="field"><label class="fl" for="ev-area">Area <span class="req">*</span></label><div class="inp error"><span data-i="ruler"></span><span class="val">0</span><span class="unitsuffix">bigha</span></div><div class="errmsg" role="alert"><span data-i="alert-circle"></span>Area must be greater than 0. Enter the pond's size in bigha.</div></div>
+          <div class="field"><label class="fl">Average depth <span class="req">*</span></label><div class="inp filled"><span data-i="ruler"></span><span class="val">2.0</span><span class="unitsuffix">metres</span></div></div>
+          <div class="field span2"><label class="fl">Note <span style="font-weight:400;color:var(--muted)">(optional)</span></label><div class="inp"><span data-i="edit-3"></span><span class="ph">Optional</span></div></div>
+        </div>
+      </div>
+      <div class="formfoot"><div class="atomnote" style="margin-bottom:0;flex:1"><span data-i="git-merge"></span><div class="an"><b>Nothing is created yet.</b> Fix the two fields above — until both sections are valid, neither the project nor the pond is saved.</div></div><button class="btn primary disabled" style="flex-shrink:0"><span data-i="check"></span>Create project &amp; pond</button></div>
+    </div>
+  </div>
+
+  <!-- EDIT MODE -->
+  <div class="variant">
+    <div class="vhead"><span class="vtag info">Edit mode</span><h3>Editing Meghna Gher</h3></div>
+    <p class="vsub">Editing an existing project: the first-pond section is gone (the project already has ponds) and a project STATUS control appears. Same details section, no atomic-pond coupling.</p>
+    <div class="formcard" style="margin-bottom:0">
+      <div class="fsec">
+        <div class="fsec-h"><span class="fi" data-i="grid"></span><span class="ft">Project details</span><span class="step" style="color:var(--brand-dark)">Editing</span></div>
+        <div class="fgrid" style="margin-top:12px">
+          <div class="field span2"><label class="fl">Project name <span class="req">*</span></label><div class="inp filled"><span data-i="grid"></span><span class="val">Meghna Gher</span></div></div>
+          <div class="field span2"><label class="fl">Site address <span class="req">*</span></label><div class="inp filled"><span data-i="map-pin"></span><span class="val">Debidwar, Cumilla, Chattogram Division</span></div></div>
+          <div class="field"><label class="fl">Latitude <span class="req">*</span></label><div class="inp filled"><span data-i="navigation"></span><span class="val">23.53</span></div></div>
+          <div class="field"><label class="fl">Longitude <span class="req">*</span></label><div class="inp filled"><span data-i="navigation"></span><span class="val">91.10</span></div></div>
+          <div class="field"><label class="fl">Land unit</label><div class="seg"><button class="on">Bigha</button><button>Decimal</button><button>Katha</button></div></div>
+          <div class="field"><label class="fl">Currency</label><div class="fixedchip">৳ BDT<span class="lockmini"><span data-i="lock"></span>Fixed</span></div></div>
+          <div class="field span2"><label class="fl">Project status</label><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><div class="seg"><button class="on">Active</button><button>Closed</button></div><span style="font-size:12.5px;color:var(--text-2)">Active — accepting logs and write actions. Closing makes the project read-only.</span></div></div>
+        </div>
+      </div>
+      <div class="formfoot"><div class="ff-sp"></div><button class="btn ghost">Cancel</button><button class="btn primary"><span data-i="check"></span>Save changes</button></div>
+    </div>
+  </div>
+
+  <!-- SUBMITTING -->
+  <div class="variant">
+    <div class="vhead"><span class="vtag">Submitting</span><h3>Creating atomically</h3></div>
+    <p class="vsub">The save is in flight; the form locks and the button shows progress so the atomic write isn't triggered twice.</p>
+    <div class="formcard" style="margin-bottom:0">
+      <div class="fsec" style="opacity:.7;pointer-events:none">
+        <div class="fsec-h"><span class="fi" data-i="grid"></span><span class="ft">Project details</span></div>
+        <div class="fgrid" style="margin-top:12px">
+          <div class="field span2"><label class="fl">Project name</label><div class="inp locked"><span data-i="grid"></span><span class="val">Meghna Gher</span></div></div>
+          <div class="field"><label class="fl">Latitude</label><div class="inp locked"><span data-i="navigation"></span><span class="val">23.53</span></div></div>
+          <div class="field"><label class="fl">Longitude</label><div class="inp locked"><span data-i="navigation"></span><span class="val">91.10</span></div></div>
+        </div>
+      </div>
+      <div class="formfoot"><div class="ff-sp"></div><button class="btn primary disabled"><span class="spin"></span>Creating project &amp; pond…</button></div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════ SCREEN 4 · ACCOUNT ═══════════════ -->
+  <div class="bigsep"></div>
+  <div class="maintag" style="margin-top:40px"><span data-i="user"></span>W-21 · /me · Any signed-in user</div>
+  <div class="screenband">
+    <span class="sn">Screen 4</span>
+    <div><h2>Account</h2><p>Small and honest: who you're signed in as, and what you can access. Roles are per-project, not global — the memberships list makes that explicit. Reached from the user chip; app bar, no project sidebar.</p></div>
+  </div>
+
+  <div class="appbar">
+    <div class="mark"><span class="logo">FMS</span></div>
+    <button class="switcher"><span data-i="layers"></span>All projects</button>
+    <div class="abspacer"></div>
+    <button class="iconbtn" aria-label="Notifications"><span data-i="bell"></span></button>
+    <div class="userchip on"><span class="av">RK</span><div><div class="un">Rahima Khatun</div><div class="ur">Account</div></div></div>
+  </div>
+
+  <!-- OWNER VIEW -->
+  <div class="acctcard">
+    <div class="acct-head">
+      <span class="aav">RK</span>
+      <div>
+        <div class="an">Rahima Khatun</div>
+        <div class="ae"><span data-i="mail"></span>rahima@example.com</div>
+        <div class="acr"><span data-i="calendar"></span>Account created 2026-05-08 <span class="bn">(২৫ বৈশাখ ১৪৩৩)</span></div>
+      </div>
+      <div class="aact"><button class="btn secondary sm"><span data-i="key"></span>Change password</button><button class="btn ghost sm"><span data-i="log-out"></span>Sign out</button></div>
+    </div>
+    <div class="ph"><span data-i="layers"></span>Memberships<span class="cnt">3 projects · role is set per project</span></div>
+    <div class="memrow">
+      <span class="mi" data-i="grid"></span>
+      <div><div class="mn">Meghna Gher</div><div class="ml"><span data-i="map-pin"></span>Debidwar, Cumilla</div></div>
+      <div class="mr"><span class="badge b-ok"><span class="dot"></span>Active</span><span class="rolechip r-owner"><span data-i="crown"></span>OWNER</span></div>
+    </div>
+    <div class="memrow">
+      <span class="mi" data-i="grid"></span>
+      <div><div class="mn">Padma Fisheries</div><div class="ml"><span data-i="map-pin"></span>Sadarpur, Faridpur</div></div>
+      <div class="mr"><span class="badge b-ok"><span class="dot"></span>Active</span><span class="rolechip r-owner"><span data-i="crown"></span>OWNER</span></div>
+    </div>
+    <div class="memrow">
+      <span class="mi closed" data-i="grid"></span>
+      <div><div class="mn">Rupsha Gher</div><div class="ml"><span data-i="map-pin"></span>Batiaghata, Khulna</div></div>
+      <div class="mr"><span class="badge b-muted"><span class="dot"></span>Closed</span><span class="rolechip r-owner"><span data-i="crown"></span>OWNER</span></div>
+    </div>
+    <div class="rolenote"><span data-i="info"></span>Your role is set separately on each project — you're an Owner on all three here, but someone can be an Owner on one project and a Partner on another. Access always follows the role for the project you're in.</div>
+  </div>
+
+  <!-- ACCOUNT VARIANTS -->
+  <div class="divider"></div>
+  <p class="slab">Account · role views</p>
+
+  <!-- WORKER -->
+  <div class="variant">
+    <div class="vhead"><span class="vtag amber">Worker</span><h3>Karim Uddin — one active project</h3></div>
+    <p class="vsub">A worker holds exactly one active project at a time, so the memberships list has a single row and says so plainly.</p>
+    <div class="acctcard" style="margin-bottom:0">
+      <div class="acct-head">
+        <span class="aav" style="background:var(--warning)">KU</span>
+        <div><div class="an">Karim Uddin</div><div class="ae"><span data-i="mail"></span>karim.uddin@example.com</div><div class="acr"><span data-i="calendar"></span>Account created 2026-05-10 <span class="bn">(২৭ বৈশাখ ১৪৩৩)</span></div></div>
+        <div class="aact"><button class="btn secondary sm"><span data-i="key"></span>Change password</button><button class="btn ghost sm"><span data-i="log-out"></span>Sign out</button></div>
+      </div>
+      <div class="ph"><span data-i="layers"></span>Memberships<span class="cnt">1 active project</span></div>
+      <div class="memrow">
+        <span class="mi" style="background:var(--tint-warning);color:var(--warning)" data-i="grid"></span>
+        <div><div class="mn">Meghna Gher</div><div class="ml"><span data-i="map-pin"></span>Debidwar, Cumilla</div></div>
+        <div class="mr"><span class="badge b-ok"><span class="dot"></span>Active</span><span class="rolechip r-worker"><span data-i="hard-hat"></span>WORKER</span></div>
+      </div>
+      <div class="rolenote workernote"><span data-i="info"></span>A worker can be active on only one project at a time. To move to a different project, an owner there invites you as worker — you'll be moved once you accept.</div>
+    </div>
+  </div>
+
+  <!-- PARTNER -->
+  <div class="variant">
+    <div class="vhead"><span class="vtag info">Partner</span><h3>Anwar Hossain — read-only co-owner view</h3></div>
+    <p class="vsub">A partner co-owns visibility but changes nothing. The read-only nature of the role is stated plainly, including for finances.</p>
+    <div class="acctcard" style="margin-bottom:0">
+      <div class="acct-head">
+        <span class="aav" style="background:var(--muted)">AH</span>
+        <div><div class="an">Anwar Hossain</div><div class="ae"><span data-i="mail"></span>anwar.hossain@example.com</div><div class="acr"><span data-i="calendar"></span>Account created 2026-06-01 <span class="bn">(১৮ জ্যৈষ্ঠ ১৪৩৩)</span></div></div>
+        <div class="aact"><button class="btn secondary sm"><span data-i="key"></span>Change password</button><button class="btn ghost sm"><span data-i="log-out"></span>Sign out</button></div>
+      </div>
+      <div class="ph"><span data-i="layers"></span>Memberships<span class="cnt">1 project</span></div>
+      <div class="memrow">
+        <span class="mi" data-i="grid"></span>
+        <div><div class="mn">Meghna Gher</div><div class="ml"><span data-i="map-pin"></span>Debidwar, Cumilla</div></div>
+        <div class="mr"><span class="badge b-ok"><span class="dot"></span>Active</span><span class="rolechip r-partner"><span data-i="eye"></span>PARTNER</span></div>
+      </div>
+      <div class="rolenote"><span data-i="eye"></span>As a Partner you can view everything on Meghna Gher — including finances — but cannot change anything. No logging, no settings, no member management.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ICONS={
+ "layers":"M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+ "log-in":"M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3",
+ "log-out":"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",
+ "globe":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z",
+ "mail":"M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6",
+ "lock":"M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4",
+ "eye":"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "key":"M21 2l-2 2M15.5 7.5 19 4M15.5 7.5a4.5 4.5 0 1 1-3 3l-6.5 6.5H3v-3l6.5-6.5a4.5 4.5 0 0 1 3-3zM12.5 10.5 11 12",
+ "arrow-right":"M5 12h14M12 5l7 7-7 7",
+ "arrow-left":"M19 12H5M12 19l-7-7 7-7",
+ "info":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01",
+ "alert-circle":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v4M12 16h.01",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "check":"M20 6 9 17l-5-5",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "circle":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "grid":"M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "navigation":"M3 11l19-9-9 19-2-8-8-2z",
+ "ruler":"M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-4.6-4.6a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4zM7.5 10.5l2 2M10.5 7.5l2 2M13.5 4.5l2 2M4.5 13.5l2 2",
+ "cloud":"M17.5 19a4.5 4.5 0 1 0 0-9h-1.26A8 8 0 1 0 4 15.25",
+ "edit-3":"M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z",
+ "git-merge":"M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15V9M6 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM18 12a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM18 12a9 9 0 0 0-9-9",
+ "folder-plus":"M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2zM12 10v6M9 13h6",
+ "bell":"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",
+ "user":"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "crown":"M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zM2 20h20",
+ "hard-hat":"M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v2zM10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5M4 15v-3a6 6 0 0 1 6-6M14 6a6 6 0 0 1 6 6v3",
+ "link-off":"M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 4 8M8 12h3M2 2l20 20"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

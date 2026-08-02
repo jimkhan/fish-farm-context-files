@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · M-03 Daily Log (Worker)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --ui:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ui);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+a{color:var(--brand);text-decoration:none}a:hover{color:var(--brand-dark)}
+.bn{font-family:var(--bn)}
+
+.page{max-width:1840px;margin:0 auto;padding:0 32px}
+.hero{padding:48px 0 8px}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--brand)}
+.hero h1{font-size:32px;font-weight:700;letter-spacing:-.5px;margin-top:10px;line-height:1.1}
+.hero p{font-size:16px;color:var(--text-2);max-width:820px;margin-top:14px}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+.tag{font-size:12px;font-weight:500;color:var(--text-2);background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:var(--r-pill)}
+
+.frames{display:flex;gap:44px;flex-wrap:wrap;padding:36px 0 72px;align-items:flex-start}
+.framecol{display:flex;flex-direction:column;gap:16px;width:412px}
+.flabel{display:flex;align-items:center;gap:10px}
+.flabel .ft{font-size:16px;font-weight:700}
+.state-pill{display:inline-flex;align-items:center;height:24px;padding:0 11px;border-radius:var(--r-pill);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.sp-ready{background:var(--tint-brand);color:var(--brand-dark)}
+.sp-filled{background:var(--tint-info);color:#075985}
+.sp-offline{background:var(--tint-warning);color:#92400E}
+.sp-done{background:var(--tint-ok);color:#166534}
+.fnote{font-size:13px;color:var(--text-2);line-height:1.55}
+.tapbudget{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--brand);border-radius:var(--r-md);padding:12px 14px}
+.tapbudget .tb-h{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--brand);margin-bottom:7px}
+.tapbudget .tb-eq{font-family:var(--bn);font-size:14px;color:var(--text);font-weight:600;line-height:1.6}
+.tapbudget .tb-eq b{color:var(--brand-dark)}
+.tapbudget .tb-j{font-size:12px;color:var(--text-2);margin-top:8px;font-family:var(--bn);line-height:1.55}
+
+/* device */
+.device{width:412px;padding:11px;background:#0F172A;border-radius:46px;box-shadow:var(--sh-lift)}
+.screen{width:390px;border-radius:35px;overflow:hidden;background:var(--bg);font-family:var(--bn);position:relative}
+.statusbar{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;background:var(--brand-dark);color:#fff;font-size:13px;font-weight:500}
+.statusbar .sbr{display:flex;align-items:center;gap:7px}
+.statusbar svg{width:15px;height:15px}
+
+/* header */
+.apphead{background:var(--brand);color:#fff;padding:12px 14px 14px}
+.apphead .r1{display:flex;align-items:center;gap:10px}
+.apphead .back{width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:#fff;background:rgba(255,255,255,.14);flex-shrink:0}
+.apphead .back svg{width:22px;height:22px}
+.apphead .htitle{font-size:20px;font-weight:700;flex:1}
+.apphead .date{font-size:13px;color:rgba(255,255,255,.85);margin-top:10px;display:flex;align-items:center;gap:7px}
+.apphead .date svg{width:14px;height:14px}
+.syncpill{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-pill);font-size:13px;font-weight:600;background:rgba(255,255,255,.16);color:#fff}
+.syncpill svg{width:16px;height:16px}
+.syncpill.off{background:var(--warning);color:#fff}
+.pondbar{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.14);border-radius:var(--r-md);padding:9px 10px 9px 12px;margin-top:12px}
+.pondbar .pn{font-size:16px;font-weight:700;color:#fff;flex:1;display:flex;align-items:center;gap:8px}
+.pondbar .pn svg{width:16px;height:16px;opacity:.85}
+.pondbar .chg{font-size:13px;font-weight:600;color:#fff;background:rgba(255,255,255,.2);border-radius:var(--r-pill);padding:0 12px;min-height:34px;display:inline-flex;align-items:center;gap:5px}
+.pondbar .chg svg{width:15px;height:15px}
+.offline-banner{display:flex;align-items:center;gap:10px;background:var(--warning);color:#fff;padding:12px 16px;font-size:15px;font-weight:600}
+.offline-banner svg{width:20px;height:20px;flex-shrink:0}
+
+/* body */
+.body{padding:14px}
+.fcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:16px;margin-bottom:14px}
+.fcard.off{opacity:.5}
+.fhead{display:flex;align-items:center;gap:12px}
+.fhead .fi{width:44px;height:44px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fhead .fi svg{width:26px;height:26px}
+.fi.feed{background:var(--tint-brand);color:var(--brand)}
+.fi.mort{background:var(--tint-critical);color:var(--critical)}
+.fi.water{background:#E0F2FE;color:var(--accent)}
+.fhead .fttl{flex:1}
+.fhead .ft2{font-size:18px;font-weight:700}
+.fhead .fs{font-size:13px;color:var(--text-2);margin-top:1px}
+.tgl{width:52px;height:30px;border-radius:var(--r-pill);background:var(--ok);position:relative;flex-shrink:0;transition:background .15s}
+.tgl::after{content:"";position:absolute;top:3px;left:25px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.tgl.off{background:var(--border-strong)}
+.tgl.off::after{left:3px}
+.plan{font-size:14px;color:var(--text-2);background:var(--surface-muted);border-radius:var(--r-md);padding:9px 12px;margin:14px 0 12px;display:flex;align-items:baseline;gap:8px;font-weight:500}
+.plan svg{width:16px;height:16px;color:var(--brand);flex-shrink:0;position:relative;top:2px}
+.plan b{color:var(--text);font-weight:700}
+.flab{font-size:14px;font-weight:600;color:var(--text-2);margin:14px 0 8px}
+
+/* stepper */
+.stepper{display:flex;align-items:center;gap:12px}
+.step-btn{width:60px;height:60px;border-radius:var(--r-md);background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center;border:1px solid var(--border);flex-shrink:0}
+.step-btn:active{background:var(--brand);color:#fff}
+.step-btn svg{width:30px;height:30px;stroke-width:2.4}
+.step-val{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);height:60px;display:flex;align-items:center;justify-content:center}
+.step-val .sv{display:flex;align-items:baseline;justify-content:center;gap:6px}
+.step-val .n{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.step-val .u{font-size:16px;color:var(--text-2);font-weight:500;line-height:1}
+
+/* chips */
+.chips{display:flex;gap:10px}
+.chip{flex:1;min-height:52px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:var(--r-md);font-size:15px;font-weight:600;background:var(--surface);border:1.5px solid var(--border-strong);color:var(--text-2)}
+.chip svg{width:18px;height:18px}
+.chip.on{background:var(--tint-brand);border-color:var(--brand);color:var(--brand-dark)}
+.chip.on.warn{background:var(--tint-warning);border-color:var(--warning);color:#92400E}
+
+/* capture */
+.capture{width:100%;min-height:96px;border:2px dashed var(--border-strong);border-radius:var(--r-lg);background:var(--surface-muted);display:flex;align-items:center;justify-content:center;gap:12px;color:var(--text-2)}
+.capture .cic{width:48px;height:48px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--brand);flex-shrink:0}
+.capture .cic svg{width:26px;height:26px}
+.capture .lab{font-size:16px;font-weight:600;color:var(--text)}
+.capture .sub{font-size:13px}
+.shot{position:relative;width:100%;border-radius:var(--r-lg);overflow:hidden;min-height:140px;background:linear-gradient(135deg,#5b8a72,#3f6b57)}
+.shot .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7)}
+.shot .ph svg{width:42px;height:42px}
+.shot .retake{position:absolute;right:10px;bottom:10px;min-height:44px;padding:0 14px;border-radius:var(--r-pill);background:rgba(15,23,42,.72);color:#fff;font-family:var(--bn);font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:7px}
+.shot .retake svg{width:18px;height:18px}
+
+/* low oxygen warning */
+.lowox{display:flex;gap:11px;background:var(--tint-critical);border:1.5px solid var(--critical);border-radius:var(--r-md);padding:12px;margin-top:12px}
+.lowox .li{width:30px;height:30px;border-radius:var(--r-pill);background:var(--critical);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lowox .li svg{width:18px;height:18px}
+.lowox .lt{font-size:15px;font-weight:700;color:#991B1B}
+.lowox .ld{font-size:13px;color:#B91C1C;margin-top:2px}
+.lowox .lbtn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:48px;margin-top:10px;padding:0 16px;border-radius:var(--r-md);background:var(--danger);color:#fff;font-family:var(--bn);font-size:15px;font-weight:700;width:100%}
+.lowox .lbtn svg{width:18px;height:18px}
+
+.more{display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;margin-top:12px;border:1px dashed var(--border-strong);border-radius:var(--r-md);color:var(--brand);font-family:var(--bn);font-size:15px;font-weight:600;width:100%}
+.more svg{width:18px;height:18px}
+
+/* save bar */
+.savebar{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px 14px}
+.savebar .sm{font-size:13px;color:var(--text-2);text-align:center;margin-bottom:9px;display:flex;align-items:center;justify-content:center;gap:6px}
+.savebar .sm svg{width:15px;height:15px;color:var(--ok)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:56px;padding:0 20px;border-radius:var(--r-md);font-family:var(--bn);font-size:18px;font-weight:700;border:1px solid transparent;width:100%}
+.btn svg{width:24px;height:24px}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.primary:active{background:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--brand);border:1px solid var(--border-strong);min-height:52px;font-size:17px}
+
+/* toast */
+.toast{display:flex;align-items:center;gap:12px;background:var(--text);color:#fff;border-radius:var(--r-md);padding:14px 16px;box-shadow:var(--sh-lift);margin:0 14px 16px}
+.toast .ti{width:32px;height:32px;border-radius:var(--r-pill);background:var(--ok);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast .ti svg{width:19px;height:19px;color:#fff}
+.toast .tt{font-size:15px;font-weight:700}
+.toast .tb{font-size:13px;color:rgba(255,255,255,.82);margin-top:1px}
+
+/* success + recap */
+.done{padding:34px 22px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.done .dchk{width:88px;height:88px;border-radius:50%;background:var(--tint-ok);color:var(--ok);display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.done .dchk svg{width:46px;height:46px;stroke-width:2.4}
+.done h2{font-size:26px;font-weight:700}
+.done p{font-size:15px;color:var(--text-2);max-width:280px}
+.recap{margin:8px 14px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-card)}
+.recap .rc-h{font-size:13px;font-weight:700;color:var(--text-2);padding:12px 16px 4px}
+.rrow{display:flex;align-items:center;gap:12px;padding:13px 16px;border-top:1px solid var(--border)}
+.rrow .ric{width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rrow .ric svg{width:22px;height:22px}
+.rrow .rm{flex:1;min-width:0}
+.rrow .rt{font-size:15px;font-weight:600}
+.rrow .rmeta{font-size:13px;color:var(--text-2);margin-top:3px}
+.rrow .rv{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:var(--r-pill);font-size:12px;font-weight:600;font-family:var(--bn);white-space:nowrap}
+.badge svg{width:13px;height:13px}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-warning{background:var(--tint-warning);color:#92400E}.b-warning .dot{background:var(--warning)}
+.doneact{display:flex;flex-direction:column;gap:10px;padding:16px 14px 6px}
+
+@media(max-width:520px){.page{padding:0 12px}.device,.framecol{width:100%;max-width:412px}}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="hero">
+    <div class="eyebrow">FMS · Screen M-03 · Worker (mobile) · adoption-critical</div>
+    <h1 class="bn">দৈনিক লগ — এক প্রবাহে খাবার · মৃত্যু · পানি</h1>
+    <p>The screen the whole product depends on. Karim records the morning’s feed, any dead fish, and a water reading in one optimistic, fully-offline save. No keyboard anywhere — big steppers for numbers, big chips for choices. Every section is skippable and pre-filled with sensible defaults, so the common “as planned” morning is a handful of confirming taps.</p>
+    <div class="meta">
+      <span class="tag">Single scrolling form (not a wizard)</span><span class="tag">≤ ২ মিনিট · ~১০ tap goal</span><span class="tag">Keyboard-free</span><span class="tag">Offline · optimistic save</span><span class="tag">Every section skippable</span>
+    </div>
+  </div>
+
+  <div class="frames">
+
+    <!-- ══════════ DEFAULT / READY ══════════ -->
+    <div class="framecol">
+      <div class="flabel"><span class="ft">DEFAULT / READY</span><span class="state-pill sp-ready">pre-filled</span></div>
+      <div class="tapbudget">
+        <div class="tb-h">সাধারণ সকাল — tap budget</div>
+        <div class="tb-eq">পুকুর <b>০</b> · খাবার <b>১</b> · মৃত্যু <b>০</b> · পানি <b>৪</b> · সংরক্ষণ <b>১</b> = <b>৬ ট্যাপ</b></div>
+        <div class="tb-j">একটি স্ক্রলিং ফর্ম — ধাপে-ধাপে উইজার্ড নয়। সব মানে ডিফল্ট বসানো, তাই বেশিরভাগ সকালে শুধু নিশ্চিত করে এক ট্যাপে সংরক্ষণ। ১০-ট্যাপ লক্ষ্যের নিচে।</div>
+      </div>
+      <div class="device"><div class="screen">
+        <div class="statusbar"><span>৬:০৪</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৮১%</span></span></div>
+        <div class="apphead">
+          <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">দৈনিক লগ</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+          <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          <div class="pondbar"><span class="pn"><span data-i="map-pin"></span>পুকুর এ-২ · গ্রোয়ার</span><span class="chg"><span data-i="chevron-down"></span>বদলান</span></div>
+        </div>
+        <div class="body">
+          <div class="fcard">
+            <div class="fhead"><span class="fi feed" data-i="utensils"></span><div class="fttl"><div class="ft2">খাবার</div><div class="fs">আজকের অংশ রেকর্ড করুন</div></div><span class="tgl" role="switch" aria-checked="true"></span></div>
+            <div class="plan"><span data-i="target"></span>আজকের পরিকল্পনা: <b>১২ কেজি</b> · গ্রোয়ার ফিড</div>
+            <div class="stepper">
+              <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+              <div class="step-val"><span class="sv"><span class="n">১২</span><span class="u">কেজি</span></span></div>
+              <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+            </div>
+            <div class="flab">খাবারের ট্রে পর্যবেক্ষণ</div>
+            <div class="chips">
+              <button class="chip on" data-i="check">স্বাভাবিক</button>
+              <button class="chip">উদ্বৃত্ত</button>
+              <button class="chip">খালি</button>
+            </div>
+          </div>
+          <div class="fcard">
+            <div class="fhead"><span class="fi mort" data-i="fish-off"></span><div class="fttl"><div class="ft2">মৃত্যু</div><div class="fs">কোনো মৃত্যু নেই — বাদ থাকবে</div></div><span class="tgl off" role="switch" aria-checked="false"></span></div>
+            <div class="stepper compact" style="margin-top:12px">
+              <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+              <div class="step-val"><span class="sv"><span class="n">০</span><span class="u">টি</span></span></div>
+              <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+            </div>
+          </div>
+          <div class="fcard">
+            <div class="fhead"><span class="fi water" data-i="droplet"></span><div class="fttl"><div class="ft2">পানি</div><div class="fs">সকালের প্রধান রিডিং</div></div><span class="tgl" role="switch" aria-checked="true"></span></div>
+            <div class="flab">দ্রবীভূত অক্সিজেন (mg/L)</div>
+            <div class="stepper">
+              <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+              <div class="step-val"><span class="sv"><span class="n">৬.৫</span><span class="u">mg/L</span></span></div>
+              <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+            </div>
+            <div class="flab">তাপমাত্রা</div>
+            <div class="stepper">
+              <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+              <div class="step-val"><span class="sv"><span class="n">২৯.৫</span><span class="u">°সে</span></span></div>
+              <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+            </div>
+            <button class="more" data-i="plus-circle">আরও প্যারামিটার (pH · অ্যামোনিয়া)</button>
+          </div>
+        </div>
+        <div class="savebar">
+          <div class="sm"><span data-i="check-circle"></span>খাবার ও পানি সংরক্ষণ হবে · মৃত্যু বাদ</div>
+          <button class="btn primary" data-i="save">সংরক্ষণ করুন</button>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ══════════ FILLED ══════════ -->
+    <div class="framecol">
+      <div class="flabel"><span class="ft">FILLED</span><span class="state-pill sp-filled">low-oxygen warning</span></div>
+      <p class="fnote">Feed confirmed (leftover observed), ২ dead fish with a photo attached, and a DO of ২.১ mg/L — below ৪, so an inline danger warning appears with the জরুরি path. No aerator control is ever offered.</p>
+      <div class="device"><div class="screen">
+        <div class="statusbar"><span>৬:০৪</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৮১%</span></span></div>
+        <div class="apphead">
+          <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">দৈনিক লগ</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+          <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+          <div class="pondbar"><span class="pn"><span data-i="map-pin"></span>পুকুর এ-২ · গ্রোয়ার</span><span class="chg"><span data-i="chevron-down"></span>বদলান</span></div>
+        </div>
+        <div class="body">
+          <div class="fcard">
+            <div class="fhead"><span class="fi feed" data-i="utensils"></span><div class="fttl"><div class="ft2">খাবার</div><div class="fs">রেকর্ড করা হবে</div></div><span class="tgl" role="switch" aria-checked="true"></span></div>
+            <div class="plan"><span data-i="target"></span>আজকের পরিকল্পনা: <b>১২ কেজি</b> · গ্রোয়ার ফিড</div>
+            <div class="stepper">
+              <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+              <div class="step-val"><span class="sv"><span class="n">১০</span><span class="u">কেজি</span></span></div>
+              <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+            </div>
+            <div class="flab">খাবারের ট্রে পর্যবেক্ষণ</div>
+            <div class="chips">
+              <button class="chip">স্বাভাবিক</button>
+              <button class="chip on warn" data-i="alert-triangle">উদ্বৃত্ত</button>
+              <button class="chip">খালি</button>
+            </div>
+          </div>
+          <div class="fcard">
+            <div class="fhead"><span class="fi mort" data-i="fish-off"></span><div class="fttl"><div class="ft2">মৃত্যু</div><div class="fs">রেকর্ড করা হবে</div></div><span class="tgl" role="switch" aria-checked="true"></span></div>
+            <div class="stepper compact" style="margin-top:12px">
+              <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+              <div class="step-val"><span class="sv"><span class="n">২</span><span class="u">টি</span></span></div>
+              <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+            </div>
+            <div class="flab">ছবি (প্রমাণ · ঐচ্ছিক)</div>
+            <div class="shot"><span class="ph" data-i="image"></span><button class="retake" data-i="refresh-cw">আবার তুলুন</button></div>
+          </div>
+          <div class="fcard">
+            <div class="fhead"><span class="fi water" data-i="droplet"></span><div class="fttl"><div class="ft2">পানি</div><div class="fs">সকালের প্রধান রিডিং</div></div><span class="tgl" role="switch" aria-checked="true"></span></div>
+            <div class="flab">দ্রবীভূত অক্সিজেন (mg/L)</div>
+            <div class="stepper">
+              <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+              <div class="step-val" style="border-color:var(--critical);background:var(--tint-critical)"><span class="sv"><span class="n" style="color:#991B1B">২.১</span><span class="u">mg/L</span></span></div>
+              <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+            </div>
+            <div class="lowox">
+              <span class="li" data-i="alert-triangle"></span>
+              <div>
+                <div class="lt">বিপজ্জনক! অক্সিজেন খুব কম</div>
+                <div class="ld">৪ mg/L-এর নিচে — মাছ ভেসে উঠতে পারে। সাথে সাথে ব্যবস্থা নিন ও সাহায্য চান।</div>
+                <button class="lbtn" data-i="alert-triangle">জরুরি জানান</button>
+              </div>
+            </div>
+            <div class="flab">তাপমাত্রা</div>
+            <div class="stepper">
+              <button class="step-btn" data-i="minus" aria-label="কমান"></button>
+              <div class="step-val"><span class="sv"><span class="n">৩০.০</span><span class="u">°সে</span></span></div>
+              <button class="step-btn" data-i="plus" aria-label="বাড়ান"></button>
+            </div>
+          </div>
+        </div>
+        <div class="savebar">
+          <div class="sm"><span data-i="check-circle"></span>৩টি অংশ সংরক্ষণ হবে · ১টি ছবি</div>
+          <button class="btn primary" data-i="save">সংরক্ষণ করুন</button>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ══════════ OFFLINE SAVE ══════════ -->
+    <div class="framecol">
+      <div class="flabel"><span class="ft">OFFLINE SAVE</span><span class="state-pill sp-offline">stored on phone</span></div>
+      <p class="fnote">Saved with no signal. The amber banner and toast confirm it is on the phone and will upload later; the three saved parts carry <span class="bn">অপেক্ষমাণ</span> badges. Nothing blocked, nothing lost.</p>
+      <div class="device"><div class="screen">
+        <div class="statusbar"><span>৬:০৫</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi-off"></span><span>৮১%</span></span></div>
+        <div class="apphead">
+          <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">দৈনিক লগ</span><span class="syncpill off"><span data-i="wifi-off"></span>অফলাইন</span></div>
+          <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+        </div>
+        <div class="offline-banner"><span data-i="wifi-off"></span>অফলাইন — সংরক্ষিত, পরে সিংক হবে</div>
+        <div class="done">
+          <div class="dchk" style="background:var(--tint-warning);color:var(--warning)"><span data-i="clock"></span></div>
+          <h2>ফোনে সংরক্ষিত</h2>
+          <p>পুকুর এ-২-এর আজকের লগ এই ফোনে রাখা হয়েছে। সংযোগ পেলেই নিজে থেকে সিংক হবে।</p>
+        </div>
+        <div class="recap">
+          <div class="rc-h">যা সংরক্ষণ হলো</div>
+          <div class="rrow"><span class="ric" style="background:var(--tint-brand);color:var(--brand)" data-i="utensils"></span><div class="rm"><div class="rt">খাবার · গ্রোয়ার</div><div class="rmeta">সকাল ৬:০৫ · <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div></div><span class="rv">১০ কেজি</span></div>
+          <div class="rrow"><span class="ric" style="background:var(--tint-critical);color:var(--critical)" data-i="fish-off"></span><div class="rm"><div class="rt">মৃত্যু · ১টি ছবি</div><div class="rmeta">সকাল ৬:০৫ · <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div></div><span class="rv">২ টি</span></div>
+          <div class="rrow"><span class="ric" style="background:#E0F2FE;color:var(--accent)" data-i="droplet"></span><div class="rm"><div class="rt">পানি · DO ও তাপমাত্রা</div><div class="rmeta">সকাল ৬:০৫ · <span class="badge b-warning"><span class="dot"></span>অপেক্ষমাণ</span></div></div><span class="rv">২.১ mg/L</span></div>
+        </div>
+        <div class="doneact">
+          <button class="btn primary" data-i="home">হোমে ফিরুন</button>
+          <button class="btn secondary" data-i="plus">আরেকটি লগ</button>
+        </div>
+        <div class="toast" style="margin-top:8px"><span class="ti" data-i="check"></span><div><div class="tt">সংরক্ষিত</div><div class="tb">এই ফোনে রাখা হয়েছে — সংযোগ পেলে সিংক হবে</div></div></div>
+      </div></div>
+    </div>
+
+    <!-- ══════════ SUCCESS / DONE ══════════ -->
+    <div class="framecol">
+      <div class="flabel"><span class="ft">SUCCESS / DONE</span><span class="state-pill sp-done">synced · a small win</span></div>
+      <p class="fnote">Online save confirmed. A clear win moment: green check, exactly what was recorded (all <span class="bn">সিংক হয়েছে</span>), and one obvious way back to হোম. This is the daily habit loop the product runs on.</p>
+      <div class="device"><div class="screen">
+        <div class="statusbar"><span>৬:০৫</span><span class="sbr"><span data-i="signal"></span><span data-i="wifi"></span><span>৮১%</span></span></div>
+        <div class="apphead">
+          <div class="r1"><span class="back" data-i="chevron-left"></span><span class="htitle">দৈনিক লগ</span><span class="syncpill"><span data-i="check-circle"></span>সিংক হয়েছে</span></div>
+          <div class="date"><span data-i="calendar"></span>৫ শ্রাবণ ১৪৩৩ · বর্ষা</div>
+        </div>
+        <div class="done">
+          <div class="dchk" data-i="check"></div>
+          <h2>লগ সম্পন্ন!</h2>
+          <p>আজকের কাজ শেষ, করিম। পুকুর এ-২-এর সব তথ্য সিংক হয়ে গেছে।</p>
+        </div>
+        <div class="recap">
+          <div class="rc-h">যা রেকর্ড হলো</div>
+          <div class="rrow"><span class="ric" style="background:var(--tint-brand);color:var(--brand)" data-i="utensils"></span><div class="rm"><div class="rt">খাবার · গ্রোয়ার</div><div class="rmeta">উদ্বৃত্ত · <span class="badge b-ok"><span class="dot"></span>সিংক হয়েছে</span></div></div><span class="rv">১০ কেজি</span></div>
+          <div class="rrow"><span class="ric" style="background:var(--tint-critical);color:var(--critical)" data-i="fish-off"></span><div class="rm"><div class="rt">মৃত্যু · ১টি ছবি</div><div class="rmeta"><span class="badge b-ok"><span class="dot"></span>সিংক হয়েছে</span></div></div><span class="rv">২ টি</span></div>
+          <div class="rrow"><span class="ric" style="background:#E0F2FE;color:var(--accent)" data-i="droplet"></span><div class="rm"><div class="rt">পানি · DO ২.১ · তাপ ৩০.০°সে</div><div class="rmeta"><span class="badge b-ok"><span class="dot"></span>সিংক হয়েছে</span></div></div><span class="rv">২.১ mg/L</span></div>
+        </div>
+        <div class="doneact">
+          <button class="btn primary" data-i="home">হোমে ফিরুন</button>
+          <button class="btn secondary" data-i="plus">আরেকটি লগ</button>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <div class="foot bn" style="padding:36px 0 60px;color:var(--muted);font-size:13px;border-top:1px solid var(--border)">FMS · M-03 দৈনিক লগ (কর্মী)। একক স্ক্রলিং ফর্ম · কীবোর্ড-মুক্ত · অফলাইন-ফার্স্ট। মৃত্যু আইকন মাছভিত্তিক; mg/L ও pH ছাড়া সব একক বাংলায়। কোনো এয়ারেটর/যন্ত্র নিয়ন্ত্রণ নেই — শুধু জরুরি জানানোর পথ। আইকন: Lucide (inline SVG)।</div>
+</div>
+
+<script>
+const ICONS={
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "home":"M3 10.5 12 3l9 7.5M5 9.6V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.6",
+ "utensils":"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "fish-off":"M3 12c2.5-4.5 9.5-4.5 12 0-2.5 4.5-9.5 4.5-12 0zM15 12l5-3.2v6.4L15 12M6.6 10.4h.01M3 3l18 18",
+ "camera":"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "image":"M3 3h18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM21 15l-5-5L5 21",
+ "plus":"M12 5v14M5 12h14",
+ "minus":"M5 12h14",
+ "plus-circle":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v8M8 12h8",
+ "check":"M20 6 9 17l-5-5",
+ "save":"M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2zM17 21v-8H7v8M7 3v5h8",
+ "target":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "refresh-cw":"M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6",
+ "wifi":"M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01",
+ "wifi-off":"M2 8.82a15 15 0 0 1 4.17-2.65M10.66 5c4.01-.36 8.14.9 11.34 3.76M16.85 11.25a10 10 0 0 1 2.22 1.68M5 12.86a10 10 0 0 1 5.17-2.69M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01M2 2l20 20",
+ "signal":"M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 20V4",
+ "chevron-left":"M15 18l-6-6 6-6",
+ "chevron-down":"M6 9l6 6 6-6"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

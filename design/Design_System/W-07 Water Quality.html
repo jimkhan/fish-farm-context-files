@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · W-07 Water Quality &amp; Trends (Owner)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;--tint-muted:#F1F5F9;
+  --focus:#0891B2;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --font:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.bn{font-family:var(--bn)}
+a{color:var(--brand);text-decoration:none}a:hover{color:var(--brand-dark)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:var(--r-sm)}
+
+/* app bar */
+.appbar{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;gap:16px;padding:0 20px}
+.mark{display:flex;align-items:center;gap:9px}
+.mark .logo{width:30px;height:30px;border-radius:8px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.5px}
+.switcher{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text)}
+.switcher svg{width:16px;height:16px;color:var(--text-2)}
+.abspacer{flex:1}
+.iconbtn{position:relative;width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+.iconbtn:hover{background:var(--surface-muted);color:var(--text)}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn .cnt{position:absolute;top:4px;right:4px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--critical);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.userchip{display:flex;align-items:center;gap:10px;padding:4px 10px 4px 4px;border-radius:var(--r-pill);border:1px solid var(--border)}
+.userchip .av{width:32px;height:32px;border-radius:50%;background:var(--brand-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.userchip .un{font-size:13px;font-weight:600;line-height:1.2}
+.userchip .ur{font-size:11px;color:var(--text-2)}
+
+/* shell */
+.shell{display:grid;grid-template-columns:248px 1fr;min-height:calc(100vh - 60px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:16px 12px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.sb-proj{padding:8px 10px 14px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sb-proj .pn{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px}
+.sb-proj .pl{font-size:12px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:5px}
+.sb-proj .pl svg{width:12px;height:12px}
+.navgroup{margin-bottom:14px}
+.navgroup .gh{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:0 10px;margin-bottom:6px}
+.navitem{display:flex;align-items:center;gap:11px;height:40px;padding:0 10px;border-radius:var(--r-md);font-size:14px;font-weight:500;color:var(--text-2);position:relative}
+.navitem:hover{background:var(--surface-muted);color:var(--text)}
+.navitem svg{width:20px;height:20px;flex-shrink:0}
+.navitem .nb{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:99px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.navitem .nb.crit{background:var(--critical);color:#fff}
+.navitem .nb.warn{background:var(--tint-warning);color:#92400E}
+.navitem.active{background:var(--tint-brand);color:var(--brand-dark);font-weight:700}
+.navitem.active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--brand)}
+.navitem.active svg{color:var(--brand)}
+
+/* main */
+.main{padding:24px 28px 60px;min-width:0}
+.maintag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--tint-brand);padding:5px 12px;border-radius:var(--r-pill);margin-bottom:16px}
+
+/* page header */
+.phead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.phead h1{font-size:26px;font-weight:700;letter-spacing:-.5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.phead .meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--text-2)}
+.phead .meta .m{display:flex;align-items:center;gap:6px}
+.phead .meta .m svg{width:15px;height:15px;color:var(--muted)}
+.phead .acts{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:1px solid transparent}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--brand);border-color:var(--border-strong)}.btn.secondary:hover{background:var(--surface-muted)}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:12px;font-weight:600;white-space:nowrap}
+.badge svg{width:13px;height:13px}
+.dot{width:7px;height:7px;border-radius:50%}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-muted{background:var(--surface-muted);color:var(--text-2)}.b-muted .dot{background:var(--muted)}
+.b-crit{background:var(--tint-critical);color:#991B1B}.b-crit .dot{background:var(--critical)}
+.b-info{background:var(--tint-info);color:#075985}.b-info .dot{background:var(--info)}
+.b-warn{background:var(--tint-warning);color:#92400E}.b-warn .dot{background:var(--warning)}
+
+/* filters */
+.filters{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:13px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);margin-bottom:20px}
+.fgroup{display:flex;align-items:center;gap:10px}
+.fglab{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.selctl{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text);background:var(--surface)}
+.selctl svg{width:15px;height:15px;color:var(--text-2)}
+.seg{display:inline-flex;background:var(--surface-muted);border-radius:var(--r-md);padding:3px}
+.seg button{height:32px;padding:0 15px;border-radius:7px;font-size:13px;font-weight:600;color:var(--text-2)}
+.seg button.on{background:var(--surface);color:var(--brand-dark);box-shadow:var(--sh-card)}
+.fspacer{flex:1}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{height:34px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--border-strong);font-size:13px;font-weight:600;color:var(--text-2);background:var(--surface);display:inline-flex;align-items:center;gap:6px}
+.pill:hover{background:var(--surface-muted)}
+.pill.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.pill.on:hover{background:var(--brand-dark)}
+
+/* KPI */
+.kpirow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px;display:flex;flex-direction:column;min-height:150px}
+.kpi .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.kpi .lab{font-size:13px;font-weight:600;color:var(--text-2)}
+.kpi .ico{width:32px;height:32px;border-radius:var(--r-md);background:var(--surface-muted);color:var(--text-2);display:flex;align-items:center;justify-content:center}
+.kpi .ico svg{width:19px;height:19px}
+.kpi .val{font-size:30px;font-weight:700;letter-spacing:-.5px;margin-top:auto;line-height:1.05}
+.kpi .val .u{font-size:15px;color:var(--text-2);font-weight:500}
+.kpi .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.delta{display:inline-flex;align-items:center;gap:4px;width:fit-content;font-size:13px;font-weight:600;padding:3px 9px;border-radius:var(--r-pill);font-variant-numeric:tabular-nums}
+.delta.up{color:var(--ok);background:var(--tint-ok)}
+.delta.down{color:var(--danger);background:var(--tint-critical)}
+.delta .cx{font-size:11px}
+.kpi .subnote{font-size:12px;color:var(--text-2)}
+.kpi .subnote.strong{color:var(--text);font-weight:600}
+.kpi.urgent{background:var(--tint-critical);border-color:var(--critical);box-shadow:0 6px 18px rgba(220,38,38,.16)}
+.kpi.urgent .lab{color:#991B1B}.kpi.urgent .ico{background:var(--critical);color:#fff}.kpi.urgent .val{color:var(--critical)}
+.kpi.urgent .subnote{color:#991B1B;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.kpi.urgent .subnote svg{width:14px;height:14px}
+.srcline{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2)}
+.srcline .sa{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.sa.worker{background:var(--brand-dark);color:#fff}
+.sa.auto{background:var(--surface-muted);color:var(--text-2)}
+.sa.auto svg{width:12px;height:12px}
+
+/* advisory */
+.advisory{background:var(--tint-warning);border:1px solid #FCD8A0;border-left:4px solid var(--warning);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:22px;display:flex;gap:16px}
+.advisory .ai{width:44px;height:44px;border-radius:var(--r-pill);background:var(--warning);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.advisory .ai svg{width:24px;height:24px}
+.advisory .aw{flex:1;min-width:0}
+.advisory .ate{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.advisory .att{font-size:16px;font-weight:700;color:#92400E}
+.distinct{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#92400E;background:var(--surface);border:1px solid #FCD8A0;padding:3px 10px;border-radius:var(--r-pill)}
+.distinct svg{width:13px;height:13px}
+.advisory .abd{font-size:14px;color:#7c3a09;margin-top:7px;line-height:1.55;max-width:820px}
+.trendnums{display:flex;align-items:center;gap:8px;margin:13px 0 4px;flex-wrap:wrap}
+.tn{display:inline-flex;align-items:baseline;gap:3px;font-weight:700;font-variant-numeric:tabular-nums;font-size:15px;color:#92400E;background:var(--surface);border:1px solid #FCD8A0;border-radius:var(--r-md);padding:5px 10px}
+.tn.crit{color:var(--critical);border-color:#FCA5A5;background:var(--tint-critical)}
+.tn .u{font-size:11px;font-weight:600;opacity:.75}
+.tsep{color:var(--warning);font-weight:700}
+.trange{font-size:12px;color:#7c3a09;margin-top:8px;display:flex;align-items:center;gap:6px}
+.trange svg{width:13px;height:13px}
+.aacts{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.abtn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border-radius:var(--r-md);font-size:13px;font-weight:600}
+.abtn svg{width:16px;height:16px}
+.abtn.primary{background:var(--warning);color:#fff}.abtn.primary:hover{background:#B45309}
+.abtn.ghost{background:var(--surface);color:#92400E;border:1px solid #FCD8A0}.abtn.ghost:hover{background:#FEF3E2}
+
+/* calm no-advisory */
+.calm-adv{background:var(--tint-ok);border:1px solid #BBF7D0;border-left:4px solid var(--ok);border-radius:var(--r-lg);padding:16px 20px;margin-bottom:22px;display:flex;gap:14px;align-items:center}
+.calm-adv .ci{width:42px;height:42px;border-radius:var(--r-pill);background:var(--ok);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.calm-adv .ci svg{width:22px;height:22px}
+.calm-adv .ct{font-size:15px;font-weight:700;color:#166534}
+.calm-adv .cd{font-size:13px;color:#15803d;margin-top:2px;max-width:760px}
+
+/* panel */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden;margin-bottom:22px}
+.ph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700}
+.ph svg{width:17px;height:17px}
+.ph .cnt{margin-left:auto;font-size:12px;font-weight:600;color:var(--text-2)}
+.ph .owneredit{margin-left:auto}
+
+/* chart */
+.legend{display:flex;gap:18px;flex-wrap:wrap;padding:14px 16px 4px;font-size:12px;color:var(--text-2)}
+.legend .lg{display:flex;align-items:center;gap:7px}
+.lg .band{width:15px;height:14px;border-radius:3px;background:var(--tint-ok);border:1px solid #BBF7D0}
+.lg .dawnd{width:11px;height:11px;border-radius:50%;background:var(--brand);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--brand)}
+.lg .midd{width:9px;height:9px;border-radius:50%;background:var(--muted)}
+.lg .decld{width:11px;height:11px;border-radius:50%;background:var(--warning);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--warning)}
+.lg .thrl{width:18px;border-top:2px dashed var(--critical)}
+.chart-wrap{padding:6px 12px 14px}
+.chart-wrap svg{width:100%;height:auto}
+
+/* tables */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:11px 16px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface)}
+.dtable th .sortable{display:inline-flex;align-items:center;gap:5px}
+.dtable th svg{width:12px;height:12px;opacity:.6}
+.dtable td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr.critrow{background:var(--tint-critical)}
+.dtable .ts{font-variant-numeric:tabular-nums;white-space:nowrap}
+.dtable .tsb{font-size:12px;color:var(--text-2);font-family:var(--bn)}
+.dtable .val{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dtable .val .u{font-weight:500;color:var(--text-2);font-size:12px}
+.pchip{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.pchip .dawn{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--brand-dark);background:var(--tint-brand);border-radius:var(--r-pill);padding:2px 8px}
+.pchip .dawn svg{width:12px;height:12px}
+.src{display:inline-flex;align-items:center;gap:8px;font-size:13px}
+.src .sa{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.src .worker{background:var(--brand-dark);color:#fff}
+.src .auto{background:var(--surface-muted);color:var(--text-2)}
+.src .auto svg{width:13px;height:13px}
+.pager{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-2)}
+.pgset{display:flex;gap:6px}
+.pgbtn{min-width:32px;height:32px;padding:0 8px;border-radius:var(--r-md);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--text-2);background:var(--surface)}
+.pgbtn.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.pgbtn svg{width:14px;height:14px}
+
+/* thresholds */
+.editbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--border-strong);color:var(--brand);font-size:13px;font-weight:600;background:var(--surface)}
+.editbtn:hover{background:var(--surface-muted)}
+.editbtn svg{width:15px;height:15px}
+.iconedit{width:32px;height:32px;border-radius:var(--r-md);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-2);background:var(--surface)}
+.iconedit:hover{background:var(--surface-muted);color:var(--brand)}
+.iconedit svg{width:15px;height:15px}
+.editing{background:var(--tint-brand)}
+.editing td{border-bottom-color:#A5DCE4}
+.miniinput{display:inline-flex;align-items:center;height:34px;border:1.5px solid var(--brand);border-radius:var(--r-md);background:var(--surface);width:82px}
+.miniinput input{border:none;outline:none;width:100%;height:100%;padding:0 10px;font-size:14px;font-weight:600;font-family:inherit;font-variant-numeric:tabular-nums;color:var(--text);background:transparent}
+.editrow-acts{display:flex;gap:6px;align-items:center}
+.savemini{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-md);background:var(--brand);color:#fff;font-size:13px;font-weight:600}
+.savemini:hover{background:var(--brand-dark)}
+.savemini svg{width:14px;height:14px}
+.cancelmini{height:34px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--border-strong);color:var(--text-2);font-size:13px;font-weight:600;background:var(--surface)}
+.thr-note{font-size:12px;color:var(--text-2);padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.thr-note svg{width:14px;height:14px;color:var(--muted)}
+
+/* degraded / skeleton / empty */
+.degraded{background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--r-lg);padding:26px;display:flex;align-items:center;gap:14px;min-height:200px;justify-content:center}
+.degraded .di{width:46px;height:46px;border-radius:var(--r-pill);background:var(--tint-warning);color:var(--warning);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.degraded .di svg{width:24px;height:24px}
+.degraded .dt{font-size:14px;font-weight:700}
+.degraded .dd{font-size:13px;color:var(--text-2);margin-top:2px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:56px 24px}
+.empty .ei{width:64px;height:64px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--muted);display:flex;align-items:center;justify-content:center}
+.empty .ei svg{width:32px;height:32px}
+.empty .et{font-size:17px;font-weight:700}
+.empty .ed{font-size:14px;color:var(--text-2);max-width:380px}
+.empty .eacts{display:flex;gap:10px;margin-top:6px}
+@keyframes shimmer{100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E2E8F0 0%,#EEF3F8 50%,#E2E8F0 100%);background-size:200% 100%;background-position:200% 0;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-sm)}
+.sk-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px;min-height:150px;display:flex;flex-direction:column;gap:12px}
+.ro-ind{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--text-2);font-size:12px;font-weight:600}
+.ro-ind svg{width:14px;height:14px}
+
+/* variant framing */
+.divider{height:1px;background:var(--border);margin:40px 0 0}
+.slab{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:28px 0 0}
+.variant{margin-top:36px}
+.vhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.vhead .vtag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--text);padding:4px 10px;border-radius:var(--r-pill)}
+.vhead h3{font-size:16px;font-weight:700}
+.vsub{font-size:14px;color:var(--text-2);margin-bottom:16px;max-width:820px}
+.vbox{border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;background:var(--bg)}
+.rationale{background:var(--tint-brand);border:1px solid #A5DCE4;border-radius:var(--r-md);padding:12px 14px;font-size:13px;color:var(--brand-dark);margin-bottom:20px;display:flex;gap:10px}
+.rationale svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.rationale b{font-weight:700}
+
+@media(max-width:1100px){.kpirow{grid-template-columns:1fr 1fr}}
+@media(max-width:820px){.shell{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+
+<!-- APP BAR -->
+<div class="appbar">
+  <div class="mark"><span class="logo">FMS</span></div>
+  <button class="switcher"><span data-i="layers"></span>Meghna Gher<span data-i="chevron-down"></span></button>
+  <div class="abspacer"></div>
+  <button class="iconbtn" aria-label="Notifications"><span data-i="bell"></span><span class="cnt">2</span></button>
+  <button class="iconbtn" aria-label="Settings"><span data-i="settings"></span></button>
+  <div class="userchip"><span class="av">RK</span><div><div class="un">Rahima Khatun</div><div class="ur">Owner</div></div></div>
+</div>
+
+<div class="shell">
+  <!-- SIDEBAR NAV (Water active, badge 2) -->
+  <aside class="sidebar">
+    <div class="sb-proj">
+      <div class="pn"><span class="badge b-ok" style="height:auto;padding:0"><span class="dot"></span></span>Meghna Gher</div>
+      <div class="pl"><span data-i="map-pin"></span>Debidwar, Cumilla · 4 ponds</div>
+    </div>
+    <div class="navgroup"><div class="gh">Operations</div>
+      <a class="navitem"><span data-i="layout"></span>Overview</a>
+      <a class="navitem"><span data-i="grid"></span>Ponds</a>
+      <a class="navitem active"><span data-i="droplet"></span>Water<span class="nb crit">2</span></a>
+      <a class="navitem"><span data-i="utensils"></span>Feed</a>
+      <a class="navitem"><span data-i="check-square"></span>Tasks<span class="nb warn">3</span></a>
+    </div>
+    <div class="navgroup"><div class="gh">Stock &amp; Growth</div>
+      <a class="navitem"><span data-i="package"></span>Inventory</a>
+      <a class="navitem"><span data-i="heart-pulse"></span>Health</a>
+      <a class="navitem"><span data-i="trending-up"></span>Growth</a>
+      <a class="navitem"><span data-i="scale"></span>Harvest</a>
+    </div>
+    <div class="navgroup"><div class="gh">Business</div>
+      <a class="navitem"><span data-i="wallet"></span>Finance</a>
+      <a class="navitem"><span data-i="file-text"></span>Reports</a>
+    </div>
+    <div class="navgroup"><div class="gh">Monitoring</div>
+      <a class="navitem"><span data-i="camera"></span>Camera</a>
+      <a class="navitem"><span data-i="cloud"></span>Weather</a>
+    </div>
+    <div class="navgroup"><div class="gh">Admin · owner only</div>
+      <a class="navitem"><span data-i="users"></span>Members</a>
+      <a class="navitem"><span data-i="settings"></span>Settings</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="maintag"><span data-i="droplet"></span>W-07 · /projects/meghna-gher/water · Owner</div>
+
+    <div class="rationale"><span data-i="info"></span><div><b>Domain-page template:</b> header → filters → headline KPI state → early-warning advisory → trend chart → readings table → config panel. Every other domain page (Feed, Health, Growth…) copies this skeleton, swapping only the parameters, chart series and thresholds. Reuses F-01 KPI cards, degraded widget, skeletons, badge vocabulary and dual dates verbatim.</div></div>
+
+    <!-- PAGE HEADER -->
+    <div class="phead">
+      <div>
+        <h1>Water quality <span class="badge b-crit"><span class="dot"></span>2 CRITICAL</span></h1>
+        <div class="meta">
+          <span class="m"><span data-i="grid"></span>Pond A2 · SPF Golda · Carp</span>
+          <span class="m"><span data-i="user"></span>Worker: Karim Uddin</span>
+          <span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span>
+        </div>
+      </div>
+      <div class="acts">
+        <button class="btn secondary"><span data-i="download"></span>Export CSV</button>
+        <button class="btn primary"><span data-i="bell-ring"></span>Notify worker</button>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <div class="fgroup"><span class="fglab">Pond</span>
+        <button class="selctl"><span data-i="grid"></span>Pond A2<span data-i="chevron-down"></span></button>
+      </div>
+      <div class="fgroup"><span class="fglab">Parameter</span>
+        <div class="pills">
+          <button class="pill on"><span data-i="droplet"></span>DO</button>
+          <button class="pill">Temp</button>
+          <button class="pill">pH</button>
+          <button class="pill">Ammonia</button>
+          <button class="pill">Nitrite</button>
+          <button class="pill">Alkalinity</button>
+          <button class="pill">Secchi</button>
+        </div>
+      </div>
+      <div class="fspacer"></div>
+      <div class="fgroup"><span class="fglab">Window</span>
+        <div class="seg"><button>7d</button><button class="on">14d</button><button>30d</button></div>
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpirow">
+      <div class="kpi urgent">
+        <div class="top"><span class="lab">Dissolved oxygen</span><span class="ico" data-i="droplet"></span></div>
+        <div class="val">2.1 <span class="u">mg/L</span></div>
+        <div class="foot"><span class="subnote"><span data-i="alert-circle"></span>Critical · below 3.0 safe floor</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Temperature</span><span class="ico" data-i="thermometer"></span></div>
+        <div class="val">29.5 <span class="u">°C</span></div>
+        <div class="foot"><span class="delta up"><span class="cx">▲</span>1.0° vs 14d avg</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">pH</span><span class="ico" data-i="activity"></span></div>
+        <div class="val">7.4</div>
+        <div class="foot"><span class="subnote">Within 6.5–8.5 safe range</span></div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="lab">Last reading</span><span class="ico" data-i="clock"></span></div>
+        <div class="val" style="font-size:22px">6 min ago</div>
+        <div class="foot" style="flex-direction:column;align-items:flex-start;gap:6px">
+          <span class="subnote">09:00 · 2026-07-21 <span class="bn">(৫ শ্রাবণ ১৪৩৩)</span></span>
+          <span class="srcline"><span class="sa auto" data-i="cpu"></span>Auto sensor</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- EARLY-WARNING ADVISORY -->
+    <div class="advisory">
+      <span class="ai" data-i="trending-down"></span>
+      <div class="aw">
+        <div class="ate">
+          <span class="att">Falling dawn dissolved oxygen — 3 consecutive mornings</span>
+          <span class="distinct"><span data-i="activity"></span>Trend warning · not a threshold breach</span>
+        </div>
+        <div class="abd">Dawn DO in Pond A2 has declined every morning for three days. This is a <b>trend signal</b> — it can fire while individual readings are still inside the safe band, giving you time to act before a crash. Dawn is when oxygen is lowest (no overnight photosynthesis), so a steady dawn decline is the earliest reliable warning of an oxygen problem.</div>
+        <div class="trendnums">
+          <span class="tn">7.0<span class="u">mg/L</span></span><span class="tsep">→</span>
+          <span class="tn">6.5<span class="u">mg/L</span></span><span class="tsep">→</span>
+          <span class="tn">6.0<span class="u">mg/L</span></span><span class="tsep">→</span>
+          <span class="tn crit">2.1<span class="u">mg/L</span></span>
+        </div>
+        <div class="trange"><span data-i="calendar"></span>Dawn readings 2026-07-18 → 07-21 <span class="bn">(২ → ৫ শ্রাবণ ১৪৩৩)</span> · ~05:50 each morning</div>
+        <div class="aacts">
+          <button class="abtn primary"><span data-i="bell-ring"></span>Notify worker to check aeration</button>
+          <button class="abtn ghost"><span data-i="wind"></span>Review aeration schedule</button>
+          <button class="abtn ghost"><span data-i="x"></span>Dismiss for today</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TREND CHART -->
+    <div class="panel">
+      <div class="ph"><span data-i="trending-up"></span>Dissolved oxygen · 14-day trend<span class="cnt">Pond A2 · mg/L</span></div>
+      <div class="legend">
+        <span class="lg"><span class="band"></span>Safe band 4.0–8.0 mg/L</span>
+        <span class="lg"><span class="dawnd"></span>Dawn reading (~05:50)</span>
+        <span class="lg"><span class="decld"></span>Declining dawn run (advisory)</span>
+        <span class="lg"><span class="midd"></span>Midday reading</span>
+        <span class="lg"><span class="thrl"></span>Critical floor 3.0</span>
+      </div>
+      <div class="chart-wrap">
+        <svg viewBox="0 0 680 252" role="img" aria-label="Dissolved oxygen 14-day trend line chart for Pond A2">
+          <!-- safe band 4-8 -->
+          <rect x="40" y="59" width="624" height="86" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="1"/>
+          <!-- gridlines + y labels -->
+          <g stroke="#E2E8F0" stroke-width="1">
+            <line x1="40" y1="16" x2="664" y2="16"/><line x1="40" y1="59" x2="664" y2="59"/>
+            <line x1="40" y1="101" x2="664" y2="101"/><line x1="40" y1="144" x2="664" y2="144"/>
+            <line x1="40" y1="187" x2="664" y2="187"/><line x1="40" y1="230" x2="664" y2="230"/>
+          </g>
+          <g font-family="Inter" font-size="10" fill="#94A3B8" text-anchor="end">
+            <text x="33" y="20">10</text><text x="33" y="63">8</text><text x="33" y="105">6</text>
+            <text x="33" y="148">4</text><text x="33" y="191">2</text><text x="33" y="234">0</text>
+          </g>
+          <!-- safe minimum 4.0 (lower edge of safe band) -->
+          <line x1="40" y1="144" x2="664" y2="144" stroke="#16A34A" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="660" y="139" font-family="Inter" font-size="10" font-weight="700" fill="#166534" text-anchor="end">Safe minimum 4.0</text>
+          <!-- critical floor 3.0 dashed -->
+          <line x1="40" y1="166" x2="664" y2="166" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="6 5"/>
+          <text x="660" y="178" font-family="Inter" font-size="10" font-weight="700" fill="#DC2626" text-anchor="end">Critical floor 3.0</text>
+          <!-- midday scatter (muted) -->
+          <g fill="#94A3B8">
+            <circle cx="136" cy="58" r="3"/><circle cx="280" cy="62" r="3"/><circle cx="424" cy="55" r="3"/><circle cx="568" cy="52" r="3"/>
+          </g>
+          <!-- dawn series line -->
+          <polyline points="40,76 88,80 136,74 184,80 232,85 280,82 328,87 376,89 424,85 472,91 520,80 568,91 616,102 664,185" fill="none" stroke="#0E7490" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- dawn dots -->
+          <g fill="#0E7490" stroke="#fff" stroke-width="2">
+            <circle cx="40" cy="76" r="4"/><circle cx="88" cy="80" r="4"/><circle cx="136" cy="74" r="4"/><circle cx="184" cy="80" r="4"/><circle cx="232" cy="85" r="4"/><circle cx="280" cy="82" r="4"/><circle cx="328" cy="87" r="4"/><circle cx="376" cy="89" r="4"/><circle cx="424" cy="85" r="4"/><circle cx="472" cy="91" r="4"/>
+          </g>
+          <!-- last 3 declining dawns emphasised -->
+          <g fill="#D97706" stroke="#fff" stroke-width="2">
+            <circle cx="520" cy="80" r="5"/><circle cx="568" cy="91" r="5"/><circle cx="616" cy="102" r="5"/>
+          </g>
+          <!-- breach point -->
+          <circle cx="664" cy="185" r="7" fill="#DC2626" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="664" cy="185" r="12" fill="none" stroke="#DC2626" stroke-width="1.5" opacity="0.5"/>
+          <text x="664" y="207" font-family="Inter" font-size="10" font-weight="700" fill="#DC2626" text-anchor="end">2.1 breach</text>
+          <!-- x labels dual -->
+          <g font-family="Inter" font-size="10" fill="#94A3B8" text-anchor="middle">
+            <text x="40" y="246">07-08 <tspan font-family="Noto Sans Bengali">২২ আষাঢ়</tspan></text>
+            <text x="232" y="246">07-12 <tspan font-family="Noto Sans Bengali">২৬ আষাঢ়</tspan></text>
+            <text x="424" y="246">07-16 <tspan font-family="Noto Sans Bengali">৩১ আষাঢ়</tspan></text>
+            <text x="632" y="246">07-21 <tspan font-family="Noto Sans Bengali">৫ শ্রাবণ</tspan></text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- READINGS TABLE -->
+    <div class="panel">
+      <div class="ph"><span data-i="list"></span>Readings<span class="cnt">Pond A2 · latest first</span></div>
+      <table class="dtable">
+        <thead><tr>
+          <th><span class="sortable">Timestamp <span data-i="chevron-down"></span></span></th>
+          <th>Parameter</th><th>Value</th><th>Source</th><th>Status</th>
+        </tr></thead>
+        <tbody>
+          <tr class="critrow">
+            <td><div class="ts">2026-07-21 05:52</div><div class="tsb">৫ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="pchip">DO <span class="dawn"><span data-i="sunrise"></span>dawn</span></span></td>
+            <td><span class="val">2.1 <span class="u">mg/L</span></span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+            <td><span class="badge b-crit"><span class="dot"></span>CRITICAL</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-21 05:52</div><div class="tsb">৫ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="pchip">Temp</span></td>
+            <td><span class="val">29.5 <span class="u">°C</span></span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+            <td><span class="badge b-ok"><span class="dot"></span>OK</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-20 14:10</div><div class="tsb">৪ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="pchip">Temp</span></td>
+            <td><span class="val">31.2 <span class="u">°C</span></span></td>
+            <td><span class="src"><span class="sa auto" data-i="cpu"></span>Auto sensor</span></td>
+            <td><span class="badge b-warn"><span class="dot"></span>WARNING</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-20 05:48</div><div class="tsb">৪ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="pchip">DO <span class="dawn"><span data-i="sunrise"></span>dawn</span></span></td>
+            <td><span class="val">6.0 <span class="u">mg/L</span></span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+            <td><span class="badge b-ok"><span class="dot"></span>OK</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-19 05:55</div><div class="tsb">৩ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="pchip">DO <span class="dawn"><span data-i="sunrise"></span>dawn</span></span></td>
+            <td><span class="val">6.5 <span class="u">mg/L</span></span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+            <td><span class="badge b-ok"><span class="dot"></span>OK</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-18 13:40</div><div class="tsb">২ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="pchip">pH</span></td>
+            <td><span class="val">7.4</span></td>
+            <td><span class="src"><span class="sa auto" data-i="cpu"></span>Auto sensor</span></td>
+            <td><span class="badge b-ok"><span class="dot"></span>OK</span></td>
+          </tr>
+          <tr>
+            <td><div class="ts">2026-07-18 05:50</div><div class="tsb">২ শ্রাবণ ১৪৩৩</div></td>
+            <td><span class="pchip">DO <span class="dawn"><span data-i="sunrise"></span>dawn</span></span></td>
+            <td><span class="val">7.0 <span class="u">mg/L</span></span></td>
+            <td><span class="src"><span class="sa worker">KU</span>Karim Uddin</span></td>
+            <td><span class="badge b-ok"><span class="dot"></span>OK</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pager">
+        <span>Showing 1–7 of 68 readings</span>
+        <div class="pgset">
+          <button class="pgbtn" aria-label="Previous"><span data-i="chevron-left"></span></button>
+          <button class="pgbtn on">1</button><button class="pgbtn">2</button><button class="pgbtn">3</button>
+          <button class="pgbtn" aria-label="Next"><span data-i="chevron-right"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- THRESHOLDS -->
+    <div class="panel">
+      <div class="ph"><span data-i="sliders"></span>Safe-range thresholds<button class="editbtn owneredit"><span data-i="edit-3"></span>Edit all</button></div>
+      <table class="dtable">
+        <thead><tr><th>Parameter</th><th>Safe min</th><th>Safe max</th><th>Critical</th><th></th></tr></thead>
+        <tbody>
+          <tr class="editing">
+            <td><span class="pchip">Dissolved oxygen <span class="u" style="color:var(--text-2);font-weight:500">mg/L</span></span></td>
+            <td><span class="miniinput"><input value="4.0" aria-label="DO safe min"/></span></td>
+            <td><span class="miniinput"><input value="8.0" aria-label="DO safe max"/></span></td>
+            <td><span class="miniinput"><input value="3.0" aria-label="DO critical below"/></span> <span style="font-size:12px;color:var(--text-2)">below</span></td>
+            <td><div class="editrow-acts"><button class="savemini"><span data-i="check"></span>Save</button><button class="cancelmini">Cancel</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="pchip">Temperature <span class="u" style="color:var(--text-2);font-weight:500">°C</span></span></td>
+            <td class="val">26.0</td><td class="val">32.0</td>
+            <td><span class="val">&lt;24.0</span> <span style="color:var(--text-2)">/</span> <span class="val">&gt;34.0</span></td>
+            <td style="text-align:right"><button class="iconedit" aria-label="Edit temperature"><span data-i="edit-3"></span></button></td>
+          </tr>
+          <tr>
+            <td><span class="pchip">pH</span></td>
+            <td class="val">6.5</td><td class="val">8.5</td>
+            <td><span class="val">&lt;6.0</span> <span style="color:var(--text-2)">/</span> <span class="val">&gt;9.0</span></td>
+            <td style="text-align:right"><button class="iconedit" aria-label="Edit pH"><span data-i="edit-3"></span></button></td>
+          </tr>
+          <tr>
+            <td><span class="pchip">Ammonia (NH₃) <span class="u" style="color:var(--text-2);font-weight:500">mg/L</span></span></td>
+            <td class="val">0.00</td><td class="val">0.10</td>
+            <td><span class="val">&gt;0.30</span></td>
+            <td style="text-align:right"><button class="iconedit" aria-label="Edit ammonia"><span data-i="edit-3"></span></button></td>
+          </tr>
+          <tr>
+            <td><span class="pchip">Nitrite (NO₂) <span class="u" style="color:var(--text-2);font-weight:500">mg/L</span></span></td>
+            <td class="val">0.00</td><td class="val">0.50</td>
+            <td><span class="val">&gt;1.00</span></td>
+            <td style="text-align:right"><button class="iconedit" aria-label="Edit nitrite"><span data-i="edit-3"></span></button></td>
+          </tr>
+          <tr>
+            <td><span class="pchip">Alkalinity <span class="u" style="color:var(--text-2);font-weight:500">mg/L</span></span></td>
+            <td class="val">50</td><td class="val">150</td>
+            <td><span class="val">&lt;30</span></td>
+            <td style="text-align:right"><button class="iconedit" aria-label="Edit alkalinity"><span data-i="edit-3"></span></button></td>
+          </tr>
+          <tr>
+            <td><span class="pchip">Secchi depth <span class="u" style="color:var(--text-2);font-weight:500">cm</span></span></td>
+            <td class="val">25</td><td class="val">45</td>
+            <td><span class="val">&lt;15</span> <span style="color:var(--text-2)">/</span> <span class="val">&gt;60</span></td>
+            <td style="text-align:right"><button class="iconedit" aria-label="Edit Secchi"><span data-i="edit-3"></span></button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="thr-note"><span data-i="info"></span>Thresholds apply to all ponds in this project unless a pond sets its own override. Changes are logged with your name and the dual date.</div>
+    </div>
+
+    <!-- ============ VARIANTS ============ -->
+    <div class="divider"></div>
+    <p class="slab">Documented variants</p>
+
+    <!-- NO ADVISORY -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">No advisory</span><h3>Healthy pond — dawn DO flat / rising</h3></div>
+      <p class="vsub">The advisory area is never simply absent — it holds a calm, explicit “no pattern detected” state so the owner can trust that the system is actively watching and has found nothing, versus the feature being off.</p>
+      <div class="vbox">
+        <div class="kpirow" style="margin-bottom:20px">
+          <div class="kpi"><div class="top"><span class="lab">Dissolved oxygen</span><span class="ico" data-i="droplet"></span></div><div class="val">6.8 <span class="u">mg/L</span></div><div class="foot"><span class="delta up"><span class="cx">▲</span>0.3 vs 14d avg</span></div></div>
+          <div class="kpi"><div class="top"><span class="lab">Temperature</span><span class="ico" data-i="thermometer"></span></div><div class="val">28.4 <span class="u">°C</span></div><div class="foot"><span class="subnote">Within safe range</span></div></div>
+          <div class="kpi"><div class="top"><span class="lab">pH</span><span class="ico" data-i="activity"></span></div><div class="val">7.6</div><div class="foot"><span class="subnote">Within 6.5–8.5</span></div></div>
+          <div class="kpi"><div class="top"><span class="lab">Last reading</span><span class="ico" data-i="clock"></span></div><div class="val" style="font-size:22px">12 min ago</div><div class="foot" style="flex-direction:column;align-items:flex-start;gap:6px"><span class="subnote">05:55 · 2026-07-21 <span class="bn">(৫ শ্রাবণ)</span></span><span class="srcline"><span class="sa worker">KU</span>Karim Uddin</span></div></div>
+        </div>
+        <div class="calm-adv">
+          <span class="ci" data-i="shield-check"></span>
+          <div><div class="ct">No early-warning pattern detected</div><div class="cd">Dawn DO in Pond B3 is stable to rising over the last 14 days. The trend monitor is active and checking every morning — nothing needs attention right now.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPTY -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Empty</span><h3>Pond with no readings yet</h3></div>
+      <p class="vsub">A newly stocked pond with no water readings. Purposeful empty state — explains what belongs here and offers the owner the one action that actually helps: prompt the worker to log.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="trending-up"></span>Dissolved oxygen · 14-day trend<span class="cnt">Pond C1 · mg/L</span></div>
+          <div class="empty">
+            <span class="ei" data-i="droplet-off"></span>
+            <div class="et">No water readings yet</div>
+            <div class="ed">Pond C1 was stocked 2 days ago. Once the worker logs a reading it will appear here, and the early-warning monitor will begin watching the dawn trend.</div>
+            <div class="eacts">
+              <button class="btn primary"><span data-i="check-square"></span>Create water-reading task</button>
+              <button class="btn secondary"><span data-i="bell-ring"></span>Notify Karim</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEGRADED -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Degraded</span><h3>Trend/chart service down</h3></div>
+      <p class="vsub">The trend-analytics service is unavailable. The KPI row and readings table still render from live data — only the chart falls back to the F-01 degraded widget. The page never blanks.</p>
+      <div class="vbox">
+        <div class="kpirow" style="margin-bottom:20px">
+          <div class="kpi urgent"><div class="top"><span class="lab">Dissolved oxygen</span><span class="ico" data-i="droplet"></span></div><div class="val">2.1 <span class="u">mg/L</span></div><div class="foot"><span class="subnote"><span data-i="alert-circle"></span>Critical</span></div></div>
+          <div class="kpi"><div class="top"><span class="lab">Temperature</span><span class="ico" data-i="thermometer"></span></div><div class="val">29.5 <span class="u">°C</span></div><div class="foot"><span class="subnote">Within range</span></div></div>
+          <div class="kpi"><div class="top"><span class="lab">pH</span><span class="ico" data-i="activity"></span></div><div class="val">7.4</div><div class="foot"><span class="subnote">Within range</span></div></div>
+          <div class="kpi"><div class="top"><span class="lab">Last reading</span><span class="ico" data-i="clock"></span></div><div class="val" style="font-size:22px">6 min ago</div><div class="foot"><span class="srcline"><span class="sa auto" data-i="cpu"></span>Auto sensor</span></div></div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="trending-up"></span>Dissolved oxygen · 14-day trend<span class="cnt">Pond A2</span></div>
+          <div class="degraded"><span class="di" data-i="alert-triangle"></span><div><div class="dt">Trend chart is temporarily unavailable.</div><div class="dd">The rest of this page is unaffected — KPIs and readings below are live.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Loading</span><h3>Skeleton state</h3></div>
+      <p class="vsub">Soft shimmer skeletons for filters, KPI row, chart and table — never spinners.</p>
+      <div class="vbox">
+        <div class="sk" style="height:52px;width:100%;border-radius:16px;margin-bottom:20px"></div>
+        <div class="kpirow" style="margin-bottom:20px">
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:70%;margin-top:auto"></div><div class="sk" style="height:18px;width:48%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:70%;margin-top:auto"></div><div class="sk" style="height:18px;width:48%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:70%;margin-top:auto"></div><div class="sk" style="height:18px;width:48%"></div></div>
+          <div class="sk-kpi"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:30px;width:70%;margin-top:auto"></div><div class="sk" style="height:18px;width:48%"></div></div>
+        </div>
+        <div class="sk-kpi" style="min-height:220px;margin-bottom:20px"><div class="sk" style="height:16px;width:30%"></div><div class="sk" style="height:170px;width:100%"></div></div>
+        <div class="sk-kpi" style="min-height:180px"><div class="sk" style="height:16px;width:24%"></div><div class="sk" style="height:34px;width:100%"></div><div class="sk" style="height:34px;width:100%"></div><div class="sk" style="height:34px;width:100%"></div></div>
+      </div>
+    </div>
+
+    <!-- PARTNER -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Partner</span><h3>Read-only partner</h3></div>
+      <p class="vsub">Identical water data — fully visible. But there are no write controls anywhere: the advisory carries no action buttons, there is no “Notify worker”, and the thresholds panel has no Edit affordance at all (managed by the owner). A discreet read-only indicator sits in the header.</p>
+      <div class="vbox">
+        <div class="phead" style="margin-bottom:18px;padding-bottom:16px">
+          <div><h1 style="font-size:20px">Water quality <span class="badge b-crit"><span class="dot"></span>2 CRITICAL</span></h1>
+            <div class="meta"><span class="m"><span data-i="grid"></span>Pond A2</span><span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span></div></div>
+          <span class="ro-ind"><span data-i="eye"></span>Read-only view</span>
+        </div>
+        <div class="advisory" style="margin-bottom:20px">
+          <span class="ai" data-i="trending-down"></span>
+          <div class="aw">
+            <div class="ate"><span class="att">Falling dawn dissolved oxygen — 3 consecutive mornings</span><span class="distinct"><span data-i="activity"></span>Trend warning</span></div>
+            <div class="abd">Dawn DO in Pond A2 has declined for three mornings. A trend signal, distinct from a threshold breach. The owner has been notified.</div>
+            <div class="trendnums"><span class="tn">7.0<span class="u">mg/L</span></span><span class="tsep">→</span><span class="tn">6.5<span class="u">mg/L</span></span><span class="tsep">→</span><span class="tn">6.0<span class="u">mg/L</span></span><span class="tsep">→</span><span class="tn crit">2.1<span class="u">mg/L</span></span></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="sliders"></span>Safe-range thresholds<span class="cnt">Managed by owner</span></div>
+          <table class="dtable">
+            <thead><tr><th>Parameter</th><th>Safe min</th><th>Safe max</th><th>Critical</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pchip">Dissolved oxygen <span class="u" style="color:var(--text-2);font-weight:500">mg/L</span></span></td><td class="val">4.0</td><td class="val">8.0</td><td><span class="val">&lt;3.0</span></td></tr>
+              <tr><td><span class="pchip">Temperature <span class="u" style="color:var(--text-2);font-weight:500">°C</span></span></td><td class="val">26.0</td><td class="val">32.0</td><td><span class="val">&lt;24.0</span> <span style="color:var(--text-2)">/</span> <span class="val">&gt;34.0</span></td></tr>
+              <tr><td><span class="pchip">pH</span></td><td class="val">6.5</td><td class="val">8.5</td><td><span class="val">&lt;6.0</span> <span style="color:var(--text-2)">/</span> <span class="val">&gt;9.0</span></td></tr>
+            </tbody>
+          </table>
+          <div class="thr-note"><span data-i="lock"></span>Thresholds are configured by the project owner and cannot be edited from a partner account.</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const ICONS={
+ "layers":"M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+ "chevron-down":"M6 9l6 6 6-6",
+ "chevron-left":"M15 18l-6-6 6-6",
+ "chevron-right":"M9 18l6-6-6-6",
+ "bell":"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",
+ "bell-ring":"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0M2 8c0-2.2.7-4.3 2-6M20 2c1.3 1.7 2 3.8 2 6",
+ "settings":"M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z",
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "layout":"M3 3h18v18H3zM3 9h18M9 21V9",
+ "grid":"M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "droplet-off":"M12 22a7 7 0 0 0 7-7c0-1.5-.6-3-1.7-4.4M9.5 4.7C8.8 6.5 7.4 8 6 9.5 5 10.9 5 12 5 15a7 7 0 0 0 9.7 6.4M2 2l20 20",
+ "utensils":"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ "check-square":"M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11",
+ "package":"M16.5 9.4 7.5 4.21M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12",
+ "heart-pulse":"M20.42 4.58a5.4 5.4 0 0 0-7.65 0L12 5.36l-.77-.78a5.4 5.4 0 0 0-7.65 7.65l.78.78L12 21l7.64-7.99.78-.78a5.4 5.4 0 0 0 0-7.65zM3.5 12h4l1.5-3 3 6 1.5-3h4",
+ "trending-up":"M22 7l-8.5 8.5-5-5L2 17M16 7h6v6",
+ "trending-down":"M22 17l-8.5-8.5-5 5L2 7M16 17h6v-6",
+ "scale":"M12 3v18M7 21h10M6.5 7 3 14a3.5 3.5 0 0 0 7 0L6.5 7zM17.5 7 14 14a3.5 3.5 0 0 0 7 0l-3.5-7zM3 7h18",
+ "wallet":"M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4z",
+ "file-text":"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8",
+ "camera":"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "cloud":"M17.5 19a4.5 4.5 0 1 0 0-9h-1.26A8 8 0 1 0 4 15.25",
+ "users":"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+ "user":"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "thermometer":"M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z",
+ "activity":"M22 12h-4l-3 9L9 3l-3 9H2",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "cpu":"M4 4h16v16H4zM9 9h6v6H9zM9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "alert-circle":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v4M12 16h.01",
+ "check":"M20 6 9 17l-5-5",
+ "x":"M18 6 6 18M6 6l12 12",
+ "wind":"M9.59 4.59A2 2 0 1 1 11 8H2M12.59 19.41A2 2 0 1 0 14 16H2M17.73 7.73A2.5 2.5 0 1 1 19.5 12H2",
+ "sunrise":"M12 2v6M4.22 10.22l1.42 1.42M1 18h2M21 18h2M18.36 11.64l1.42-1.42M23 22H1M16 18a4 4 0 0 0-8 0M8 6l4-4 4 4",
+ "list":"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
+ "sliders":"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
+ "edit-3":"M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z",
+ "download":"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
+ "eye":"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "lock":"M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4",
+ "shield-check":"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4",
+ "info":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · W-17 Reports · W-18 Settings · W-19 Members (Owner)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;--tint-muted:#F1F5F9;
+  --focus:#0891B2;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --font:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.bn{font-family:var(--bn)}
+a{color:var(--brand);text-decoration:none}a:hover{color:var(--brand-dark)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:var(--r-sm)}
+
+/* app bar */
+.appbar{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;gap:16px;padding:0 20px}
+.mark{display:flex;align-items:center;gap:9px}
+.mark .logo{width:30px;height:30px;border-radius:8px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.5px}
+.switcher{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text)}
+.switcher svg{width:16px;height:16px;color:var(--text-2)}
+.abspacer{flex:1}
+.iconbtn{position:relative;width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+.iconbtn:hover{background:var(--surface-muted);color:var(--text)}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn .cnt{position:absolute;top:4px;right:4px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--critical);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.userchip{display:flex;align-items:center;gap:10px;padding:4px 10px 4px 4px;border-radius:var(--r-pill);border:1px solid var(--border)}
+.userchip .av{width:32px;height:32px;border-radius:50%;background:var(--brand-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.userchip .un{font-size:13px;font-weight:600;line-height:1.2}
+.userchip .ur{font-size:11px;color:var(--text-2)}
+
+/* shell */
+.shell{display:grid;grid-template-columns:248px 1fr;min-height:calc(100vh - 60px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:16px 12px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.sb-proj{padding:8px 10px 14px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sb-proj .pn{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px}
+.sb-proj .pl{font-size:12px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:5px}
+.sb-proj .pl svg{width:12px;height:12px}
+.navgroup{margin-bottom:14px}
+.navgroup .gh{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:0 10px;margin-bottom:6px}
+.navitem{display:flex;align-items:center;gap:11px;height:40px;padding:0 10px;border-radius:var(--r-md);font-size:14px;font-weight:500;color:var(--text-2);position:relative}
+.navitem:hover{background:var(--surface-muted);color:var(--text)}
+.navitem svg{width:20px;height:20px;flex-shrink:0}
+.navitem .nb{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:99px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.navitem .nb.crit{background:var(--critical);color:#fff}
+.navitem .nb.warn{background:var(--tint-warning);color:#92400E}
+.navitem.active{background:var(--tint-brand);color:var(--brand-dark);font-weight:700}
+.navitem.active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--brand)}
+.navitem.active svg{color:var(--brand)}
+
+/* main */
+.main{padding:24px 28px 60px;min-width:0}
+.maintag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--tint-brand);padding:5px 12px;border-radius:var(--r-pill);margin-bottom:16px}
+
+/* header */
+.phead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.phead h1{font-size:26px;font-weight:700;letter-spacing:-.5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.phead .meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--text-2)}
+.phead .meta .m{display:flex;align-items:center;gap:6px}
+.phead .meta .m svg{width:15px;height:15px;color:var(--muted)}
+.phead .acts{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:1px solid transparent}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--brand);border-color:var(--border-strong)}.btn.secondary:hover{background:var(--surface-muted)}
+.btn.danger{background:var(--surface);color:var(--critical);border-color:#FCA5A5}.btn.danger:hover{background:var(--tint-critical)}
+.btn.dangersolid{background:var(--critical);color:#fff}.btn.dangersolid:hover{background:#B91C1C}
+.btn.sm{height:36px;padding:0 13px;font-size:13px}
+.selctl{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 14px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text);background:var(--surface)}
+.selctl svg{width:16px;height:16px;color:var(--text-2)}
+.selctl .lab{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:12px;font-weight:600;white-space:nowrap}
+.badge svg{width:13px;height:13px}
+.dot{width:7px;height:7px;border-radius:50%}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-muted{background:var(--surface-muted);color:var(--text-2)}.b-muted .dot{background:var(--muted)}
+.b-crit{background:var(--tint-critical);color:#991B1B}.b-crit .dot{background:var(--critical)}
+.b-info{background:var(--tint-info);color:#075985}.b-info .dot{background:var(--info)}
+.b-warn{background:var(--tint-warning);color:#92400E}.b-warn .dot{background:var(--warning)}
+.owner-only{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 12px;border-radius:var(--r-pill);background:var(--brand-dark);color:#fff;font-size:12px;font-weight:600}
+.owner-only svg{width:14px;height:14px}
+.ro-ind{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:var(--r-pill);background:var(--surface-muted);color:var(--text-2);font-size:12px;font-weight:600}
+.ro-ind svg{width:14px;height:14px}
+
+/* role chips */
+.rolechip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-sm);font-size:11px;font-weight:700;letter-spacing:.03em}
+.rolechip svg{width:13px;height:13px}
+.r-owner{background:var(--tint-brand);color:var(--brand-dark);border:1px solid #A5DCE4}
+.r-worker{background:var(--tint-warning);color:#92400E;border:1px solid #FCD8A0}
+.r-partner{background:var(--surface-muted);color:var(--text-2);border:1px solid var(--border-strong)}
+
+/* panel */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden;margin-bottom:22px}
+.ph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700}
+.ph svg{width:17px;height:17px;color:var(--text-2)}
+.ph .cnt{margin-left:auto;font-size:12px;font-weight:600;color:var(--text-2);display:flex;align-items:center;gap:8px}
+.ph .cnt svg{width:14px;height:14px}
+.secnote{font-size:12px;color:var(--text-2);padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.secnote svg{width:14px;height:14px;color:var(--muted);flex-shrink:0;margin-top:1px}
+
+/* ═══ REPORTS · daily summary ═══ */
+.summary{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden;margin-bottom:22px}
+.sumhead{display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--border)}
+.sumhead .st{font-size:15px;font-weight:700}
+.sumhead .sd{font-size:12.5px;color:var(--text-2)}
+.sumhead .sp{margin-left:auto}
+.sumgrid{display:grid;grid-template-columns:repeat(4,1fr)}
+.sumtile{padding:18px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:8px;min-height:130px}
+.sumtile:last-child{border-right:none}
+.sumtile .tl{font-size:12px;font-weight:600;color:var(--text-2);display:flex;align-items:center;gap:7px}
+.sumtile .tl svg{width:15px;height:15px;color:var(--muted)}
+.sumtile .tv{font-size:30px;font-weight:700;letter-spacing:-.5px;line-height:1;margin-top:auto;font-variant-numeric:tabular-nums}
+.sumtile .tv .u{font-size:14px;font-weight:500;color:var(--text-2)}
+.sumtile .ts{font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:6px}
+.delta{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:var(--r-pill);font-variant-numeric:tabular-nums}
+.delta.up{color:var(--ok);background:var(--tint-ok)}
+.delta.down{color:var(--danger);background:var(--tint-critical)}
+.delta .cx{font-size:10px}
+.verdict{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:var(--r-md);font-size:14px;font-weight:700;width:fit-content;margin-top:auto}
+.verdict svg{width:16px;height:16px}
+.v-ok{background:var(--tint-ok);color:#166534}
+.v-warn{background:var(--tint-warning);color:#92400E}
+.v-crit{background:var(--tint-critical);color:#991B1B}
+.sumtile.zero .tv{color:var(--muted)}
+.zeronote{padding:13px 18px;background:var(--surface-muted);border-top:1px solid var(--border);font-size:12.5px;color:var(--text-2);display:flex;align-items:center;gap:9px}
+.zeronote svg{width:15px;height:15px;color:var(--muted);flex-shrink:0}
+
+/* exports */
+.expgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+@media(max-width:980px){.expgrid{grid-template-columns:1fr}}
+.expcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px;display:flex;flex-direction:column;gap:12px}
+.expcard .eh{display:flex;align-items:center;gap:11px}
+.expcard .ei{width:40px;height:40px;border-radius:var(--r-md);background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.expcard .ei svg{width:21px;height:21px}
+.expcard .et{font-size:15px;font-weight:700}
+.expcard .efmt{font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--text-2);background:var(--surface-muted);border:1px solid var(--border);padding:2px 8px;border-radius:var(--r-sm)}
+.expcard .ed{font-size:13px;color:var(--text-2);line-height:1.5;flex:1}
+.expcard .erange{font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:7px;padding:9px 11px;background:var(--surface-muted);border-radius:var(--r-md)}
+.expcard .erange svg{width:14px;height:14px;color:var(--muted);flex-shrink:0}
+.expcard.restricted .ei{background:var(--tint-info);color:var(--info)}
+.restrict-tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#075985;background:var(--tint-info);border:1px solid #A5CCE8;padding:2px 8px;border-radius:var(--r-pill);margin-left:auto}
+.restrict-tag svg{width:12px;height:12px}
+
+/* recent exports */
+.rexlist{}
+.rexrow{display:flex;align-items:center;gap:13px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.rexrow:last-child{border-bottom:none}
+.rexrow .rxi{width:34px;height:34px;border-radius:var(--r-md);background:var(--surface-muted);color:var(--text-2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rexrow .rxi svg{width:17px;height:17px}
+.rexrow .rxn{font-size:13.5px;font-weight:600}
+.rexrow .rxm{font-size:12px;color:var(--text-2);margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rexrow .rxsize{margin-left:auto;font-size:12px;font-weight:600;color:var(--text-2);font-variant-numeric:tabular-nums}
+.rexrow .redl{width:36px;height:36px;border-radius:var(--r-md);border:1px solid var(--border-strong);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rexrow .redl:hover{background:var(--surface-muted)}
+.rexrow .redl svg{width:16px;height:16px}
+
+/* ═══ SETTINGS ═══ */
+.fieldrow{display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)}
+.fieldrow:last-of-type{border-bottom:none}
+.fieldrow .fl{font-size:13px;font-weight:600;color:var(--text-2)}
+.fieldrow .fl .sub{font-size:12px;font-weight:400;color:var(--muted);margin-top:2px}
+.fieldrow .fv{font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fieldrow.editing{background:var(--tint-brand)}
+.fieldrow.editing .fl{color:var(--brand-dark)}
+.finput{display:flex;align-items:center;height:40px;border:1.5px solid var(--brand);border-radius:var(--r-md);background:var(--surface);min-width:280px;max-width:420px;flex:1}
+.finput input{border:none;outline:none;width:100%;height:100%;padding:0 12px;font-size:14px;font-weight:600;font-family:inherit;color:var(--text);background:transparent}
+.editacts{display:flex;gap:8px}
+.savebtn{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:var(--r-md);background:var(--brand);color:#fff;font-size:13px;font-weight:600}
+.savebtn:hover{background:var(--brand-dark)}
+.savebtn svg{width:15px;height:15px}
+.cancelbtn{height:40px;padding:0 14px;border-radius:var(--r-md);border:1px solid var(--border-strong);color:var(--text-2);font-size:13px;font-weight:600;background:var(--surface)}
+.iconedit{width:34px;height:34px;border-radius:var(--r-md);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-2);background:var(--surface);margin-left:auto}
+.iconedit:hover{background:var(--surface-muted);color:var(--brand)}
+.iconedit svg{width:15px;height:15px}
+.seg{display:inline-flex;background:var(--surface-muted);border-radius:var(--r-md);padding:3px}
+.seg button{height:32px;padding:0 14px;border-radius:7px;font-size:13px;font-weight:600;color:var(--text-2)}
+.seg button.on{background:var(--surface);color:var(--brand-dark);box-shadow:var(--sh-card)}
+.statustoggle{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600}
+
+/* close project */
+.closecard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px 20px;margin-bottom:22px;display:flex;gap:16px}
+.closecard .ci{width:44px;height:44px;border-radius:var(--r-md);background:var(--tint-warning);color:var(--warning);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.closecard .ci svg{width:22px;height:22px}
+.closecard .ct{font-size:15px;font-weight:700}
+.closecard .cd{font-size:13px;color:var(--text-2);margin-top:6px;line-height:1.6;max-width:640px}
+.closecard ul{margin:8px 0 0;padding-left:2px;list-style:none;display:flex;flex-direction:column;gap:5px}
+.closecard li{font-size:13px;color:var(--text-2);display:flex;gap:9px;align-items:flex-start}
+.closecard li svg{width:15px;height:15px;color:var(--brand);flex-shrink:0;margin-top:2px}
+.closecard .ca{margin-top:14px}
+.confirmbox{background:var(--tint-warning);border:1px solid #FCD8A0;border-radius:var(--r-md);padding:16px;margin-top:14px;max-width:640px}
+.confirmbox .qt{font-size:14px;font-weight:700;color:#92400E;display:flex;align-items:center;gap:8px}
+.confirmbox .qt svg{width:17px;height:17px}
+.confirmbox .qd{font-size:13px;color:#7c3a09;margin-top:6px;line-height:1.55}
+.confirmbox .chk{display:flex;align-items:flex-start;gap:9px;margin-top:12px;font-size:13px;color:#7c3a09;font-weight:600}
+.confirmbox .box{width:19px;height:19px;border-radius:5px;border:2px solid var(--warning);background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--warning);margin-top:1px}
+.confirmbox .box svg{width:13px;height:13px}
+.confirmbox .cacts{display:flex;gap:10px;margin-top:14px}
+
+/* tables */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:11px 16px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface)}
+.dtable td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+.dtable tr:last-child td{border-bottom:none}
+.dtable .val{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dtable .val .u{font-weight:500;color:var(--text-2);font-size:12px}
+.dtable .pchip{font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.dtable .pchip .u{font-weight:500;color:var(--text-2);font-size:12px}
+.dtable tr.editing{background:var(--tint-brand)}
+.miniinput{display:inline-flex;align-items:center;height:34px;border:1.5px solid var(--brand);border-radius:var(--r-md);background:var(--surface);width:92px}
+.miniinput input{border:none;outline:none;width:100%;height:100%;padding:0 10px;font-size:14px;font-weight:600;font-family:inherit;font-variant-numeric:tabular-nums;color:var(--text);background:transparent}
+.miniinput.bn input{font-family:var(--bn)}
+.money{font-family:var(--bn);font-weight:700;font-variant-numeric:tabular-nums}
+.rate-link{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--brand-dark);background:var(--tint-brand);border:1px solid #A5DCE4;padding:2px 8px;border-radius:var(--r-pill)}
+.rate-link svg{width:12px;height:12px}
+
+/* ═══ MEMBERS ═══ */
+.mrow-name{display:flex;align-items:center;gap:11px}
+.mrow-name .mav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.av-owner{background:var(--brand-dark)}
+.av-worker{background:var(--warning)}
+.av-partner{background:var(--muted)}
+.mrow-name .mn{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.mrow-name .youtag{font-size:10.5px;font-weight:700;letter-spacing:.03em;color:var(--brand-dark);background:var(--tint-brand);padding:1px 7px;border-radius:var(--r-pill)}
+.mrow-name .me{font-size:12px;color:var(--text-2)}
+.removebtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-md);border:1px solid #FCA5A5;color:var(--critical);font-size:13px;font-weight:600;background:var(--surface)}
+.removebtn:hover{background:var(--tint-critical)}
+.removebtn svg{width:15px;height:15px}
+.removeblocked{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--border);color:var(--muted);font-size:13px;font-weight:600;background:var(--surface-muted);cursor:not-allowed}
+.removeblocked svg{width:15px;height:15px}
+.pendingtag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#92400E}
+.pendingtag svg{width:14px;height:14px}
+
+/* role explainer */
+.rolebox{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+@media(max-width:900px){.rolebox{grid-template-columns:1fr}}
+.rolecol{padding:16px 18px;border-right:1px solid var(--border)}
+.rolecol:last-child{border-right:none}
+.rolecol .rt{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.rolecol ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.rolecol li{font-size:12.5px;color:var(--text-2);display:flex;gap:8px;align-items:flex-start;line-height:1.45}
+.rolecol li svg{width:14px;height:14px;flex-shrink:0;margin-top:2px}
+.rolecol li.yes svg{color:var(--ok)}
+.rolecol li.no svg{color:var(--muted)}
+
+/* invite panel */
+.invite{background:var(--surface);border:1px solid var(--brand);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden;margin-bottom:22px}
+.invite .ih{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700;background:var(--tint-brand);color:var(--brand-dark)}
+.invite .ih svg{width:17px;height:17px}
+.invite .ih .close{margin-left:auto;color:var(--text-2)}
+.invite .ih .close svg{width:16px;height:16px}
+.invite .ib{padding:18px}
+.ifield{margin-bottom:16px}
+.ifield .il{font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:7px;display:block}
+.ifield .inp{display:flex;align-items:center;height:44px;border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface);padding:0 12px;gap:9px;font-size:14px}
+.ifield .inp svg{width:16px;height:16px;color:var(--muted)}
+.ifield .inp .ph2{color:var(--muted)}
+.ifield .inp.filled .ph2{color:var(--text)}
+.roleopts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:760px){.roleopts{grid-template-columns:1fr}}
+.roleopt{border:1px solid var(--border-strong);border-radius:var(--r-md);padding:13px;cursor:pointer}
+.roleopt.sel{border-color:var(--brand);border-width:2px;background:var(--tint-brand);padding:12px}
+.roleopt .roh{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.roleopt .rod{font-size:12px;color:var(--text-2);line-height:1.45}
+.invite .iacts{display:flex;gap:10px;margin-top:4px}
+.invite-note{font-size:12px;color:var(--text-2);display:flex;align-items:flex-start;gap:8px;margin-top:14px;line-height:1.5}
+.invite-note svg{width:14px;height:14px;color:var(--muted);flex-shrink:0;margin-top:1px}
+
+/* guardrail error */
+.guardrail{background:var(--tint-critical);border:1px solid #FCA5A5;border-left:4px solid var(--critical);border-radius:var(--r-md);padding:14px 16px;margin-top:14px;display:flex;gap:12px}
+.guardrail .gi{width:36px;height:36px;border-radius:var(--r-pill);background:var(--critical);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.guardrail .gi svg{width:19px;height:19px}
+.guardrail .gt{font-size:13.5px;font-weight:700;color:#991B1B}
+.guardrail .gd{font-size:12.5px;color:#7f1d1d;margin-top:4px;line-height:1.55}
+.guardrail .gd b{font-weight:700}
+.guardrail.info{background:var(--tint-info);border-color:#A5CCE8;border-left-color:var(--info)}
+.guardrail.info .gi{background:var(--info)}
+.guardrail.info .gt{color:#075985}.guardrail.info .gd{color:#0c5a6b}
+.blockedmsg{font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:7px;margin-top:6px}
+.blockedmsg svg{width:13px;height:13px;color:var(--muted)}
+
+/* degraded / skeleton / empty */
+.degraded{background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--r-lg);padding:30px;display:flex;align-items:center;gap:14px;min-height:170px;justify-content:center}
+.degraded .di{width:46px;height:46px;border-radius:var(--r-pill);background:var(--tint-warning);color:var(--warning);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.degraded .di svg{width:24px;height:24px}
+.degraded .dt{font-size:14px;font-weight:700}
+.degraded .dd{font-size:13px;color:var(--text-2);margin-top:2px;max-width:440px}
+@keyframes shimmer{100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E2E8F0 0%,#EEF3F8 50%,#E2E8F0 100%);background-size:200% 100%;background-position:200% 0;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-sm)}
+
+/* screen + variant framing */
+.screenband{background:var(--brand-dark);color:#fff;border-radius:var(--r-lg);padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px}
+.screenband .sn{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7DD3E0;background:rgba(255,255,255,.08);padding:5px 12px;border-radius:var(--r-pill);white-space:nowrap}
+.screenband h2{font-size:22px;font-weight:700}
+.screenband p{font-size:13px;color:rgba(255,255,255,.82);margin-top:2px;max-width:840px}
+.bigsep{height:2px;background:var(--border);margin:52px 0 0}
+.divider{height:1px;background:var(--border);margin:36px 0 0}
+.slab{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:26px 0 0}
+.variant{margin-top:32px}
+.vhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.vhead .vtag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--text);padding:4px 10px;border-radius:var(--r-pill)}
+.vhead .vtag.amber{background:var(--warning)}
+.vhead .vtag.crit{background:var(--critical)}
+.vhead .vtag.info{background:var(--info)}
+.vhead h3{font-size:16px;font-weight:700}
+.vsub{font-size:14px;color:var(--text-2);margin-bottom:16px;max-width:860px}
+.vbox{border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;background:var(--bg)}
+.rationale{background:var(--tint-brand);border:1px solid #A5DCE4;border-radius:var(--r-md);padding:12px 14px;font-size:13px;color:var(--brand-dark);margin-bottom:20px;display:flex;gap:10px}
+.rationale svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.rationale b{font-weight:700}
+
+@media(max-width:1100px){.sumgrid{grid-template-columns:1fr 1fr}.sumtile:nth-child(2){border-right:none}}
+@media(max-width:820px){.shell{grid-template-columns:1fr}.sidebar{display:none}.fieldrow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- APP BAR -->
+<div class="appbar">
+  <div class="mark"><span class="logo">FMS</span></div>
+  <button class="switcher"><span data-i="layers"></span>Meghna Gher<span data-i="chevron-down"></span></button>
+  <div class="abspacer"></div>
+  <button class="iconbtn" aria-label="Alerts"><span data-i="bell"></span><span class="cnt">2</span></button>
+  <button class="iconbtn" aria-label="Settings"><span data-i="settings"></span></button>
+  <div class="userchip"><span class="av">RK</span><div><div class="un">Rahima Khatun</div><div class="ur">Owner</div></div></div>
+</div>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-proj">
+      <div class="pn"><span class="badge b-ok" style="height:auto;padding:0"><span class="dot"></span></span>Meghna Gher</div>
+      <div class="pl"><span data-i="map-pin"></span>Debidwar, Cumilla · 4 ponds</div>
+    </div>
+    <div class="navgroup"><div class="gh">Operations</div>
+      <a class="navitem"><span data-i="layout"></span>Overview</a>
+      <a class="navitem"><span data-i="grid"></span>Ponds</a>
+      <a class="navitem"><span data-i="droplet"></span>Water<span class="nb crit">2</span></a>
+      <a class="navitem"><span data-i="utensils"></span>Feed</a>
+      <a class="navitem"><span data-i="check-square"></span>Tasks<span class="nb warn">3</span></a>
+    </div>
+    <div class="navgroup"><div class="gh">Stock &amp; Growth</div>
+      <a class="navitem"><span data-i="package"></span>Inventory</a>
+      <a class="navitem"><span data-i="heart-pulse"></span>Health</a>
+      <a class="navitem"><span data-i="trending-up"></span>Growth</a>
+      <a class="navitem"><span data-i="scale"></span>Harvest</a>
+    </div>
+    <div class="navgroup"><div class="gh">Business</div>
+      <a class="navitem"><span data-i="wallet"></span>Finance</a>
+      <a class="navitem active" href="#reports"><span data-i="file-text"></span>Reports</a>
+    </div>
+    <div class="navgroup"><div class="gh">Monitoring</div>
+      <a class="navitem"><span data-i="camera"></span>Camera</a>
+      <a class="navitem"><span data-i="cloud"></span>Weather</a>
+    </div>
+    <div class="navgroup"><div class="gh">Admin · owner only</div>
+      <a class="navitem" href="#members"><span data-i="users"></span>Members</a>
+      <a class="navitem" href="#settings"><span data-i="settings"></span>Settings</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ═══════════════ SCREEN 1 · REPORTS ═══════════════ -->
+    <div id="reports" class="maintag"><span data-i="file-text"></span>W-17 · /projects/meghna-gher/reports · Owner + Partner</div>
+    <div class="screenband">
+      <span class="sn">Screen 1</span>
+      <div><h2>Reports</h2><p>Two things live here: a daily summary the owner reads at the end of the day, and file exports they download. Light and scannable — a glance, not an analysis.</p></div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="phead">
+      <div>
+        <h1>Reports</h1>
+        <div class="meta">
+          <span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span>
+        </div>
+      </div>
+      <div class="acts">
+        <button class="selctl"><span class="lab">Summary for</span><span data-i="calendar"></span>2026-07-21 <span class="bn" style="font-weight:400;color:var(--text-2)">(৫ শ্রাবণ)</span><span data-i="chevron-down"></span></button>
+      </div>
+    </div>
+
+    <!-- DAILY SUMMARY -->
+    <div class="summary">
+      <div class="sumhead">
+        <div><div class="st">Daily summary</div><div class="sd">2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা · a full day of logs</div></div>
+        <span class="sp badge b-crit"><span class="dot"></span>Water critical today</span>
+      </div>
+      <div class="sumgrid">
+        <div class="sumtile">
+          <span class="tl"><span data-i="utensils"></span>Feed used</span>
+          <span class="tv">84 <span class="u">kg</span></span>
+          <span class="ts"><span class="delta up"><span class="cx">▲</span>6 kg</span> vs 7-day avg</span>
+        </div>
+        <div class="sumtile">
+          <span class="tl"><span data-i="heart-pulse"></span>Mortalities</span>
+          <span class="tv">12</span>
+          <span class="ts"><span class="delta down"><span class="cx">▲</span>9</span> above avg · Pond A2 spike</span>
+        </div>
+        <div class="sumtile">
+          <span class="tl"><span data-i="droplet"></span>Water status</span>
+          <span class="verdict v-crit"><span data-i="alert-circle"></span>CRITICAL</span>
+          <span class="ts">Pond A2 DO 2.1 mg/L · below 3.0 floor</span>
+        </div>
+        <div class="sumtile">
+          <span class="tl"><span data-i="check-square"></span>Tasks</span>
+          <span class="tv">6 <span class="u">done · 3 missed</span></span>
+          <span class="ts">of 9 scheduled today</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORTS -->
+    <p class="slab" style="margin-top:0;margin-bottom:14px">Exports</p>
+    <div class="expgrid">
+      <div class="expcard">
+        <div class="eh"><span class="ei" data-i="trending-up"></span><div><div class="et">Growth report</div></div><span class="efmt">CSV</span></div>
+        <div class="ed">Sampling history, average weight, ADG, SGR and FCR per pond and species across the cycle.</div>
+        <div class="erange"><span data-i="calendar"></span>2026-05-10 → 07-21 (২৭ বৈশাখ → ৫ শ্রাবণ ১৪৩৩)</div>
+        <button class="btn primary"><span data-i="download"></span>Download CSV</button>
+      </div>
+      <div class="expcard">
+        <div class="eh"><span class="ei" data-i="scale"></span><div><div class="et">Harvest report</div></div><span class="efmt">CSV</span></div>
+        <div class="ed">Every harvest event: pond, species, grade, weight landed and buyer, with running totals.</div>
+        <div class="erange"><span data-i="calendar"></span>2026-05-10 → 07-21 (২৭ বৈশাখ → ৫ শ্রাবণ ১৪৩৩)</div>
+        <button class="btn primary"><span data-i="download"></span>Download CSV</button>
+      </div>
+      <div class="expcard restricted">
+        <div class="eh"><span class="ei" data-i="wallet"></span><div><div class="et">Financial report</div></div><span class="restrict-tag"><span data-i="lock"></span>Owner &amp; Partner</span></div>
+        <div class="ed">All revenue and cost entries, cost-by-category and revenue-by-grade, net profit and projected ROI.</div>
+        <div class="erange"><span data-i="calendar"></span>2026-05-10 → 07-21 (২৭ বৈশাখ → ৫ শ্রাবণ ১৪৩৩)</div>
+        <button class="btn primary"><span data-i="download"></span>Download CSV</button>
+      </div>
+    </div>
+    <div class="rationale" style="margin-bottom:22px"><span data-i="lock"></span><div>The <b>financial export is restricted to Owner and Partner</b> — for a Worker account this card is entirely absent, not disabled. Exported files carry <b>dual dates</b> (Gregorian + Bangla) in every row so they read correctly for local record-keeping.</div></div>
+
+    <!-- RECENT EXPORTS -->
+    <div class="panel">
+      <div class="ph"><span data-i="clock"></span>Recent exports<span class="cnt">Last 30 days</span></div>
+      <div class="rexlist">
+        <div class="rexrow">
+          <span class="rxi" data-i="wallet"></span>
+          <div><div class="rxn">Financial report · cycle to date</div><div class="rxm"><span>Rahima Khatun (Owner)</span>·<span>2026-07-20 <span class="bn">(৪ শ্রাবণ ১৪৩৩)</span> 18:04</span></div></div>
+          <span class="rxsize">18 KB</span>
+          <button class="redl" aria-label="Download again"><span data-i="download"></span></button>
+        </div>
+        <div class="rexrow">
+          <span class="rxi" data-i="scale"></span>
+          <div><div class="rxn">Harvest report · cycle to date</div><div class="rxm"><span>Anwar Hossain (Partner)</span>·<span>2026-07-18 <span class="bn">(২ শ্রাবণ ১৪৩৩)</span> 11:20</span></div></div>
+          <span class="rxsize">12 KB</span>
+          <button class="redl" aria-label="Download again"><span data-i="download"></span></button>
+        </div>
+        <div class="rexrow">
+          <span class="rxi" data-i="trending-up"></span>
+          <div><div class="rxn">Growth report · cycle to date</div><div class="rxm"><span>Rahima Khatun (Owner)</span>·<span>2026-07-14 <span class="bn">(৩০ আষাঢ় ১৪৩৩)</span> 09:37</span></div></div>
+          <span class="rxsize">31 KB</span>
+          <button class="redl" aria-label="Download again"><span data-i="download"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS VARIANTS -->
+    <div class="divider"></div>
+    <p class="slab">Reports · documented variants</p>
+
+    <!-- ZERO ACTIVITY -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Zero-activity day</span><h3>A quiet day reports zeros — not an error</h3></div>
+      <p class="vsub">On a day with no logs the summary shows honest zeros and a water status of OK. It must never look broken, and must never invent a worse status just because data is missing. Missing logs mean "nothing happened", not "something is wrong".</p>
+      <div class="vbox">
+        <div class="summary" style="margin-bottom:0">
+          <div class="sumhead">
+            <div><div class="st">Daily summary</div><div class="sd">2026-07-17 (১ শ্রাবণ ১৪৩৩) · বর্ষা</div></div>
+            <span class="sp badge b-muted"><span class="dot"></span>No activity recorded</span>
+          </div>
+          <div class="sumgrid">
+            <div class="sumtile zero"><span class="tl"><span data-i="utensils"></span>Feed used</span><span class="tv">0 <span class="u">kg</span></span><span class="ts">No feed logged</span></div>
+            <div class="sumtile zero"><span class="tl"><span data-i="heart-pulse"></span>Mortalities</span><span class="tv">0</span><span class="ts">None recorded</span></div>
+            <div class="sumtile"><span class="tl"><span data-i="droplet"></span>Water status</span><span class="verdict v-ok"><span data-i="check-circle"></span>OK</span><span class="ts">No readings breached a threshold</span></div>
+            <div class="sumtile zero"><span class="tl"><span data-i="check-square"></span>Tasks</span><span class="tv">0 <span class="u">done · 0 missed</span></span><span class="ts">Nothing scheduled</span></div>
+          </div>
+          <div class="zeronote"><span data-i="info"></span>Nothing was recorded on this date — no feed, mortality, water or task logs. A quiet day is reported as zeros, and water stays OK because no reading breached a threshold.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEGRADED -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag amber">Degraded</span><h3>Report service down</h3></div>
+      <p class="vsub">The reporting service is unreachable. The daily summary falls back to the F-01 degraded widget; the page frame and exports section still render.</p>
+      <div class="vbox">
+        <div class="degraded"><span class="di" data-i="alert-triangle"></span><div><div class="dt">The daily summary is temporarily unavailable.</div><div class="dd">The rest of the app is unaffected, and existing exports below can still be downloaded.</div></div></div>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Loading</span><h3>Skeleton state</h3></div>
+      <p class="vsub">Soft shimmer skeletons for the summary tiles and export cards — never spinners.</p>
+      <div class="vbox">
+        <div class="summary" style="margin-bottom:20px">
+          <div class="sumhead"><div class="sk" style="height:16px;width:180px"></div></div>
+          <div class="sumgrid">
+            <div class="sumtile"><div class="sk" style="height:13px;width:60%"></div><div class="sk" style="height:30px;width:50%;margin-top:auto"></div></div>
+            <div class="sumtile"><div class="sk" style="height:13px;width:60%"></div><div class="sk" style="height:30px;width:50%;margin-top:auto"></div></div>
+            <div class="sumtile"><div class="sk" style="height:13px;width:60%"></div><div class="sk" style="height:30px;width:50%;margin-top:auto"></div></div>
+            <div class="sumtile"><div class="sk" style="height:13px;width:60%"></div><div class="sk" style="height:30px;width:50%;margin-top:auto"></div></div>
+          </div>
+        </div>
+        <div class="expgrid" style="margin-bottom:0">
+          <div class="expcard"><div class="sk" style="height:40px;width:100%"></div><div class="sk" style="height:38px;width:100%"></div><div class="sk" style="height:42px;width:100%"></div></div>
+          <div class="expcard"><div class="sk" style="height:40px;width:100%"></div><div class="sk" style="height:38px;width:100%"></div><div class="sk" style="height:42px;width:100%"></div></div>
+          <div class="expcard"><div class="sk" style="height:40px;width:100%"></div><div class="sk" style="height:38px;width:100%"></div><div class="sk" style="height:42px;width:100%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTNER -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Partner</span><h3>Read-only partner</h3></div>
+      <p class="vsub">A partner reads the same summary and can download all three exports — including financial, which they are entitled to. There is nothing configurable, and the date picker is the only control. A discreet read-only indicator sits in the header.</p>
+      <div class="vbox">
+        <div class="phead" style="margin-bottom:18px;padding-bottom:16px">
+          <div><h1 style="font-size:20px">Reports</h1><div class="meta"><span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span></div></div>
+          <span class="ro-ind"><span data-i="eye"></span>Read-only view</span>
+        </div>
+        <div class="expgrid" style="margin-bottom:0">
+          <div class="expcard"><div class="eh"><span class="ei" data-i="trending-up"></span><div class="et">Growth report</div><span class="efmt">CSV</span></div><div class="ed">Sampling, ADG, SGR, FCR per pond.</div><button class="btn primary"><span data-i="download"></span>Download CSV</button></div>
+          <div class="expcard"><div class="eh"><span class="ei" data-i="scale"></span><div class="et">Harvest report</div><span class="efmt">CSV</span></div><div class="ed">Harvest events, grade and weight landed.</div><button class="btn primary"><span data-i="download"></span>Download CSV</button></div>
+          <div class="expcard restricted"><div class="eh"><span class="ei" data-i="wallet"></span><div class="et">Financial report</div><span class="restrict-tag"><span data-i="check"></span>Available</span></div><div class="ed">Revenue, cost, net profit and ROI.</div><button class="btn primary"><span data-i="download"></span>Download CSV</button></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════ SCREEN 2 · SETTINGS ═══════════════ -->
+    <div class="bigsep"></div>
+    <div id="settings" class="maintag" style="margin-top:40px"><span data-i="settings"></span>W-18 · /projects/meghna-gher/settings · Owner only</div>
+    <div class="screenband">
+      <span class="sn">Screen 2</span>
+      <div><h2>Settings</h2><p>This page does not exist for Partner or Worker — it is absent from their navigation entirely. Where an action has consequences, it is stated plainly before it happens, not warned about afterward.</p></div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="phead">
+      <div>
+        <h1>Settings <span class="owner-only"><span data-i="crown"></span>Owner only</span></h1>
+        <div class="meta"><span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span></div>
+      </div>
+    </div>
+
+    <!-- PROJECT DETAILS -->
+    <div class="panel">
+      <div class="ph"><span data-i="grid"></span>Project details</div>
+      <div class="fieldrow editing">
+        <div class="fl">Project name</div>
+        <div class="fv"><span class="finput"><input value="Meghna Gher" aria-label="Project name"/></span><div class="editacts"><button class="savebtn"><span data-i="check"></span>Save</button><button class="cancelbtn">Cancel</button></div></div>
+      </div>
+      <div class="fieldrow">
+        <div class="fl">Site address</div>
+        <div class="fv">Debidwar, Cumilla, Chattogram Division<button class="iconedit" aria-label="Edit address"><span data-i="edit-3"></span></button></div>
+      </div>
+      <div class="fieldrow">
+        <div class="fl">Site coordinates<div class="sub">Drive the weather forecast</div></div>
+        <div class="fv">23.53°N, 91.10°E <span class="rate-link"><span data-i="cloud"></span>Used by Weather</span><button class="iconedit" aria-label="Edit coordinates"><span data-i="edit-3"></span></button></div>
+      </div>
+      <div class="fieldrow">
+        <div class="fl">Land unit</div>
+        <div class="fv"><div class="seg"><button class="on">Bigha</button><button>Decimal</button><button>Katha</button></div></div>
+      </div>
+      <div class="fieldrow">
+        <div class="fl">Project status</div>
+        <div class="fv"><span class="badge b-ok"><span class="dot"></span>Active</span><span style="font-size:12px;color:var(--text-2);font-weight:400">— accepting logs and write actions</span></div>
+      </div>
+    </div>
+
+    <!-- CLOSE PROJECT -->
+    <div class="closecard">
+      <span class="ci" data-i="archive"></span>
+      <div>
+        <div class="ct">Close this project</div>
+        <div class="cd">Closing is for a project whose cycle is finished. It is serious but reversible — not a delete.</div>
+        <ul>
+          <li><span data-i="check"></span>The project becomes <b>read-only</b>; all data stays visible for reference.</li>
+          <li><span data-i="check"></span>Write actions everywhere — logging feed, water, mortality, tasks — are <b>hidden</b>.</li>
+          <li><span data-i="check"></span>Reports and exports remain fully available.</li>
+          <li><span data-i="check"></span>An owner can <b>reopen</b> the project later to resume logging.</li>
+        </ul>
+        <div class="ca"><button class="btn danger"><span data-i="archive"></span>Close project…</button></div>
+      </div>
+    </div>
+
+    <!-- WATER THRESHOLDS -->
+    <div class="panel">
+      <div class="ph"><span data-i="sliders"></span>Water thresholds<span class="cnt"><span data-i="link"></span>Same values shown on the Water screen</span></div>
+      <table class="dtable">
+        <thead><tr><th>Parameter</th><th>Safe min</th><th>Safe max</th><th>Critical</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pchip">Dissolved oxygen <span class="u">mg/L</span></span></td><td class="val">4.0</td><td class="val">8.0</td><td><span class="val">&lt;3.0</span> <span style="color:var(--text-2)">below</span></td></tr>
+          <tr><td><span class="pchip">Temperature <span class="u">°C</span></span></td><td class="val">26.0</td><td class="val">32.0</td><td><span class="val">&lt;24.0</span> <span style="color:var(--text-2)">/</span> <span class="val">&gt;34.0</span></td></tr>
+          <tr><td><span class="pchip">pH</span></td><td class="val">6.5</td><td class="val">8.5</td><td><span class="val">&lt;6.0</span> <span style="color:var(--text-2)">/</span> <span class="val">&gt;9.0</span></td></tr>
+          <tr><td><span class="pchip">Ammonia (NH₃) <span class="u">mg/L</span></span></td><td class="val">0.00</td><td class="val">0.10</td><td><span class="val">&gt;0.30</span></td></tr>
+          <tr><td><span class="pchip">Nitrite (NO₂) <span class="u">mg/L</span></span></td><td class="val">0.00</td><td class="val">0.50</td><td><span class="val">&gt;1.00</span></td></tr>
+          <tr><td><span class="pchip">Alkalinity <span class="u">mg/L</span></span></td><td class="val">50</td><td class="val">150</td><td><span class="val">&lt;30</span></td></tr>
+          <tr><td><span class="pchip">Secchi depth <span class="u">cm</span></span></td><td class="val">25</td><td class="val">45</td><td><span class="val">&lt;15</span> <span style="color:var(--text-2)">/</span> <span class="val">&gt;60</span></td></tr>
+        </tbody>
+      </table>
+      <div class="secnote"><span data-i="info"></span>Changes are audit-logged with your name and the dual date, and take effect on the next reading. Thresholds apply to all ponds unless a pond sets its own override.</div>
+    </div>
+
+    <!-- MARKET RATES -->
+    <div class="panel">
+      <div class="ph"><span data-i="tag"></span>Market rates<span class="cnt">৳ per kg</span></div>
+      <table class="dtable">
+        <thead><tr><th>Species &amp; grade</th><th>Rate (৳/kg)</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pchip">SPF Golda — export grade</span></td><td class="money">৳৯৫০</td><td style="color:var(--text-2)">Highest-value stock still in water</td></tr>
+          <tr><td><span class="pchip">SPF Golda — local grade</span></td><td class="money">৳৬৫০</td><td style="color:var(--text-2)">Undersized / local-market golda</td></tr>
+          <tr><td><span class="pchip">Carp (Rui / Catla) — local</span></td><td class="money">৳২২০</td><td style="color:var(--text-2)">Carp standing biomass</td></tr>
+        </tbody>
+      </table>
+      <div class="secnote"><span data-i="alert-triangle"></span>These rates feed the <b>remaining harvest value</b> estimate on the Finance screen (currently <span class="bn" style="font-weight:700">৳৯,০০,০০০</span> at a blended <span class="bn" style="font-weight:700">৳৭৫০/kg</span>). Changing a rate here changes that headline number.</div>
+    </div>
+
+    <!-- SETTINGS VARIANTS -->
+    <div class="divider"></div>
+    <p class="slab">Settings · documented variants</p>
+
+    <!-- EDIT MODE -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Edit mode</span><h3>Market rates in edit</h3></div>
+      <p class="vsub">A section in edit mode shows inline inputs with Save / Cancel and restates the consequence — a rate change moves the Finance headline. The audit-log promise is explicit.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="tag"></span>Market rates<span class="cnt">Editing · ৳ per kg</span></div>
+          <table class="dtable">
+            <thead><tr><th>Species &amp; grade</th><th>Rate (৳/kg)</th><th></th></tr></thead>
+            <tbody>
+              <tr class="editing"><td><span class="pchip">SPF Golda — export grade</span></td><td><span class="miniinput bn"><input value="৯৫০" aria-label="Export rate"/></span></td><td style="text-align:right"><div class="editacts" style="justify-content:flex-end"><button class="savebtn"><span data-i="check"></span>Save</button><button class="cancelbtn">Cancel</button></div></td></tr>
+              <tr class="editing"><td><span class="pchip">SPF Golda — local grade</span></td><td><span class="miniinput bn"><input value="৬৫০" aria-label="Local golda rate"/></span></td><td></td></tr>
+              <tr class="editing"><td><span class="pchip">Carp (Rui / Catla) — local</span></td><td><span class="miniinput bn"><input value="২২০" aria-label="Carp rate"/></span></td><td></td></tr>
+            </tbody>
+          </table>
+          <div class="secnote"><span data-i="alert-triangle"></span>Saving updates the <b>remaining harvest value</b> on Finance immediately, and is audit-logged with your name and the dual date 2026-07-21 <span class="bn">(৫ শ্রাবণ ১৪৩৩)</span>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLOSE CONFIRM -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag amber">Confirm</span><h3>Close-project confirmation</h3></div>
+      <p class="vsub">The confirmation restates exactly what closing does and requires a deliberate tick before the button enables. The tone is weighty but not alarming — this is reversible.</p>
+      <div class="vbox">
+        <div class="closecard" style="margin-bottom:0">
+          <span class="ci" data-i="archive"></span>
+          <div style="flex:1">
+            <div class="ct">Close this project</div>
+            <div class="cd">You're about to close <b>Meghna Gher</b>. It will become read-only — all data stays visible, write actions are hidden, and an owner can reopen it later.</div>
+            <div class="confirmbox">
+              <div class="qt"><span data-i="alert-triangle"></span>Confirm you want to close Meghna Gher</div>
+              <div class="qd">Logging feed, water, mortality and tasks will be turned off for everyone until the project is reopened. Reports and exports stay available.</div>
+              <div class="chk"><span class="box" data-i="check"></span>I understand the project will become read-only and write actions will be hidden.</div>
+              <div class="cacts"><button class="btn dangersolid"><span data-i="archive"></span>Close project</button><button class="btn secondary">Keep it active</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEGRADED -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag amber">Degraded</span><h3>Settings service down</h3></div>
+      <p class="vsub">Configuration can't be loaded. The page frame holds and the fields fall back to the degraded widget rather than showing blank or editable-but-unsaveable inputs.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="grid"></span>Project details</div>
+          <div class="degraded"><span class="di" data-i="alert-triangle"></span><div><div class="dt">Settings are temporarily unavailable.</div><div class="dd">The rest of the app is unaffected. No changes have been lost — try again shortly.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Loading</span><h3>Skeleton state</h3></div>
+      <p class="vsub">Soft shimmer skeletons for the detail rows and threshold table.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="grid"></span>Project details</div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;gap:16px"><div class="sk" style="height:16px;width:180px"></div><div class="sk" style="height:16px;flex:1"></div></div>
+            <div style="display:flex;gap:16px"><div class="sk" style="height:16px;width:180px"></div><div class="sk" style="height:16px;flex:1"></div></div>
+            <div style="display:flex;gap:16px"><div class="sk" style="height:16px;width:180px"></div><div class="sk" style="height:16px;flex:1"></div></div>
+            <div style="display:flex;gap:16px"><div class="sk" style="height:16px;width:180px"></div><div class="sk" style="height:16px;flex:1"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════ SCREEN 3 · MEMBERS ═══════════════ -->
+    <div class="bigsep"></div>
+    <div id="members" class="maintag" style="margin-top:40px"><span data-i="users"></span>W-19 · /projects/meghna-gher/members · Owner only</div>
+    <div class="screenband">
+      <span class="sn">Screen 3</span>
+      <div><h2>Members</h2><p>Who can see and do what on this project — also absent for Partner and Worker. The two backend guardrails are shown as real, clearly-worded blocks, because the owner will hit them.</p></div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="phead">
+      <div>
+        <h1>Members <span class="owner-only"><span data-i="crown"></span>Owner only</span></h1>
+        <div class="meta"><span class="m"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</span><span class="m"><span data-i="users"></span>3 members</span></div>
+      </div>
+      <div class="acts"><button class="btn primary"><span data-i="user-plus"></span>Invite member</button></div>
+    </div>
+
+    <!-- MEMBER LIST -->
+    <div class="panel">
+      <div class="ph"><span data-i="users"></span>Members<span class="cnt">3 people</span></div>
+      <table class="dtable">
+        <thead><tr><th>Name</th><th>Role</th><th>Joined</th><th>Last active</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="mrow-name"><span class="mav av-owner">RK</span><div><div class="mn">Rahima Khatun <span class="youtag">You</span></div><div class="me">rahima.khatun@example.com</div></div></div></td>
+            <td><span class="rolechip r-owner"><span data-i="crown"></span>OWNER</span></td>
+            <td><div>2026-05-08</div><div class="me bn">২৫ বৈশাখ ১৪৩৩</div></td>
+            <td>Just now</td>
+            <td style="text-align:right"><span class="removeblocked" title="A project must always have at least one owner"><span data-i="lock"></span>Remove</span></td>
+          </tr>
+          <tr>
+            <td><div class="mrow-name"><span class="mav av-worker">KU</span><div><div class="mn">Karim Uddin</div><div class="me">karim.uddin@example.com</div></div></div></td>
+            <td><span class="rolechip r-worker"><span data-i="hard-hat"></span>WORKER</span></td>
+            <td><div>2026-05-10</div><div class="me bn">২৭ বৈশাখ ১৪৩৩</div></td>
+            <td>Today 09:00</td>
+            <td style="text-align:right"><button class="removebtn"><span data-i="user-minus"></span>Remove</button></td>
+          </tr>
+          <tr>
+            <td><div class="mrow-name"><span class="mav av-partner">AH</span><div><div class="mn">Anwar Hossain</div><div class="me">anwar.hossain@example.com</div></div></div></td>
+            <td><span class="rolechip r-partner"><span data-i="eye"></span>PARTNER</span></td>
+            <td><div>2026-06-01</div><div class="me bn">১৮ জ্যৈষ্ঠ ১৪৩৩</div></td>
+            <td>2026-07-20 <span class="bn" style="color:var(--muted)">(৪ শ্রাবণ)</span></td>
+            <td style="text-align:right"><button class="removebtn"><span data-i="user-minus"></span>Remove</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ROLE EXPLAINER -->
+    <div class="panel">
+      <div class="ph"><span data-i="shield"></span>What each role can do</div>
+      <div class="rolebox">
+        <div class="rolecol">
+          <div class="rt"><span class="rolechip r-owner"><span data-i="crown"></span>OWNER</span></div>
+          <ul>
+            <li class="yes"><span data-i="check"></span>Full access, including finances and settings</li>
+            <li class="yes"><span data-i="check"></span>Manage members — invite and remove</li>
+            <li class="yes"><span data-i="check"></span>Edit thresholds, market rates, close the project</li>
+          </ul>
+        </div>
+        <div class="rolecol">
+          <div class="rt"><span class="rolechip r-worker"><span data-i="hard-hat"></span>WORKER</span></div>
+          <ul>
+            <li class="yes"><span data-i="check"></span>Operational logging on the mobile app — feed, water, mortality, tasks, camera</li>
+            <li class="no"><span data-i="x"></span>Never sees finances or settings</li>
+            <li class="no"><span data-i="x"></span>Active on only <b>one</b> project at a time</li>
+          </ul>
+        </div>
+        <div class="rolecol">
+          <div class="rt"><span class="rolechip r-partner"><span data-i="eye"></span>PARTNER</span></div>
+          <ul>
+            <li class="yes"><span data-i="check"></span>Read-only across the whole project, including finances</li>
+            <li class="no"><span data-i="x"></span>Cannot change anything — no logging, no settings</li>
+            <li class="yes"><span data-i="check"></span>Can download reports &amp; exports</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- INVITE PANEL (open) -->
+    <div class="invite">
+      <div class="ih"><span data-i="user-plus"></span>Invite a member<button class="close" aria-label="Close"><span data-i="x"></span></button></div>
+      <div class="ib">
+        <div class="ifield">
+          <span class="il">Email address</span>
+          <div class="inp filled"><span data-i="mail"></span><span class="ph2">shirin.akter@example.com</span></div>
+        </div>
+        <div class="ifield">
+          <span class="il">Role</span>
+          <div class="roleopts">
+            <div class="roleopt"><div class="roh"><span class="rolechip r-owner"><span data-i="crown"></span>OWNER</span></div><div class="rod">Full access incl. finances &amp; settings; can manage members.</div></div>
+            <div class="roleopt sel"><div class="roh"><span class="rolechip r-worker"><span data-i="hard-hat"></span>WORKER</span></div><div class="rod">Mobile logging only — feed, water, mortality, tasks. One active project at a time.</div></div>
+            <div class="roleopt"><div class="roh"><span class="rolechip r-partner"><span data-i="eye"></span>PARTNER</span></div><div class="rod">Read-only across the project, including finances. Cannot change anything.</div></div>
+          </div>
+        </div>
+        <div class="iacts"><button class="btn primary"><span data-i="send"></span>Send invite</button><button class="btn secondary">Cancel</button></div>
+        <div class="invite-note"><span data-i="info"></span>If this person has no FMS account yet, they'll be guided through setting up a password when they open the invite.</div>
+      </div>
+    </div>
+
+    <!-- MEMBERS VARIANTS -->
+    <div class="divider"></div>
+    <p class="slab">Members · documented variants</p>
+
+    <!-- WORKER CONFLICT -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag crit">Guardrail</span><h3>Worker already active on another project</h3></div>
+      <p class="vsub">The backend enforces that a worker holds only one active project. The invite is rejected with a plain explanation and a way forward — no membership is created. This reads as the system protecting a rule, not a generic red toast.</p>
+      <div class="vbox">
+        <div class="invite" style="margin-bottom:0;border-color:#FCA5A5">
+          <div class="ih" style="background:var(--tint-critical);color:#991B1B"><span data-i="user-plus"></span>Invite a member</div>
+          <div class="ib">
+            <div class="ifield"><span class="il">Email address</span><div class="inp filled"><span data-i="mail"></span><span class="ph2">jamal.hossain@example.com</span></div></div>
+            <div class="ifield"><span class="il">Role</span><div class="roleopts"><div class="roleopt"><div class="roh"><span class="rolechip r-owner"><span data-i="crown"></span>OWNER</span></div></div><div class="roleopt sel"><div class="roh"><span class="rolechip r-worker"><span data-i="hard-hat"></span>WORKER</span></div></div><div class="roleopt"><div class="roh"><span class="rolechip r-partner"><span data-i="eye"></span>PARTNER</span></div></div></div></div>
+            <div class="guardrail">
+              <span class="gi" data-i="shield"></span>
+              <div><div class="gt">This person is already the active worker on another project</div><div class="gd">A worker can hold <b>only one active project</b> at a time, so this invite was not created. Ask them to be removed from their current project first, or invite them as a <b>Partner</b> if they only need to view Meghna Gher.</div></div>
+            </div>
+            <div class="iacts" style="margin-top:14px"><button class="btn primary" style="opacity:.5">Send invite</button><button class="btn secondary">Change role to Partner</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAST OWNER BLOCK -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag crit">Guardrail</span><h3>Removing the last owner is blocked</h3></div>
+      <p class="vsub">A project must always have at least one owner. When Rahima is the only owner, her remove action is blocked — shown inline on the row and explained, with the constructive alternative (add another owner first).</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="users"></span>Members</div>
+          <table class="dtable">
+            <tbody>
+              <tr>
+                <td><div class="mrow-name"><span class="mav av-owner">RK</span><div><div class="mn">Rahima Khatun <span class="youtag">You</span></div><div class="me">rahima.khatun@example.com</div></div></div></td>
+                <td><span class="rolechip r-owner"><span data-i="crown"></span>OWNER</span></td>
+                <td style="text-align:right"><span class="removeblocked"><span data-i="lock"></span>Remove</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="guardrail" style="margin:0;border-radius:0;border-left-width:4px;border-top:1px solid #FCA5A5">
+            <span class="gi" data-i="shield"></span>
+            <div><div class="gt">The last owner can't be removed</div><div class="gd">Every project must keep <b>at least one owner</b>. To leave Meghna Gher, first invite another member as Owner — once there are two owners, this action unlocks.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENDING INVITE -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag info">Pending</span><h3>Invited, not yet accepted</h3></div>
+      <p class="vsub">A sent invite shows as a pending row until the person accepts. It is clearly distinct from an active member and can be revoked or resent.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="users"></span>Members<span class="cnt">3 members · 1 pending</span></div>
+          <table class="dtable">
+            <tbody>
+              <tr style="background:var(--tint-info)">
+                <td><div class="mrow-name"><span class="mav" style="background:var(--surface);border:1.5px dashed var(--info);color:var(--info)"><span data-i="mail" style="width:16px;height:16px"></span></span><div><div class="mn" style="color:var(--text-2)">shirin.akter@example.com</div><div class="me">Invitation sent · awaiting sign-up</div></div></div></td>
+                <td><span class="rolechip r-worker"><span data-i="hard-hat"></span>WORKER</span></td>
+                <td><span class="pendingtag"><span data-i="clock"></span>Invited 2026-07-20 <span class="bn">(৪ শ্রাবণ)</span></span></td>
+                <td><span class="badge b-info"><span class="dot"></span>Pending</span></td>
+                <td style="text-align:right"><button class="btn secondary sm"><span data-i="send"></span>Resend</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="secnote"><span data-i="info"></span>Pending invites don't count toward active access. If Shirin has no account, she'll set a password when she opens the invite.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEGRADED -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag amber">Degraded</span><h3>Member service down</h3></div>
+      <p class="vsub">The membership service is unreachable; the list falls back to the degraded widget while the page frame holds.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="users"></span>Members</div>
+          <div class="degraded"><span class="di" data-i="alert-triangle"></span><div><div class="dt">The member list is temporarily unavailable.</div><div class="dd">The rest of the app is unaffected. Existing access is unchanged — inviting and removing will work again shortly.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="variant">
+      <div class="vhead"><span class="vtag">Loading</span><h3>Skeleton state</h3></div>
+      <p class="vsub">Soft shimmer skeletons for the member rows.</p>
+      <div class="vbox">
+        <div class="panel" style="margin-bottom:0">
+          <div class="ph"><span data-i="users"></span>Members</div>
+          <div style="padding:6px 16px">
+            <div style="display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid var(--border)"><div class="sk" style="width:38px;height:38px;border-radius:50%"></div><div style="flex:1"><div class="sk" style="height:14px;width:32%;margin-bottom:7px"></div><div class="sk" style="height:11px;width:48%"></div></div><div class="sk" style="height:24px;width:90px;border-radius:6px"></div></div>
+            <div style="display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid var(--border)"><div class="sk" style="width:38px;height:38px;border-radius:50%"></div><div style="flex:1"><div class="sk" style="height:14px;width:28%;margin-bottom:7px"></div><div class="sk" style="height:11px;width:44%"></div></div><div class="sk" style="height:24px;width:90px;border-radius:6px"></div></div>
+            <div style="display:flex;align-items:center;gap:13px;padding:12px 0"><div class="sk" style="width:38px;height:38px;border-radius:50%"></div><div style="flex:1"><div class="sk" style="height:14px;width:30%;margin-bottom:7px"></div><div class="sk" style="height:11px;width:46%"></div></div><div class="sk" style="height:24px;width:90px;border-radius:6px"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const ICONS={
+ "layers":"M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+ "chevron-down":"M6 9l6 6 6-6",
+ "bell":"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",
+ "settings":"M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z",
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "layout":"M3 3h18v18H3zM3 9h18M9 21V9",
+ "grid":"M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
+ "droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z",
+ "utensils":"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ "check-square":"M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11",
+ "package":"M16.5 9.4 7.5 4.21M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12",
+ "heart-pulse":"M20.42 4.58a5.4 5.4 0 0 0-7.65 0L12 5.36l-.77-.78a5.4 5.4 0 0 0-7.65 7.65l.78.78L12 21l7.64-7.99.78-.78a5.4 5.4 0 0 0 0-7.65zM3.5 12h4l1.5-3 3 6 1.5-3h4",
+ "trending-up":"M22 7l-8.5 8.5-5-5L2 17M16 7h6v6",
+ "scale":"M12 3v18M7 21h10M6.5 7 3 14a3.5 3.5 0 0 0 7 0L6.5 7zM17.5 7 14 14a3.5 3.5 0 0 0 7 0l-3.5-7zM3 7h18",
+ "wallet":"M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4z",
+ "file-text":"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8",
+ "camera":"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+ "cloud":"M17.5 19a4.5 4.5 0 1 0 0-9h-1.26A8 8 0 1 0 4 15.25",
+ "users":"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "alert-circle":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v4M12 16h.01",
+ "check":"M20 6 9 17l-5-5",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "x":"M18 6 6 18M6 6l12 12",
+ "arrow-right":"M5 12h14M12 5l7 7-7 7",
+ "eye":"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "lock":"M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4",
+ "shield":"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+ "info":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01",
+ "download":"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
+ "edit-3":"M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z",
+ "sliders":"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
+ "tag":"M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01",
+ "link":"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
+ "archive":"M21 8v13H3V8M1 3h22v5H1zM10 12h4",
+ "crown":"M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zM2 20h20",
+ "hard-hat":"M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v2zM10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5M4 15v-3a6 6 0 0 1 6-6M14 6a6 6 0 0 1 6 6v3",
+ "user-plus":"M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M8.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM20 8v6M23 11h-6",
+ "user-minus":"M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M8.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 11h-6",
+ "mail":"M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6",
+ "send":"M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

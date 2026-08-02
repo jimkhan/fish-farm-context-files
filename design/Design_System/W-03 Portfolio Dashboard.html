@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FMS · W-03 Portfolio Dashboard (Owner)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --brand:#0E7490;--brand-dark:#155E75;--accent:#0891B2;
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface-muted:#F1F5F9;--border:#E2E8F0;--border-strong:#CBD5E1;
+  --text:#0F172A;--text-2:#475569;--inverse:#FFFFFF;
+  --info:#0284C7;--warning:#D97706;--critical:#DC2626;
+  --ok:#16A34A;--muted:#94A3B8;--danger:#DC2626;
+  --tint-brand:#ECFEFF;--tint-info:#EFF6FF;--tint-warning:#FFFBEB;--tint-critical:#FEF2F2;--tint-ok:#F0FDF4;--tint-muted:#F1F5F9;
+  --focus:#0891B2;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-pill:999px;
+  --sh-card:0 1px 3px rgba(15,23,42,.08);--sh-lift:0 10px 30px rgba(15,23,42,.16);
+  --font:"Inter",system-ui,sans-serif;--bn:"Noto Sans Bengali","Hind Siliguri",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.bn{font-family:var(--bn)}
+a{color:var(--brand);text-decoration:none}a:hover{color:var(--brand-dark)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:var(--r-sm)}
+
+/* app bar */
+.appbar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;gap:18px;padding:0 24px}
+.mark{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;letter-spacing:-.3px;color:var(--brand-dark)}
+.mark .logo{width:30px;height:30px;border-radius:8px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.5px}
+.switcher{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-size:14px;font-weight:600;color:var(--text)}
+.switcher svg{width:16px;height:16px;color:var(--text-2)}
+.abspacer{flex:1}
+.iconbtn{position:relative;width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+.iconbtn:hover{background:var(--surface-muted);color:var(--text)}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn .cnt{position:absolute;top:4px;right:4px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--critical);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.userchip{display:flex;align-items:center;gap:10px;padding:4px 10px 4px 4px;border-radius:var(--r-pill);border:1px solid var(--border)}
+.userchip .av{width:32px;height:32px;border-radius:50%;background:var(--brand-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.userchip .un{font-size:13px;font-weight:600;line-height:1.2}
+.userchip .ur{font-size:11px;color:var(--text-2)}
+
+/* layout */
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 64px}
+.pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.pagehead h1{font-size:24px;font-weight:700;letter-spacing:-.4px}
+.pagehead .greet{font-size:14px;color:var(--text-2);margin-top:4px;display:flex;align-items:center;gap:7px}
+.pagehead .greet svg{width:15px;height:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:1px solid transparent}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand-dark)}
+.btn.secondary{background:var(--surface);color:var(--brand);border-color:var(--border-strong)}.btn.secondary:hover{background:var(--surface-muted)}
+
+/* section label */
+.slab{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:0 0 12px}
+
+/* KPI row */
+.kpirow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:20px;display:flex;flex-direction:column;min-height:150px}
+.kpi .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.kpi .lab{font-size:14px;font-weight:600;color:var(--text-2)}
+.kpi .ico{width:34px;height:34px;border-radius:var(--r-md);background:var(--surface-muted);color:var(--text-2);display:flex;align-items:center;justify-content:center}
+.kpi .ico svg{width:20px;height:20px}
+.kpi .val{font-size:34px;font-weight:700;letter-spacing:-.5px;margin-top:auto;line-height:1.05}
+.kpi .val .u{font-size:16px;color:var(--text-2);font-weight:500}
+.kpi .foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.delta{display:inline-flex;align-items:center;gap:4px;width:fit-content;font-size:13px;font-weight:600;padding:3px 9px;border-radius:var(--r-pill);font-variant-numeric:tabular-nums}
+.delta.up{color:var(--ok);background:var(--tint-ok)}
+.delta.down{color:var(--danger);background:var(--tint-critical)}
+.spark{color:var(--muted);flex-shrink:0}
+.kpi.urgent{background:var(--tint-critical);border-color:var(--critical);box-shadow:0 6px 18px rgba(220,38,38,.18)}
+.kpi.urgent .lab{color:#991B1B}
+.kpi.urgent .ico{background:var(--critical);color:#fff}
+.kpi.urgent .val{color:var(--critical)}
+.kpi.urgent .foot .sub{font-size:13px;font-weight:600;color:#991B1B;display:inline-flex;align-items:center;gap:6px}
+.kpi.urgent .foot .sub svg{width:15px;height:15px}
+
+/* critical strip */
+.critwrap{margin-top:24px}
+.critbar{background:var(--surface);border:1px solid var(--critical);border-left:4px solid var(--critical);border-radius:var(--r-lg);box-shadow:var(--sh-card);overflow:hidden}
+.critbar .ch{display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--tint-critical);color:#991B1B;font-weight:700;font-size:14px;border-bottom:1px solid #FCA5A5}
+.critbar .ch svg{width:18px;height:18px}
+.critbar .ch .n{margin-left:auto;font-size:12px;background:var(--critical);color:#fff;border-radius:var(--r-pill);padding:2px 9px}
+.crititem{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.crititem:last-child{border-bottom:none}
+.crititem .pulse{width:10px;height:10px;border-radius:50%;background:var(--critical);flex-shrink:0;box-shadow:0 0 0 0 rgba(220,38,38,.5);animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(220,38,38,.45)}70%{box-shadow:0 0 0 8px rgba(220,38,38,0)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}}
+.crititem .cmain{flex:1;min-width:0}
+.crititem .ctitle{font-size:15px;font-weight:700}
+.crititem .ctitle .proj{color:var(--critical)}
+.crititem .cmeta{font-size:13px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.crititem .cmeta svg{width:14px;height:14px}
+.ackbtn{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 16px;border-radius:var(--r-md);background:var(--critical);color:#fff;font-size:14px;font-weight:600;flex-shrink:0}
+.ackbtn:hover{background:#B91C1C}
+.ackbtn svg{width:16px;height:16px}
+
+/* project grid */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);display:flex;flex-direction:column;overflow:hidden;transition:box-shadow .15s,border-color .15s}
+.pcard.link:hover{box-shadow:var(--sh-lift);border-color:var(--border-strong)}
+.pcard.crit{border-color:#FCA5A5}
+.pcard.closed{background:var(--surface-muted);box-shadow:none}
+.pcard.closed .pc-body{opacity:.72}
+.pc-body{padding:18px 18px 8px}
+.pc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.pc-name{font-size:17px;font-weight:700;letter-spacing:-.2px}
+.pc-loc{font-size:13px;color:var(--text-2);margin-top:2px;display:flex;align-items:center;gap:5px}
+.pc-loc svg{width:13px;height:13px}
+.pc-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;margin-top:16px}
+.pc-stat .k{font-size:12px;color:var(--text-2);font-weight:500}
+.pc-stat .v{font-size:18px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.pc-stat .v.loss{color:var(--danger)}
+.pc-stat .v.alertok{color:var(--ok)}
+.pc-stat .v.alertcrit{color:var(--critical)}
+.pc-foot{border-top:1px solid var(--border);margin-top:14px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pc-worker{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)}
+.pc-worker .wav{width:26px;height:26px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.pc-open{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--brand)}
+.pc-open svg{width:16px;height:16px}
+.pc-lastact{font-size:12px;color:var(--muted);padding:0 18px 14px}
+.closed-note{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-2);padding:0 18px 14px}
+.closed-note svg{width:14px;height:14px}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:12px;font-weight:600;white-space:nowrap}
+.badge svg{width:13px;height:13px}
+.dot{width:7px;height:7px;border-radius:50%}
+.b-ok{background:var(--tint-ok);color:#166534}.b-ok .dot{background:var(--ok)}
+.b-muted{background:var(--surface-muted);color:var(--text-2)}.b-muted .dot{background:var(--muted)}
+.b-crit{background:var(--tint-critical);color:#991B1B}.b-crit .dot{background:var(--critical)}
+
+/* degraded widget */
+.degraded{grid-column:1/-1;background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;display:flex;align-items:center;gap:14px;min-height:150px}
+.degraded .di{width:44px;height:44px;border-radius:var(--r-pill);background:var(--tint-warning);color:var(--warning);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.degraded .di svg{width:24px;height:24px}
+.degraded .dt{font-size:15px;font-weight:700}
+.degraded .dd{font-size:14px;color:var(--text-2);margin-top:2px}
+
+/* empty */
+.empty{background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--r-lg);padding:56px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+.empty .ei{width:60px;height:60px;border-radius:var(--r-pill);background:var(--tint-brand);color:var(--brand);display:flex;align-items:center;justify-content:center}
+.empty .ei svg{width:30px;height:30px}
+.empty .et{font-size:18px;font-weight:700}
+.empty .ed{font-size:14px;color:var(--text-2);max-width:360px}
+
+/* skeleton */
+@keyframes shimmer{100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E2E8F0 0%,#EEF3F8 50%,#E2E8F0 100%);background-size:200% 100%;background-position:200% 0;animation:shimmer 1.4s ease-in-out infinite;border-radius:var(--r-sm)}
+.sk-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:20px;min-height:150px;display:flex;flex-direction:column;gap:14px}
+.sk-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-card);padding:18px;display:flex;flex-direction:column;gap:14px}
+
+/* variant framing */
+.variant{margin-top:52px}
+.vhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.vhead .vtag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--text);padding:4px 10px;border-radius:var(--r-pill)}
+.vhead h3{font-size:16px;font-weight:700}
+.vsub{font-size:14px;color:var(--text-2);margin-bottom:16px;max-width:720px}
+.vbox{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--bg)}
+.vbox .vbar{height:54px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 20px}
+.vbox .vbody{padding:22px}
+
+.divider{height:1px;background:var(--border);margin:40px 0}
+.maintag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--tint-brand);padding:5px 12px;border-radius:var(--r-pill);margin-bottom:16px}
+
+@media(max-width:900px){.kpirow,.pgrid{grid-template-columns:1fr}.userchip .un,.userchip .ur{display:none}}
+</style>
+</head>
+<body>
+
+<!-- ===== APP BAR ===== -->
+<div class="appbar">
+  <div class="mark"><span class="logo">FMS</span></div>
+  <button class="switcher"><span data-i="layers"></span>All projects<span data-i="chevron-down"></span></button>
+  <div class="abspacer"></div>
+  <button class="iconbtn" aria-label="Notifications"><span data-i="bell"></span><span class="cnt">3</span></button>
+  <button class="iconbtn" aria-label="Settings"><span data-i="settings"></span></button>
+  <div class="userchip"><span class="av">RK</span><div><div class="un">Rahima Khatun</div><div class="ur">Owner · 3 projects</div></div></div>
+</div>
+
+<div class="wrap">
+  <div class="maintag"><span data-i="monitor"></span>W-03 · /portfolio · Owner</div>
+
+  <!-- PAGE HEADER -->
+  <div class="pagehead">
+    <div>
+      <h1>Good morning, Rahima</h1>
+      <div class="greet"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</div>
+    </div>
+    <button class="btn primary"><span data-i="plus"></span>New project</button>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="kpirow">
+    <div class="kpi">
+      <div class="top"><span class="lab">Total biomass</span><span class="ico" data-i="fish"></span></div>
+      <div class="val">5,240 <span class="u">kg</span></div>
+      <div class="foot">
+        <span class="delta up"><span data-i="chevron-up-s"></span>6.1% this week</span>
+        <svg class="spark" width="76" height="24" viewBox="0 0 76 24" fill="none" aria-hidden="true"><polyline points="0,17 13,18 26,14 38,13 51,9 64,8 76,4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="kpi urgent">
+      <div class="top"><span class="lab">Open critical alerts</span><span class="ico" data-i="alert-triangle"></span></div>
+      <div class="val">2</div>
+      <div class="foot"><span class="sub"><span data-i="alert-circle"></span>Across 1 project · needs attention now</span></div>
+    </div>
+    <div class="kpi">
+      <div class="top"><span class="lab">Portfolio net profit</span><span class="ico" data-i="wallet"></span></div>
+      <div class="val bn">৳৮,৪২,০০০</div>
+      <div class="foot">
+        <span class="delta up"><span data-i="chevron-up-s"></span>4.3% this month</span>
+        <svg class="spark" width="76" height="24" viewBox="0 0 76 24" fill="none" aria-hidden="true"><polyline points="0,18 13,15 26,16 38,11 51,12 64,7 76,6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRITICAL STRIP -->
+  <div class="critwrap">
+    <div class="critbar">
+      <div class="ch"><span data-i="alert-triangle"></span>Critical alerts — act now<span class="n">2 open</span></div>
+      <div class="crititem">
+        <span class="pulse"></span>
+        <div class="cmain">
+          <div class="ctitle">Emergency raised — <span class="proj">Meghna Gher</span> · Pond J1 — fish surfacing / gasping</div>
+          <div class="cmeta"><span data-i="clock"></span>18 min ago · 2026-07-21 09:23 (৫ শ্রাবণ ১৪৩৩) · raised by worker Karim Uddin</div>
+        </div>
+        <button class="ackbtn"><span data-i="check"></span>Acknowledge</button>
+      </div>
+      <div class="crititem">
+        <span class="pulse"></span>
+        <div class="cmain">
+          <div class="ctitle">Dissolved oxygen critical — <span class="proj">Meghna Gher</span> · Pond A2 — 2.1 mg/L</div>
+          <div class="cmeta"><span data-i="clock"></span>41 min ago · 2026-07-21 09:00 (৫ শ্রাবণ ১৪৩৩) · auto sensor</div>
+        </div>
+        <button class="ackbtn"><span data-i="check"></span>Acknowledge</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT GRID -->
+  <p class="slab" style="margin-top:32px">Your projects</p>
+  <div class="pgrid">
+
+    <!-- critical project -->
+    <div class="pcard link crit">
+      <div class="pc-body">
+        <div class="pc-head">
+          <div><div class="pc-name">Meghna Gher</div><div class="pc-loc"><span data-i="map-pin"></span>Debidwar, Cumilla</div></div>
+          <span class="badge b-ok"><span class="dot"></span>ACTIVE</span>
+        </div>
+        <div class="pc-stats">
+          <div class="pc-stat"><div class="k">Biomass</div><div class="v">1,840 kg</div></div>
+          <div class="pc-stat"><div class="k">Active alerts</div><div class="v alertcrit">2 critical</div></div>
+          <div class="pc-stat"><div class="k">Net profit</div><div class="v bn">৳৪,২১,০০০</div></div>
+          <div class="pc-stat"><div class="k">Ponds</div><div class="v">4</div></div>
+        </div>
+      </div>
+      <div class="pc-lastact">Last activity 2026-07-21 09:23 (৫ শ্রাবণ ১৪৩৩)</div>
+      <div class="pc-foot">
+        <div class="pc-worker"><span class="wav">KU</span>Karim Uddin</div>
+        <span class="pc-open">Open<span data-i="arrow-right"></span></span>
+      </div>
+    </div>
+
+    <!-- healthy project -->
+    <div class="pcard link">
+      <div class="pc-body">
+        <div class="pc-head">
+          <div><div class="pc-name">Padma Fisheries</div><div class="pc-loc"><span data-i="map-pin"></span>Sadarpur, Faridpur</div></div>
+          <span class="badge b-ok"><span class="dot"></span>ACTIVE</span>
+        </div>
+        <div class="pc-stats">
+          <div class="pc-stat"><div class="k">Biomass</div><div class="v">2,510 kg</div></div>
+          <div class="pc-stat"><div class="k">Active alerts</div><div class="v alertok">None</div></div>
+          <div class="pc-stat"><div class="k">Net profit</div><div class="v bn">৳৩,৪৫,০০০</div></div>
+          <div class="pc-stat"><div class="k">Ponds</div><div class="v">3</div></div>
+        </div>
+      </div>
+      <div class="pc-lastact">Last activity 2026-07-21 08:47 (৫ শ্রাবণ ১৪৩৩)</div>
+      <div class="pc-foot">
+        <div class="pc-worker"><span class="wav">SB</span>Sultana Begum</div>
+        <span class="pc-open">Open<span data-i="arrow-right"></span></span>
+      </div>
+    </div>
+
+    <!-- closed project -->
+    <div class="pcard closed">
+      <div class="pc-body">
+        <div class="pc-head">
+          <div><div class="pc-name">Rupsha Gher</div><div class="pc-loc"><span data-i="map-pin"></span>Batiaghata, Khulna</div></div>
+          <span class="badge b-muted"><span class="dot"></span>CLOSED</span>
+        </div>
+        <div class="pc-stats">
+          <div class="pc-stat"><div class="k">Final biomass</div><div class="v">890 kg</div></div>
+          <div class="pc-stat"><div class="k">Active alerts</div><div class="v">—</div></div>
+          <div class="pc-stat"><div class="k">Net profit</div><div class="v bn">৳১,৯০,০০০</div></div>
+          <div class="pc-stat"><div class="k">Ponds</div><div class="v">2</div></div>
+        </div>
+      </div>
+      <div class="closed-note"><span data-i="archive"></span>Closed & read-only · cycle ended 2026-06-30 (১৬ আষাঢ় ১৪৩৩)</div>
+      <div class="pc-foot">
+        <div class="pc-worker"><span class="wav">MI</span>Mizanur Islam</div>
+        <span class="pc-open" style="color:var(--text-2)">View<span data-i="arrow-right"></span></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ VARIANTS ============ -->
+  <div class="divider"></div>
+  <p class="slab">Documented variants</p>
+
+  <!-- EMPTY -->
+  <div class="variant">
+    <div class="vhead"><span class="vtag">Empty</span><h3>No projects yet</h3></div>
+    <p class="vsub">A first-run owner with nothing set up. Purposeful, single next step — no fake data, no zeroed KPI row.</p>
+    <div class="vbox"><div class="vbody">
+      <div class="empty">
+        <span class="ei" data-i="fish"></span>
+        <div class="et">No projects yet</div>
+        <div class="ed">Create your first pond farm project to start tracking biomass, alerts and profit across your portfolio.</div>
+        <button class="btn primary"><span data-i="plus"></span>Create your first project</button>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- DEGRADED -->
+  <div class="variant">
+    <div class="vhead"><span class="vtag">Degraded</span><h3>Portfolio summary service down</h3></div>
+    <p class="vsub">The aggregation service is unavailable. The KPI row shows the F-01 degraded widget; the project list still renders — the page never blanks out.</p>
+    <div class="vbox"><div class="vbody">
+      <div class="kpirow">
+        <div class="degraded">
+          <span class="di" data-i="alert-triangle"></span>
+          <div><div class="dt">Portfolio summary is temporarily unavailable.</div><div class="dd">The rest of this page is unaffected. Your projects are shown below.</div></div>
+        </div>
+      </div>
+      <div class="pgrid" style="margin-top:16px">
+        <div class="pcard link">
+          <div class="pc-body">
+            <div class="pc-head"><div><div class="pc-name">Meghna Gher</div><div class="pc-loc"><span data-i="map-pin"></span>Debidwar, Cumilla</div></div><span class="badge b-ok"><span class="dot"></span>ACTIVE</span></div>
+            <div class="pc-stats">
+              <div class="pc-stat"><div class="k">Biomass</div><div class="v">1,840 kg</div></div>
+              <div class="pc-stat"><div class="k">Active alerts</div><div class="v alertcrit">2 critical</div></div>
+              <div class="pc-stat"><div class="k">Net profit</div><div class="v bn">৳৪,২১,০০০</div></div>
+              <div class="pc-stat"><div class="k">Ponds</div><div class="v">4</div></div>
+            </div>
+          </div>
+          <div class="pc-foot"><div class="pc-worker"><span class="wav">KU</span>Karim Uddin</div><span class="pc-open">Open<span data-i="arrow-right"></span></span></div>
+        </div>
+        <div class="pcard link">
+          <div class="pc-body">
+            <div class="pc-head"><div><div class="pc-name">Padma Fisheries</div><div class="pc-loc"><span data-i="map-pin"></span>Sadarpur, Faridpur</div></div><span class="badge b-ok"><span class="dot"></span>ACTIVE</span></div>
+            <div class="pc-stats">
+              <div class="pc-stat"><div class="k">Biomass</div><div class="v">2,510 kg</div></div>
+              <div class="pc-stat"><div class="k">Active alerts</div><div class="v alertok">None</div></div>
+              <div class="pc-stat"><div class="k">Net profit</div><div class="v bn">৳৩,৪৫,০০০</div></div>
+              <div class="pc-stat"><div class="k">Ponds</div><div class="v">3</div></div>
+            </div>
+          </div>
+          <div class="pc-foot"><div class="pc-worker"><span class="wav">SB</span>Sultana Begum</div><span class="pc-open">Open<span data-i="arrow-right"></span></span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="variant">
+    <div class="vhead"><span class="vtag">Loading</span><h3>Skeleton state</h3></div>
+    <p class="vsub">Soft shimmer skeletons for the KPI row and project cards — never spinners.</p>
+    <div class="vbox"><div class="vbody">
+      <div class="kpirow">
+        <div class="sk-kpi"><div class="sk" style="height:13px;width:44%"></div><div class="sk" style="height:32px;width:66%;margin-top:auto"></div><div class="sk" style="height:20px;width:38%"></div></div>
+        <div class="sk-kpi"><div class="sk" style="height:13px;width:44%"></div><div class="sk" style="height:32px;width:66%;margin-top:auto"></div><div class="sk" style="height:20px;width:38%"></div></div>
+        <div class="sk-kpi"><div class="sk" style="height:13px;width:44%"></div><div class="sk" style="height:32px;width:66%;margin-top:auto"></div><div class="sk" style="height:20px;width:38%"></div></div>
+      </div>
+      <div class="pgrid" style="margin-top:16px">
+        <div class="sk-card"><div class="sk" style="height:16px;width:55%"></div><div class="sk" style="height:12px;width:40%"></div><div class="sk" style="height:44px;width:100%;margin-top:6px"></div><div class="sk" style="height:36px;width:100%"></div></div>
+        <div class="sk-card"><div class="sk" style="height:16px;width:55%"></div><div class="sk" style="height:12px;width:40%"></div><div class="sk" style="height:44px;width:100%;margin-top:6px"></div><div class="sk" style="height:36px;width:100%"></div></div>
+        <div class="sk-card"><div class="sk" style="height:16px;width:55%"></div><div class="sk" style="height:12px;width:40%"></div><div class="sk" style="height:44px;width:100%;margin-top:6px"></div><div class="sk" style="height:36px;width:100%"></div></div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- PARTNER -->
+  <div class="variant">
+    <div class="vhead"><span class="vtag">Partner</span><h3>Read-only partner · one co-owned project</h3></div>
+    <p class="vsub">The same /portfolio route seen by an investor who co-owns ONE project. No cross-project totals, no “New project”, no settings, no member admin — and no hint any other project exists. Role-gating is hidden, never greyed out.</p>
+    <div class="vbox">
+      <div class="vbar">
+        <div class="mark"><span class="logo">FMS</span></div>
+        <div class="switcher" style="pointer-events:none"><span data-i="map-pin"></span>Padma Fisheries</div>
+        <div style="flex:1"></div>
+        <button class="iconbtn" aria-label="Notifications"><span data-i="bell"></span></button>
+        <div class="userchip"><span class="av" style="background:var(--accent)">AH</span><div><div class="un">Anwar Hossain</div><div class="ur">Partner · read-only</div></div></div>
+      </div>
+      <div class="vbody">
+        <div class="pagehead">
+          <div><h1 style="font-size:20px">Padma Fisheries</h1><div class="greet"><span data-i="calendar"></span>2026-07-21 (৫ শ্রাবণ ১৪৩৩) · বর্ষা</div></div>
+          <span class="badge b-muted" style="height:28px"><span data-i="eye"></span>Read-only view</span>
+        </div>
+        <div class="kpirow">
+          <div class="kpi">
+            <div class="top"><span class="lab">Biomass</span><span class="ico" data-i="fish"></span></div>
+            <div class="val">2,510 <span class="u">kg</span></div>
+            <div class="foot"><span class="delta up"><span data-i="chevron-up-s"></span>5.2% this week</span></div>
+          </div>
+          <div class="kpi">
+            <div class="top"><span class="lab">Open critical alerts</span><span class="ico" data-i="check-circle"></span></div>
+            <div class="val" style="color:var(--ok)">0</div>
+            <div class="foot"><span class="sub" style="font-size:13px;color:var(--text-2)">All ponds healthy</span></div>
+          </div>
+          <div class="kpi">
+            <div class="top"><span class="lab">Net profit</span><span class="ico" data-i="wallet"></span></div>
+            <div class="val bn">৳৩,৪৫,০০০</div>
+            <div class="foot"><span class="delta up"><span data-i="chevron-up-s"></span>4.3% this month</span></div>
+          </div>
+        </div>
+        <div class="pgrid" style="grid-template-columns:1fr;margin-top:16px">
+          <div class="pcard">
+            <div class="pc-body">
+              <div class="pc-head"><div><div class="pc-name">Padma Fisheries</div><div class="pc-loc"><span data-i="map-pin"></span>Sadarpur, Faridpur</div></div><span class="badge b-ok"><span class="dot"></span>ACTIVE</span></div>
+              <div class="pc-stats" style="grid-template-columns:repeat(4,1fr)">
+                <div class="pc-stat"><div class="k">Biomass</div><div class="v">2,510 kg</div></div>
+                <div class="pc-stat"><div class="k">Active alerts</div><div class="v alertok">None</div></div>
+                <div class="pc-stat"><div class="k">Net profit</div><div class="v bn">৳৩,৪৫,০০০</div></div>
+                <div class="pc-stat"><div class="k">Ponds</div><div class="v">3</div></div>
+              </div>
+            </div>
+            <div class="pc-lastact">Last activity 2026-07-21 08:47 (৫ শ্রাবণ ১৪৩৩)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ICONS={
+ "layers":"M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+ "chevron-down":"M6 9l6 6 6-6",
+ "chevron-up-s":"M18 15l-6-6-6 6",
+ "bell":"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",
+ "settings":"M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z",
+ "monitor":"M2 3h20v14H2zM8 21h8M12 17v4",
+ "calendar":"M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+ "plus":"M12 5v14M5 12h14",
+ "fish":"M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6zM18 12h.01M2 12s2.5-2 4.5-2M2 12s2.5 2 4.5 2",
+ "alert-triangle":"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
+ "alert-circle":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v4M12 16h.01",
+ "check-circle":"M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3",
+ "wallet":"M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4z",
+ "clock":"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+ "check":"M20 6 9 17l-5-5",
+ "map-pin":"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+ "arrow-right":"M5 12h14M12 5l7 7-7 7",
+ "archive":"M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8M2 4h20v4H2zM10 12h4",
+ "eye":"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"
+};
+function svg(name){const d=ICONS[name];if(!d)return"";const paths=d.split("M").filter(Boolean).map(s=>'<path d="M'+s.trim()+'"/>').join("");
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+document.querySelectorAll("[data-i]").forEach(el=>{el.insertAdjacentHTML("afterbegin",svg(el.getAttribute("data-i")));});
+</script>
+</body>
+</html>

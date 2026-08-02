@@ -1,0 +1,28 @@
+/* FMS spacing, radius, shadow, layout tokens */
+:root {
+  /* Spacing scale (px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Mobile minimum tap target */
+  --tap-min: 48px;
+
+  /* Radius (px) */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Shadow */
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, .08);
+  --shadow-modal: 0 10px 30px rgba(15, 23, 42, .18);
+
+  /* Icon sizes (px) */
+  --icon-sm: 20px;
+  --icon-md: 28px;
+  --icon-lg: 40px;
+}

@@ -1,0 +1,24 @@
+/* FMS typography tokens */
+:root {
+  /* Families */
+  --font-base: "Inter", system-ui, -apple-system, sans-serif;
+  --font-bangla: "Noto Sans Bengali", "Hind Siliguri", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Sizes (px) */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-md: 16px;   /* base */
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+
+  /* Weights */
+  --fw-regular: 400; /* @kind font */
+  --fw-medium: 500; /* @kind font */
+  --fw-bold: 700; /* @kind font */
+
+  /* Line heights */
+  --lh-tight: 1.2; /* @kind font */
+  --lh-normal: 1.5; /* @kind font */
+}

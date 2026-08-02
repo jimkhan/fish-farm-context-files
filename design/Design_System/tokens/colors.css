@@ -1,0 +1,43 @@
+/* FMS color tokens — teal water identity, high contrast, severity palette */
+:root {
+  /* Brand */
+  --brand-primary: #0E7490;
+  --brand-primary-dark: #155E75;
+  --brand-accent: #0891B2;
+
+  /* Neutrals */
+  --bg: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface-muted: #F1F5F9;
+  --border: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-inverse: #FFFFFF;
+
+  /* Alert severity */
+  --sev-info: #0284C7;
+  --sev-warning: #D97706;
+  --sev-critical: #DC2626;
+
+  /* Status */
+  --status-ok: #16A34A;
+  --status-muted: #94A3B8;
+  --status-danger: #DC2626;
+
+  /* Tinted surfaces for badges/banners (calm, low-saturation) */
+  --tint-info: #EFF6FF;
+  --tint-warning: #FFFBEB;
+  --tint-critical: #FEF2F2;
+  --tint-ok: #F0FDF4;
+  --tint-brand: #ECFEFF;
+
+  /* Focus ring — brand accent, WCAG-visible */
+  --focus-ring: #0891B2;
+
+  /* Semantic aliases */
+  --text-body: var(--text-primary);
+  --text-meta: var(--text-secondary);
+  --surface-card: var(--surface);
+  --surface-page: var(--bg);
+}

@@ -18,6 +18,10 @@ Code repos (created in Phase 7) hold only generated code plus their own `.cursor
 ## Reading order (the AIDLC cascade)
 `GLOSSARY` → `PROJECT_CONCEPT_NOTE` → `PRODUCT_SPECIFICATION` → `TECHNICAL_SPECIFICATION` + `DECISIONS` + `contracts/` + `ERD` → `FEATURE_LIST` + `MODULE_LIST` → `modules/*` → `BACKLOG` + `TRACEABILITY_MATRIX` → `MODULE_PROGRESS_TRACKER`
 
+> **Design track (parallel).** The web/mobile UI was designed *before* the front-end build: `DESIGN_PROCESS.md`
+> governs the workflow and holds the screen-id → file map + review log; the approved mockups, component kit,
+> and full design tokens live in `design/Design_System/` — the visual source of truth the web/mobile modules build against.
+
 ## Artifact registry
 
 | File | Phase | Status | ID range |
@@ -32,7 +36,7 @@ Code repos (created in Phase 7) hold only generated code plus their own `.cursor
 | `TECHNICAL_SPECIFICATION.md` | 3 | ✅ Complete | — |
 | `DECISIONS.md` | 3 (+P7 amend) | ✅ Complete | ADR-001…ADR-017 (ADR-017 reverted; ADR-002 governs repo layout) |
 | `contracts/openapi.yaml` | 3 (+P6 closure) | ✅ Complete | CON-001…CON-048 (CON-049…057 reserved) |
-| `contracts/design-tokens.json` | 3 | ✅ Complete (stub) | — |
+| `contracts/design-tokens.json` | 3 | ✅ Complete (stub) | full token values live in `design/Design_System/tokens/` |
 | `contracts/schemas/` | 3 | ✅ Complete (pointer) | — |
 | `FEATURE_LIST.md` | 4 | ✅ Complete | FT-001…FT-069 |
 | `MODULE_LIST.md` | 4 | ✅ Complete | MOD-01…MOD-12 |
@@ -52,6 +56,8 @@ Code repos (created in Phase 7) hold only generated code plus their own `.cursor
 | `BACKLOG.md` | 6 | ✅ Complete | TASK-001…TASK-051 |
 | `TRACEABILITY_MATRIX.md` | 6 | ✅ Complete | — |
 | `MODULE_PROGRESS_TRACKER.md` | 7 | ✅ Complete | — |
+| `DESIGN_PROCESS.md` | design-first (ahead of P7 web/mobile build) | ✅ Complete | screen-id → file map; §3b nav, §3c data-integrity, §4 review log, §5 punch-list |
+| `design/Design_System/` | design-first (ahead of P7 web/mobile build) | ✅ Complete | 30 approved HTML screen mockups + React component kit + `tokens/`, `ui_kits/{owner_web,partner_web,worker_mobile}` |
 | `fish-farm-backend/.cursorrules` + `README.md` | 7 | ✅ Complete | — |
 | `fish-farm-web/.cursorrules` + `README.md` | 7 | ✅ Complete | — |
 | `fish-farm-mobile-app/.cursorrules` + `README.md` | 7 | ✅ Complete | — |

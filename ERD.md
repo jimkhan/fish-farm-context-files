@@ -184,6 +184,7 @@ erDiagram
         enum grade "EXPORT | LOCAL"
         date harvested_on
         int revenue_minor "Money, BDT, nullable"
+        string client_mutation_id UK "offline idempotency (TASK-031 gap synced back — module doc groups harvest under the same NFR-001 guarantee as mortality/sampling)"
     }
 
     INVENTORY_ITEM {
@@ -372,6 +373,7 @@ erDiagram
         uuid user_id FK
         string entity
         string status "SYNCED | CONFLICT | FAILED"
+        uuid server_id "nullable, the created entity's id — needed to return the same id on an idempotent replay (TASK-040 gap synced back)"
         timestamptz processed_at
     }
 ```

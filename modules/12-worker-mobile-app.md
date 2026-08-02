@@ -4,6 +4,7 @@
 **Owns features:** FT-063, FT-064, FT-065, FT-066, FT-067, FT-068, FT-069
 **Contract refs:** CON-040, CON-029, CON-030, CON-031
 **Dependencies:** MOD-01, MOD-02, MOD-04, MOD-05, MOD-06, MOD-07, MOD-09, MOD-11
+**UI reference:** approved worker screens in `design/Design_System/ui_kits/worker_mobile` (design-first Bangla mockups + component kit); see `DESIGN_PROCESS.md` for the screen-id → file map.
 
 ---
 

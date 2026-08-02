@@ -4,6 +4,7 @@
 **Owns features:** FT-012, FT-013, FT-014, FT-015, FT-016, FT-017
 **Contract refs:** CON-006, CON-007, CON-008, CON-009, CON-035
 **Dependencies:** MOD-01, MOD-02, MOD-11
+**UI reference:** approved owner/partner screens in `design/Design_System/ui_kits/{owner_web,partner_web}` (design-first mockups + component kit); see `DESIGN_PROCESS.md` for the screen-id → file map.
 
 ---
 

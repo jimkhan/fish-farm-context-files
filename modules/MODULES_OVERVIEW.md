@@ -30,6 +30,9 @@
 - **API contract** (`contracts/openapi.yaml`) — the shared seam; backend implements, clients
   generate. Changes are a human-approved guardrail.
 - **Design tokens** (`contracts/design-tokens.json`) — shared by web + mobile UI.
+- **Design system** (`design/Design_System/`, process in `DESIGN_PROCESS.md`) — the approved,
+  design-first screen mockups + component kit + full tokens the web (MOD-03) and mobile (MOD-12)
+  UIs are built against.
 - **Bangla calendar** (MOD-11) — the only sanctioned source of Bangla dates; used everywhere.
 - **Error contract & domain-error mapping** (MOD-01: FT-006) — one error shape across surfaces.
 - **Audit logging** (MOD-01: FT-005) — every state change, within the same transaction.

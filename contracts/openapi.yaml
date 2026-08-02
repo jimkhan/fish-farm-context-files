@@ -1,13 +1,13 @@
 openapi: 3.1.0
 info:
   title: Fish Farm Management System (FMS) API
-  version: 0.1.6
+  version: 0.1.9
   description: >
     Contract-first API for the FMS. The backend (fish-farm-backend) implements this contract;
     the web and mobile clients are generated from it (ADR-003). Every operation carries a CON- id
-    in its `description` and traces the FR- it serves. Defined: CON-001…CON-048, CON-051, CON-052
-    (health CON-047, species CON-048, treatments CON-051, and growth-ADG/SGR CON-052 activated in
-    the Phase-6+ closure passes — CON-052 only for ADG/SGR, not FCR, TASK-030's separate scope).
+    in its `description` and traces the FR- it serves. Defined: CON-001…CON-048, CON-051, CON-052,
+    CON-058, CON-059 (health CON-047, species CON-048, treatments CON-051, growth-ADG/SGR CON-052,
+    pond-level FCR CON-058, and water trends CON-059 activated in the Phase-6+ closure passes).
     CON-049…CON-050, CON-053…CON-057 remain reserved for deferred P2/P3 endpoints — see the
     registry at the foot of this file. Any change here is a human-approved guardrail (it affects
     all surfaces).
@@ -27,6 +27,25 @@ info:
     alert is re-notified past the SLA).
     0.1.6 (TASK-021): `FeedPlan` gained `adjustmentReason` (nullable — R3/AC-073 require an
     "explicit reason" for a temp/DO-adjusted quota, never modeled as a field before this task).
+    0.1.7 (TASK-031): `CreateHarvest` gained `clientMutationId` (required — offline idempotency,
+    ADR-010, same as every other worker-loggable entity; the module doc's own NFR-001/edge-case-9
+    text groups harvest under the same offline guarantee, a gap this task closes). `Harvest`
+    gained `withdrawalWarning` (boolean — R7/AC-101, "200 + flag" per the error table, never a
+    blocking error) and `revenue` is now explicitly `nullable` (a harvest may be recorded before
+    its sale price is known).
+    0.1.8 (TASK-030): CON-058 (`GET /projects/{projectId}/ponds/{pondId}/fcr`) activated —
+    new `PondFcr`/`BatchSurvival` schemas. No pre-reserved CON- id existed for this (BACKLOG's own
+    TASK-030 entry says `Contract: —`); minted as the next free id since AC-098 ("When FCR is
+    requested") has no other queryable path. `fcr`/`biomassGainKg` are nullable — never fabricated
+    before ≥2 samplings exist for at least one batch in the pond (R3 edge case 2).
+    0.1.9 (TASK-026): CON-059 (`GET /projects/{projectId}/ponds/{pondId}/water-readings/trends`)
+    activated — new `WaterTrends`/`PatternAdvisory` schemas. BACKLOG's TASK-026 says `Contract:
+    CON-025`, but CON-025 (the readings list) carries no date-window params and no advisory field,
+    while AC-087 requires the falling-dawn-DO advisory to surface "when trends are queried" — the
+    module doc's "no new endpoints" note predates that. Resolved with the human: a new sub-resource
+    (minted CON-059, next free id, same posture as CON-058) rather than mutating CON-025's shipped
+    shape. `advisory` is non-null only for DO when the pattern is currently active — never
+    fabricated for other parameters or a flat/rising series.
     Tenant isolation (NFR-011): all `/projects/{projectId}/...` resources are auto-scoped to the
     caller's ProjectMembership; a non-member receives 403/404 uniformly and never another
     project's data.
@@ -291,15 +310,23 @@ paths:
       description: "CON-052 — FR-036. Activated for ADG/SGR only (TASK-029); FCR is a separate concern (TASK-030) and is not part of this response."
       responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Growth' } } } } }
 
+  /projects/{projectId}/ponds/{pondId}/fcr:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/pondId' } ]
+    get:
+      tags: [growth]
+      summary: Pond-level FCR + per-batch survival rate
+      description: "CON-058 — FR-037, R3/R4, AC-098/099 (TASK-030). FCR is reported at pond level only — never per-species (RISK-007); a pond may carry more than one batch (polyculture), each with its own reported survival rate."
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PondFcr' } } } } }
+
   # ---------------- harvest (FR-039..FR-041) ----------------
   /projects/{projectId}/batches/{batchId}/harvests:
     parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/batchId' } ]
     post:
       tags: [harvest]
       summary: Record a partial harvest (reduces biomass, adds revenue)
-      description: "CON-021 — FR-039, FR-040. Grade export|local."
+      description: "CON-021 — FR-039, FR-040. Grade export|local. AC-103: quantity exceeding remaining stock returns HARVEST_EXCEEDS_STOCK/409. AC-101: an EXPORT harvest inside a treatment withdrawal window is not blocked — withdrawalWarning is set on the response instead."
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CreateHarvest' } } } }
-      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Harvest' } } } } }
+      responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Harvest' } } } }, '409': { $ref: '#/components/responses/Error' } }
 
   # ---------------- inventory (FR-042..FR-044) ----------------
   /projects/{projectId}/inventory:
@@ -325,6 +352,21 @@ paths:
       responses: { '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/InventoryTxn' } } } } }
 
   # ---------------- water (FR-022..FR-026) ----------------
+  /projects/{projectId}/ponds/{pondId}/water-readings/trends:
+    parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/pondId' } ]
+    get:
+      tags: [water]
+      summary: Parameter trend series + early-warning advisory
+      description: >
+        CON-059 — FR-024. Time series for one parameter over a window (defaults to the trailing
+        14 days). For DO, the response also carries a falling-dawn-DO early-warning advisory
+        (AC-087) — a pattern signal distinct from the instantaneous WaterThresholdBreached that
+        recording a reading emits. Chart UI is TASK-039 (web).
+      parameters:
+        - { name: parameter, in: query, required: true, schema: { $ref: '#/components/schemas/WaterParameter' } }
+        - { name: from, in: query, required: false, schema: { type: string, format: date-time } }
+        - { name: to, in: query, required: false, schema: { type: string, format: date-time } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/WaterTrends' } } } } }
   /projects/{projectId}/ponds/{pondId}/water-readings:
     parameters: [ { $ref: '#/components/parameters/projectId' }, { $ref: '#/components/parameters/pondId' } ]
     get:
@@ -579,6 +621,10 @@ components:
         userId: { type: string, format: uuid }
         projectId: { type: string, format: uuid }
         role: { $ref: '#/components/schemas/Role' }
+        # Member identity for the owner-only Members admin UI (TASK-047). Resolved from the member's
+        # User; a freshly-invited account not yet signed up has `name` defaulting to its email.
+        email: { type: string, format: email }
+        name: { type: string }
     CreateMembership: { type: object, required: [email, role], properties: { email: { type: string, format: email }, role: { $ref: '#/components/schemas/Role' } } }
 
     # ---- projects ----
@@ -721,15 +767,22 @@ components:
       properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, batchId: { type: string, format: uuid }, sampleSize: { type: integer }, avgWeightG: { type: number }, sampledOn: { type: string, format: date } }
     Growth:
       type: object
-      description: "ADG/SGR only (TASK-029) — no `fcr` field until TASK-030."
+      description: "ADG/SGR only (TASK-029) — FCR is pond-level, not batch-level (R3/RISK-007), so TASK-030 exposes it via its own `PondFcr`/CON-058 endpoint instead of a field here."
       properties: { batchId: { type: string, format: uuid }, speciesId: { type: string, format: uuid }, samplings: { type: array, items: { $ref: '#/components/schemas/Sampling' } }, adgGPerDay: { type: number, nullable: true }, sgrPercentPerDay: { type: number, nullable: true }, growthAnomaly: { type: boolean } }
+    BatchSurvival:
+      type: object
+      properties: { batchId: { type: string, format: uuid }, speciesId: { type: string, format: uuid }, survivalRate: { type: number, description: "current survival ÷ initial count (R4/AC-099)" } }
+    PondFcr:
+      type: object
+      description: "TASK-030, R3/AC-098. FCR is pond-level only (RISK-007 — never per-species); `fcr`/`biomassGainKg` are null (never fabricated) when no batch in the pond has ≥2 samplings yet."
+      properties: { pondId: { type: string, format: uuid }, totalFeedKg: { type: number }, biomassGainKg: { type: number, nullable: true }, fcr: { type: number, nullable: true }, batches: { type: array, items: { $ref: '#/components/schemas/BatchSurvival' } } }
     CreateHarvest:
       type: object
-      required: [quantity, totalWeightKg, grade, harvestedOn]
-      properties: { quantity: { type: integer }, totalWeightKg: { type: number }, grade: { $ref: '#/components/schemas/HarvestGrade' }, harvestedOn: { type: string, format: date }, revenue: { $ref: '#/components/schemas/Money' } }
+      required: [quantity, totalWeightKg, grade, harvestedOn, clientMutationId]
+      properties: { quantity: { type: integer }, totalWeightKg: { type: number }, grade: { $ref: '#/components/schemas/HarvestGrade' }, harvestedOn: { type: string, format: date }, revenue: { $ref: '#/components/schemas/Money' }, clientMutationId: { type: string } }
     Harvest:
       type: object
-      properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, batchId: { type: string, format: uuid }, quantity: { type: integer }, totalWeightKg: { type: number }, grade: { $ref: '#/components/schemas/HarvestGrade' }, harvestedOn: { type: string, format: date }, revenue: { $ref: '#/components/schemas/Money' } }
+      properties: { id: { type: string, format: uuid }, projectId: { type: string, format: uuid }, batchId: { type: string, format: uuid }, quantity: { type: integer }, totalWeightKg: { type: number }, grade: { $ref: '#/components/schemas/HarvestGrade' }, harvestedOn: { type: string, format: date }, revenue: { $ref: '#/components/schemas/Money', nullable: true }, withdrawalWarning: { type: boolean, description: "R7/AC-101 — true when an EXPORT harvest falls inside a treatment's withdrawal window; never blocks the write." } }
 
     # ---- inventory ----
     InventoryItem:
@@ -763,6 +816,25 @@ components:
       type: object
       required: [parameter]
       properties: { parameter: { $ref: '#/components/schemas/WaterParameter' }, min: { type: number, nullable: true }, max: { type: number, nullable: true }, critical: { type: number, nullable: true } }
+    PatternAdvisory:
+      type: object
+      description: >
+        CON-059 — an early-warning *pattern* signal (AC-087), distinct from an instantaneous
+        threshold breach. Present only when a pattern is currently active.
+      required: [pattern, consecutiveDays, fromReadAt, toReadAt, dropValue]
+      properties:
+        pattern: { type: string, enum: [FALLING_DAWN_DO], description: The detected pattern kind. }
+        consecutiveDays: { type: integer, description: Consecutive daily dawn readings in the declining run. }
+        fromReadAt: { type: string, format: date-time, description: First (highest) dawn reading of the run. }
+        toReadAt: { type: string, format: date-time, description: Most recent (lowest) dawn reading of the run. }
+        dropValue: { type: number, description: 'Total decline across the run (from − to, always positive).' }
+    WaterTrends:
+      type: object
+      required: [parameter, series]
+      properties:
+        parameter: { $ref: '#/components/schemas/WaterParameter' }
+        series: { type: array, items: { $ref: '#/components/schemas/WaterReading' }, description: Ascending by readAt. }
+        advisory: { oneOf: [ { $ref: '#/components/schemas/PatternAdvisory' }, { type: 'null' } ], description: Non-null only for DO when the falling-dawn-DO pattern is active. }
     SensorReading: { type: object, required: [parameter, value, readAt], properties: { parameter: { $ref: '#/components/schemas/WaterParameter' }, value: { type: number }, readAt: { type: string, format: date-time } } }
     CreateWaterEvent: { type: object, properties: { pondId: { type: string, format: uuid }, note: { type: string }, clientMutationId: { type: string } } }
 
