@@ -52,10 +52,10 @@ Surface legend per cell: **B** backend · **W** web · **M** mobile · **S** sha
 | FR-009 | FT-011 | B, W | MOD-02 | TASK-010 (B); **TASK-047 (W)** |
 | FR-010 | FT-015 | W, B | MOD-03 | TASK-012 (B); TASK-014 (W) |
 | FR-011 | FT-014 | B, W, M | MOD-03 | TASK-011 (B); TASK-013/014 (W); TASK-042 (M single-project binding) |
-| FR-012 | FT-018 | B, W, M | MOD-04 | TASK-018 (B); TASK-014 (W inline) · multi-pond UI deferred — see §6 R1 |
-| FR-013 | FT-019 | B, W, M | MOD-04 | TASK-019 (B); CON-048 species lookup TASK-018; W/M stocking UI — §6 R1 |
+| FR-012 | FT-018 | B, W, M | MOD-04 | TASK-018 (B); TASK-014 (W inline) + **TASK-052 (W multi-pond)** · M — see §6 R1 |
+| FR-013 | FT-019 | B, W, M | MOD-04 | TASK-019 (B); CON-048 species lookup TASK-018; **TASK-052 (W stocking UI)**; M — §6 R1 |
 | FR-014 | FT-020 | B | MOD-04 | TASK-019 |
-| FR-015 | FT-021 | W, M | MOD-04 | TASK-019 (B calc); W/M density advisory display — §6 R1 |
+| FR-015 | FT-021 | W, M | MOD-04 | TASK-019 (B calc); **TASK-052 (W density advisory)**; M — §6 R1 |
 | FR-016 | FT-023 | B | MOD-05 | TASK-021 |
 | FR-017 | FT-024 | B | MOD-05 | TASK-021 |
 | FR-018 | FT-025 | B, M | MOD-05 | TASK-021 (B); TASK-043 (M) |
@@ -78,7 +78,7 @@ Surface legend per cell: **B** backend · **W** web · **M** mobile · **S** sha
 | FR-035 | FT-041 | B, M, W | MOD-07 | TASK-029 (B, done — CON-052 delivered for ADG/SGR); TASK-043 (M) · W sampling view (P2) |
 | FR-036 | FT-042 | B, W | MOD-07 | TASK-029 (B, done — CON-052 delivered for ADG/SGR) · W growth charts (P2) |
 | FR-037 | FT-043 | B, W | MOD-07 | TASK-030 (B) · W FCR view (P2) |
-| FR-038 | FT-022 | B, W | MOD-04 | TASK-019 (B); TASK-012/014 (W biomass overview) |
+| FR-038 | FT-022 | B, W | MOD-04 | TASK-019 (B); TASK-012/014 (W biomass overview) + **TASK-052 (W per-batch)** |
 | FR-039 | FT-044 | B, W, M | MOD-07 | TASK-031 (B); W/M harvest UI (P2) |
 | FR-040 | FT-044 | B | MOD-07 | TASK-031 |
 | FR-041 | FT-045 | W | MOD-07 | TASK-031 (B data) · W progress view CON-053 reserved (P2) |
@@ -145,9 +145,9 @@ All 16 NFRs → ≥1 TASK. ✅ (NFR-004/007/008 closed by the new TASK-048/049/0
 | FR-007 | ✓ TASK-011 | ✓ TASK-014 | — |
 | FR-009 | ✓ TASK-010 | ✓ **TASK-047** | — |
 | FR-011 | ✓ TASK-011 | ✓ TASK-013 | ✓ TASK-042 |
-| FR-012 | ✓ TASK-018 | ~ TASK-014 | ~ R1 |
-| FR-013 | ✓ TASK-019 | ~ R1 | ~ R1 |
-| FR-015 | ✓ TASK-019 | ~ R1 | ~ R1 |
+| FR-012 | ✓ TASK-018 | ✓ **TASK-052** | ~ R1 |
+| FR-013 | ✓ TASK-019 | ✓ **TASK-052** | ~ R1 |
+| FR-015 | ✓ TASK-019 | ✓ **TASK-052** | ~ R1 |
 | FR-018 | ✓ TASK-021 | — | ✓ TASK-043 |
 | FR-020 | ✓ TASK-022 | — | ✓ TASK-043 |
 | FR-022 | ✓ TASK-023 | — | ✓ TASK-043 |
@@ -172,7 +172,7 @@ All 16 NFRs → ≥1 TASK. ✅ (NFR-004/007/008 closed by the new TASK-048/049/0
 | CON-001…004 | auth/reset | TASK-008, TASK-009 | TASK-013, **TASK-046** |
 | CON-005 | /me | TASK-010 | TASK-013, TASK-042 |
 | CON-006…012 | projects + members | TASK-011 | TASK-014, **TASK-047** |
-| CON-013…017, CON-043 | ponds/batches/biomass | TASK-018, TASK-019 | TASK-014 |
+| CON-013…017, CON-043 | ponds/batches/biomass | TASK-018, TASK-019 | TASK-014, **TASK-052** |
 | CON-018, CON-018a | feeding + plan | TASK-021, TASK-022 | TASK-043 |
 | CON-019…021 | mortality/sampling/harvest | TASK-028, TASK-029, TASK-031 | TASK-043 |
 | CON-022…024 | inventory | TASK-020 | TASK-039 |
@@ -205,7 +205,7 @@ CON-049…057 are explicitly **reserved** (see openapi.yaml foot registry) — n
 
 ### Residual items (tracked, not silently dropped)
 
-- **R1 — Pond/stocking/density client UI (FR-012/013/015 web+mobile).** Backend done (TASK-018/019); the common single-pond case is covered by the inline first-pond form (TASK-014). A dedicated multi-pond management + stocking + density-advisory screen on web/mobile is **deferred** (single-pond is the v1 norm per PRODUCT_SPEC §13). *Action: add web/mobile cards if/when a project runs multiple ponds.*
+- **R1 — Pond/stocking/density client UI (FR-012/013/015 web+mobile).** Backend done (TASK-018/019). **Web half closed 2026-08-03 by TASK-052** (design W-06 `/projects/{id}/ponds` — multi-pond management, stocking, per-species density advisory). The **mobile** half remains deferred (single-pond is the v1 norm per PRODUCT_SPEC §13). *Action: add a mobile card if/when a worker's project runs multiple ponds.*
 - **R2 — Task-definition authoring UI on web (FR-031 web).** Owner-creates-recurring-task backend is TASK-041; worker completion is TASK-044. A web task-definition editor is **not yet carded** (P1/P2 boundary). *Action: add a small web card under MOD-10/12 or fold into TASK-039.*
 - **R3 — P2 read UIs** (treatments, growth/ADG/SGR, FCR, harvest progress, inventory web, market-rate config) map to reserved **CON-049…054** and are intentionally Phase-2. Their tasks are authored when those contracts are defined.
 

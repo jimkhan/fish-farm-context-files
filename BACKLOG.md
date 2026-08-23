@@ -218,6 +218,15 @@ order) define the true build DAG. P1 = MVP; P2/P3 later.
 - **Technical notes** — clamp survival ≥0; biomass null before first sampling; idempotent event consumers; **stocking-density advisory computes count ÷ area in the project's `landUnit` (bigha default); seed per-species sane-ranges calibrated to bigha** (ADR-018; ~33 decimal/bigha).
 - **Non-goals** — Mortality/sampling/harvest *sources* are MOD-07.
 
+### TASK-052 — Ponds & batches web screen (web)
+- **Type:** Feature  **Surface:** web  **Target repo:** fish-farm-web
+- **Module:** MOD-04  **Delivers:** FT-018/019/020/021/022 (web)  **Satisfies:** FR-012, FR-013, FR-015, FR-038, NFR-007, NFR-014  **Contract:** CON-013/014/015/016/043/048
+- **Priority:** P1  **Estimate:** 5  **Depends on:** TASK-013, TASK-014, TASK-018, TASK-019
+- **Context** — Design **W-06** `/projects/{id}/ponds` — the first of the nine designed-but-uncarded web screens (added 2026-08-03 to close the design↔backlog gap the tracker's screen audit found). Pond cards with their per-species batches, the per-batch stocking-density advisory, KPI row, stocking history, and the Owner-only add-pond / record-stocking flows.
+- **Acceptance criteria** — (client) AC-065 (density = count ÷ pond area, per-species advisory when outside the sane range), AC-066 (biomass = survival × latest avg weight; **null before the first sampling — render "—", never 0**), AC-060/AC-062 (Owner create pond / record stocking through the contract), AC-039 (a down biomass/density service degrades that widget only)
+- **Technical notes** — Density is computed client-side from `Pond.area` (project `landUnit`, bigha default) + `Batch.initialCount` + `Species.defaultDensityMin/Max`; a species with no configured range renders "No range · not assessed", never a false all-clear. Role gate is *hidden, not disabled* — a Partner sees every pond, batch and advisory but no write affordance anywhere.
+- **Non-goals** — No water trend chart (W-07/TASK-053); no harvest recording (W-12); no CSV export (no `kind=ponds` in CON-046); no withdrawal badge (W-10 owns it).
+
 ---
 
 ## MOD-05 — Feed & Inventory

@@ -169,8 +169,36 @@ invite** (AC-029) are required deliverables feeding NFR-011.
   persisted and the plaintext never appears in logs. — parent NFR-005
 - **AC-018** — *Given* an issued access token, *When* it is decoded, *Then* it contains the user id
   (`sub`) and **no** role or project claim. — parent FR-002
-- **AC-019** — *Given* a refresh token that has already been rotated, *When* it is presented again,
-  *Then* the token family is revoked and the request returns `TOKEN_REVOKED`/401. — parent FR-001, NFR-005
+- **AC-019** *(amended 2026-08-17 — rotation grace window)* — *Given* a refresh token that has
+  already been rotated, *When* it is presented again **more than `ROTATION_GRACE_MS` (10s) after
+  that rotation**, *Then* the token family is revoked and the request returns `TOKEN_REVOKED`/401.
+  *When* it is presented **within** that window, *Then* it is treated as a concurrent refresh: a
+  fresh token is issued in the same family and the family is left intact. — parent FR-001, NFR-005
+  - **AC-019a** — *Given* a refresh token revoked by a *security* action rather than by rotation
+    (`revokeFamily` on replay detection, or `revokeAllForUser` on password reset — both leave
+    `rotated_at` null), *When* it is presented at any time including immediately, *Then* the
+    family is revoked and the request returns `TOKEN_REVOKED`/401. The grace window must never
+    resurrect a session a password reset just ended. — parent FR-006, NFR-005
+
+  > **Why amended.** The original wording — *any* re-presentation revokes the family — is not
+  > implementable without logging legitimate users out, because an immediate replay is
+  > indistinguishable from a concurrent refresh. The owner web app renews the session inside
+  > Next.js middleware, which runs on every matched request; when the 15-minute access cookie
+  > lapses, one link click issues the navigation *and* an RSC prefetch in parallel, both carrying
+  > the same refresh cookie (the rotated one is not set until the first response returns). Under
+  > the literal rule the second request looked exactly like theft: the family was revoked, the
+  > freshly-minted token died with it, and the owner was bounced to `/login` mid-session holding a
+  > valid 30-day token. Two open tabs reproduced it every time.
+  >
+  > Bounded rotation leeway is the standard remedy (Auth0, Okta and Laravel Passport all ship it).
+  > The detection intent of AC-019 is preserved: a genuinely stolen token is replayed far outside a
+  > ten-second window and still trips full-family revocation. The residual exposure is that a
+  > stolen token can be used once within 10s of a legitimate rotation without being detected.
+  >
+  > Implemented by `refresh_token.rotated_at` (migration `1784890000000-AddRefreshTokenRotatedAt`),
+  > `RefreshToken.wasRotatedWithin()`, and `RefreshUseCase`. Proven by three e2e cases in
+  > `test/auth.e2e-spec.ts` (post-window replay revokes the family; immediate reuse succeeds with
+  > the family intact; a reset-revoked token is never graced) plus unit tests on the entity.
 - **AC-020** — *Given* a password-reset request, *When* the user confirms with a valid unexpired
   token, *Then* the password changes; an expired/used token returns `RESET_TOKEN_INVALID`/400. —
   parent FR-006
