@@ -213,6 +213,17 @@ tests cover append-only-never-conflicts + mutable LWW-with-audit (AC-131).
   dates + Bengali numerals via `packages/calendar` (no `Intl`). — parent FR-058, NFR-002, NFR-016
 - **AC-139** — *Given* a worker reassigned to a different project, *When* membership changes, *Then*
   the prior project's local data is cleared (no residue). — parent NFR-011
+- **AC-145** *(added 2026-09-25 with TASK-065 — F5 names reminders and FR-031 requires them, but no
+  AC covered the on-device half; amended the same day after a device check — see the grouping clause)*
+  — *Given* open tasks due today, *When* the app has notification permission, *Then* **one** Bangla
+  local reminder is scheduled per reminder slot, naming the tasks due then (never one notification
+  per task — six tasks sharing a slot must not become six notifications), completing a task rebuilds
+  or cancels that slot's reminder, and a refused permission degrades silently. — parent FR-031, NFR-002
+- **AC-144** *(added 2026-09-01 with TASK-061 — the design↔backlog audit found §2.5 edge case 9 and
+  §6.3 describing the offline-emergency guarantee with no AC to test it)* — *Given* a worker raises
+  an emergency while fully offline, *When* they confirm it, *Then* it is queued as a `WATER_EVENT`,
+  the worker is told **in Bangla** that it will be sent the instant a connection returns (never that
+  it failed), and it fires automatically on reconnect. — parent FR-026, NFR-001, NFR-013
 
 ## 6. Implementation & done
 
@@ -252,4 +263,4 @@ the API client from `openapi.yaml`.
 
 ---
 
-*MOD-12 detail — Fish Farm Management System. Phase 5 artifact. ACs: AC-127…AC-139. Phase 5 complete (12/12).*
+*MOD-12 detail — Fish Farm Management System. Phase 5 artifact. ACs: AC-127…AC-139, AC-144, AC-145. Phase 5 complete (12/12).*

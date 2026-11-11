@@ -472,6 +472,101 @@ order) define the true build DAG. P1 = MVP; P2/P3 later.
 
 ---
 
+## MOD-05/06/07/12 — Mobile screens designed but uncarded (2026-09-01 design↔backlog audit)
+
+> The same gap the 2026-08-03 audit found for web (closed by TASK-052): four **approved worker
+> screens** in `design/Design_System/` had no backlog card, so the mobile build would have stopped
+> with them unbuilt. `DESIGN_PROCESS.md` §3a lists M-01…M-10; cards existed only for M-01/M-02/M-03/
+> M-07/M-09/M-10 (via TASK-042…TASK-045). These four close it. **TASK-053…TASK-060 are reserved for
+> the eight remaining designed-but-uncarded WEB screens** (TASK-052's non-goals already name W-07 as
+> TASK-053), so these mobile cards are minted from TASK-061 to avoid a collision.
+>
+> Each card is the **client** half of domain behaviour the backend already implements — no new
+> endpoint, no new domain rule. Every mutation goes through the existing offline queue and
+> `POST /sync` (CON-040), so the offline guarantees (AC-128/129/130/137) apply unchanged.
+
+### TASK-061 — Mobile water emergency: one-tap raise + offline guarantee (M-08)
+- **Type:** Feature  **Surface:** mobile  **Target repo:** fish-farm-mobile-app
+- **Module:** MOD-12 (client of MOD-06)  **Delivers:** FT-036(mobile)  **Satisfies:** FR-026, NFR-001, NFR-002, NFR-013  **Contract:** CON-040 (`WATER_EVENT`)
+- **Priority:** P1  **Estimate:** 3  **Depends on:** TASK-042, TASK-024, TASK-040
+- **Context** — Design **M-08** — the highest-stakes worker screen. Fish are dying now; the worker may be panicking, in the dark, one-handed. One dominant red জরুরি button is the only thing to do; optional zero-typing context chips (মাছ ভাসছে / অক্সিজেন কম / পানি খারাপ / গণমৃত্যু) help the owner but are never required. **One** deliberate confirmation prevents a misfire without slowing a real crisis. Offline the emergency **queues and still counts** — the sheet promises "সংযোগ পেলেই সাথে সাথে পাঠানো হবে" and the SENT state repeats it. Meanwhile-advice (manual aeration, water exchange, do not feed) is **text, never a control**.
+- **Acceptance criteria** — AC-086 (a one-tap emergency reaches the owner as a CRITICAL alert via MOD-09 with no reading attached), **AC-144** (offline, the emergency is queued, the worker is told in Bangla that it will send the instant a connection returns, and it fires on reconnect), AC-128/AC-129 (queued through the same offline path, no loss)
+- **Technical notes** — `WATER_EVENT` mutation (`pondId`, optional `note` carrying the chosen chip) through the existing queue; the queue drain fires it on reconnect. No SMS fallback (MOD-12 §6.4 open question — default "no" for MVP). The app **notifies only**: no aerator/equipment affordance anywhere on the screen, and the advice block must read as instructions to the worker, never as controls.
+- **Non-goals** — No on-device SMS fallback; no alert acknowledgement UI (owner web owns it); no threshold configuration.
+
+### TASK-062 — Mobile feeding screen: today's plan + check-tray observation (M-04)
+- **Type:** Feature  **Surface:** mobile  **Target repo:** fish-farm-mobile-app
+- **Module:** MOD-12 (client of MOD-05)  **Delivers:** FT-027(mobile), FT-028  **Satisfies:** FR-020, FR-021, NFR-002, NFR-009  **Contract:** CON-018a (plan), CON-040 (`FEEDING_LOG`)
+- **Priority:** P1  **Estimate:** 3  **Depends on:** TASK-042, TASK-043, TASK-021
+- **Context** — Design **M-04** — the single-purpose feeding screen behind the খাবার tab (the M-03 composite covers the quick daily case). Today's plan per pond with its species mix and planned কেজি per feed type; polyculture ponds split floating and sinking rations onto separate lines; a temp/DO-adjusted quota shows **why** it was cut. Logging is the big stepper pre-filled with the plan ("as planned" = one tap), feed type, and the check-tray chips স্বাভাবিক / উদ্বৃত্ত / খালি.
+- **Acceptance criteria** — AC-073 (an adjusted quota is shown with its explicit reason), AC-074 (a logged feeding deducts the matching inventory item on sync), AC-077 (the check-tray observation is recorded), AC-076 (a feeding logged offline against now-insufficient stock is still recorded and flagged, never lost)
+- **Technical notes** — Reuses the existing reference mirror (ponds, `feed_plan`) and the daily-log write path; per-feed-type lines need the plan's `lines[]`, not just `totalKg`.
+- **Non-goals** — No inventory adjustment UI; no quota configuration (owner web).
+
+### TASK-063 — Mobile water reading: 7-parameter capture + aeration/chain-drag log (M-05)
+- **Type:** Feature  **Surface:** mobile  **Target repo:** fish-farm-mobile-app
+- **Module:** MOD-12 (client of MOD-06)  **Delivers:** FT-032(mobile), FT-035(mobile)  **Satisfies:** FR-022, FR-025, NFR-002, NFR-009  **Contract:** CON-040 (`WATER_READING`, `POND_ACTION`)
+- **Priority:** P1  **Estimate:** 3  **Depends on:** TASK-042, TASK-043, TASK-024, TASK-025
+- **Context** — Design **M-05** — the full reading behind the পানি tab: all seven parameters (DO, temp, pH, ammonia, nitrite, alkalinity, Secchi) on steppers, keyboard-free, with the safe range visible and a breach shown inline; plus logging an aeration or chain-drag action as a `pond_action`. M-03 captures only the morning DO/temp pair.
+- **Acceptance criteria** — AC-083 (all seven parameters can be recorded), AC-084 (an out-of-range reading is surfaced as a breach), AC-092 (a max-only parameter such as ammonia breaches on exceeding max), AC-088 (an aeration/chain-drag action is logged as `pond_action`), AC-091 (a reading captured offline is still threshold-evaluated when it syncs late)
+- **Technical notes** — One `WATER_READING` mutation per parameter (the sync contract takes a single parameter each); thresholds should come from the project's configured safe ranges rather than the design's hard-coded floors — mirror them alongside ponds.
+- **Non-goals** — No trend chart (owner web W-07); no threshold configuration; no sensor ingestion.
+
+### TASK-064 — Mobile mortality & sampling (M-06)
+- **Type:** Feature  **Surface:** mobile  **Target repo:** fish-farm-mobile-app
+- **Module:** MOD-12 (client of MOD-07)  **Delivers:** FT-038(mobile), FT-041(mobile)  **Satisfies:** FR-027, FR-028, FR-035, NFR-002, NFR-009  **Contract:** CON-040 (`MORTALITY`, `SAMPLING`)
+- **Priority:** P1  **Estimate:** 3  **Depends on:** TASK-042, TASK-043, TASK-027, TASK-029
+- **Context** — Design **M-06** — mortality (near-daily) and sampling (every ~10 days) under one segmented control. Mortality defaults to ০ so "no deaths" costs nothing; cause is single-select chips (অক্সিজেন / রোগ / শিকার / হ্যান্ডলিং / অজানা); a photo is optional proof, never a blocker. An unusually high count shows a **calm amber note framed without blame** — information that the owner will be told. Sampling records sample size + average weight with the pond's recent samplings for a sanity check.
+- **Acceptance criteria** — AC-094 (mortality with count, cause and optional photo is logged), AC-095 (survival/biomass update on sync), AC-096 (a sampling is recorded and feeds the quota), AC-100 (a spike is detected server-side; the client states plainly that the owner is informed, never as an error or blame)
+- **Technical notes** — The mortality icon is the **fish-off mark, never a skull** (design review §5). The "higher than usual" note needs a local baseline (recent mortality rows) — do not fabricate a server figure. Sampling avg weight steps in decimals (grams).
+- **Non-goals** — No treatment recording; no growth charts; no harvest.
+
+---
+
+## MOD-12 / MOD-09 — Mobile gaps found while building the worker app (2026-09-25)
+
+> Three deliverables the mobile cards deliberately left open, recorded rather than quietly dropped.
+> TASK-065 is buildable now; **TASK-066 and TASK-067 are blocked and must not be started** until the
+> human resolves what each one names.
+
+### TASK-065 — Mobile local task reminders (on-device, no server)
+- **Type:** Feature  **Surface:** mobile  **Target repo:** fish-farm-mobile-app
+- **Module:** MOD-12  **Delivers:** FT-067(mobile — the reminder half)  **Satisfies:** FR-031, NFR-001, NFR-002  **Contract:** — (no endpoint; on-device only)
+- **Priority:** P2  **Estimate:** 2  **Depends on:** TASK-044
+- **Context** — TASK-044 delivered the due list and completion but **not** the reminders its own context names; FR-031 asks for "recurring reminders" and FT-067's mobile column is exactly that. These are **local** notifications scheduled on the device from the mirrored task list, so they work with no signal — which is the point, since the worker is usually offline. Push (the "backup" half) is MOD-09's channel and is blocked separately (TASK-067).
+- **Acceptance criteria** — **AC-145** — *Given* open tasks due today, *When* the app has notification permission, *Then* a **Bangla** local reminder is scheduled for each at the day's reminder time, completing a task cancels its reminder, and a refused permission degrades silently (the task list still works) — parent FR-031, NFR-002
+- **Technical notes** — `expo-notifications` local scheduling only; no FCM credentials needed. Reconcile (schedule missing / cancel stale) whenever the mirrored task list changes, so a completed or deleted task never fires. **`Task` carries no time-of-day** (the M-07 mockup shows "সকাল ৭:০০" but the contract has only `dueOn`), so reminders fire at a fixed local morning hour until the contract carries a per-task time — do not fabricate one. **Because every task of a day therefore shares one slot, reminders are scheduled per *slot*, not per task** (amended 2026-09-25 after a device check found six alarms registered for the same second — the `MAX_REMINDERS` cap limits the queue but not the pile-up at the tray). One notification names up to three tasks and counts the rest; reconciliation matches on a fingerprint of slot + task ids, so completing one task of six rebuilds that slot with the remaining five. When the contract gains a per-task time, slots become naturally distinct and the grouping quietly stops applying.
+- **Non-goals** — No push/FCM (TASK-067); no missed-task detection (server-side, TASK-041); no per-task time UI.
+
+### TASK-066 — Proof-photo upload for mortality and task completion  🚧 **BLOCKED — contract gap**
+- **Type:** Feature  **Surface:** mobile, backend  **Target repo:** fish-farm-mobile-app (+ backend)
+- **Module:** MOD-12 (+MOD-07)  **Delivers:** FT-038/FT-068 (the photo half)  **Satisfies:** FR-027, FR-032, MOD-12 R9  **Contract:** **needs a new endpoint — none exists**
+- **Priority:** P2  **Estimate:** — (unestimable until the contract is decided)  **Depends on:** TASK-043, TASK-044, TASK-064
+- **Context** — `Mortality.photoUrl` and `TaskLog.photoUrl` are **server-side URLs**, and MOD-12 R9 says photos are "compressed before queueing; uploaded on sync" — but **no endpoint in `contracts/openapi.yaml` accepts a file**. The mobile app therefore captures and compresses the photo, keeps it on the device (`photo_local_uri`), and never sends a `file://` path as `photoUrl`. The proof the owner is supposed to see does not reach them today.
+- **Blocked on (human decision — contract change is a guardrail):** (a) add an upload endpoint (multipart or a pre-signed-URL handshake) and where the bytes live (VPS disk vs object storage — ADR territory, none exists); (b) how an **offline-queued** photo uploads — the `/sync` batch is JSON, so the photo needs its own transfer that resolves to a URL *before* or *after* the mutation replays; (c) retention/size limits for a low-end device and a modest VPS.
+- **Acceptance criteria** — to be written once the contract is decided; today's behaviour (photo kept locally, never a fake URL) is covered by existing tests.
+- **Non-goals** — Do not invent an endpoint or a storage location to unblock this.
+
+### TASK-068 — Mobile task streak (M-07 ALL DONE) — needs a source of truth for "consecutive days"
+- **Type:** Feature  **Surface:** mobile (+ backend, if the streak is server-computed)  **Target repo:** fish-farm-mobile-app
+- **Module:** MOD-12  **Delivers:** FT-067 (the ALL DONE frame's habit loop)  **Satisfies:** FR-031, NFR-009  **Contract:** **none today — see below**
+- **Priority:** P3  **Estimate:** 2 (client only, once the figure exists)  **Depends on:** TASK-044
+- **Context** — M-07's ALL DONE frame shows a streak pill, "টানা ৭ দিন সব কাজ শেষ" — the reward that keeps the daily habit going. It is the one element of M-07 the app does **not** render, because it cannot be computed honestly: a streak needs, for every past day, whether *every* task due that day was completed, and the mobile mirror keeps only current tasks (a recurring task is one row rolled forward, so yesterday's due-set is gone). The rest of the frame — the check circle, the Bangla congratulation, the recap and হোমে ফিরুন — is built and shipping.
+- **Blocked on (human decision):** where the figure comes from — (a) the server computes it from `task_log` (it has the full history) and returns it with the task list, which needs a contract field; or (b) the app retains a small local per-day "all done" ledger, which is cheap but resets on reinstall and cannot be trusted across devices. (a) is the honest one; (b) is the offline-pure one.
+- **Acceptance criteria** — to be written with the decision. Today's behaviour (streak omitted, never fabricated) is deliberate and matches TASK-064's "do not fabricate a server figure" rule.
+- **Non-goals** — Do not invent a streak client-side from the current task list; a wrong streak is worse than none for a habit cue.
+
+### TASK-067 — Mobile push registration + alert delivery  🚧 **BLOCKED — credentials**
+- **Type:** Feature  **Surface:** mobile  **Target repo:** fish-farm-mobile-app
+- **Module:** MOD-09 (client)  **Delivers:** FT-051(mobile)  **Satisfies:** FR-031, NFR-013  **Contract:** CON-045 (`POST /notifications/devices`)
+- **Priority:** P2  **Estimate:** 2  **Depends on:** TASK-016, TASK-065
+- **Context** — MOD-09 registers a device's FCM token (CON-045) and pushes alerts; the worker app is a delivery target (missed tasks, water breaches, emergencies raised elsewhere).
+- **Blocked on (human):** a Firebase project and its `google-services.json` — the repo has none, and adding the Firebase Gradle plugin without it breaks the Android build. Nothing else blocks it.
+- **Acceptance criteria** — AC-052/AC-055 (client half) once credentials exist.
+- **Non-goals** — No SMS/WhatsApp (Phase 2 stubs); no local reminders (TASK-065).
+
+---
+
 ## MOD-02 / MOD-03 — Web surfaces missed in the first pass (Phase-6 closure)
 
 ### TASK-046 — Password reset + account management web pages (web)

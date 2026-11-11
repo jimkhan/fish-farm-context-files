@@ -92,5 +92,15 @@
     "sizeSm": { "value": "20" },
     "sizeMd": { "value": "28" },
     "sizeLg": { "value": "40", "description": "Icon-first worker actions" }
+  },
+  "layout": {
+    "contentMaxWidth": {
+      "value": "1600",
+      "description": "Max width of page content inside the owner/partner web shell. Fluid up to this cap so a 1080p/22\" monitor is filled edge to edge (sidebar + gutters + content), then centered with symmetric margins on ultrawide screens (mirrors ui_kits/partner_web `maxWidth + margin: 0 auto`)."
+    },
+    "contentNarrowMaxWidth": {
+      "value": "760",
+      "description": "Max width for single-column reading/form pages (account, project create/edit, role-denied notices)."
+    }
   }
 }

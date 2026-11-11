@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Fish Farm Management System (FMS) API
-  version: 0.1.12
+  version: 0.1.14
   description: >
     Contract-first API for the FMS. The backend (fish-farm-backend) implements this contract;
     the web and mobile clients are generated from it (ADR-003). Every operation carries a CON- id
@@ -46,6 +46,22 @@ info:
     (minted CON-059, next free id, same posture as CON-058) rather than mutating CON-025's shipped
     shape. `advisory` is non-null only for DO when the pattern is currently active — never
     fabricated for other parameters or a flat/rising series.
+    0.1.13 (MOD-03 review): `Alert` gained `sourceRef` — the id of the entity the alert is about
+    (pond for WATER_THRESHOLD/WATER_EMERGENCY, batch for ABNORMAL_MORTALITY, inventory item for
+    LOW_STOCK, task for MISSED_TASK). The field already existed server-side as the dedup key but
+    was never on the wire, leaving clients no structured way to link an alert to the row it
+    concerns; the web overview had resorted to substring-matching a pond's name inside `message`,
+    which mis-flagged "Pond 1" for a "Pond 12" alert and broke silently whenever a pond was
+    renamed. (Note: changelog entries for 0.1.10–0.1.12 are missing — those bumps predate this
+    pass and should be back-filled by whoever made them.)
+    0.1.14 (MOD-04 review): `Batch` gained `harvestedCount` and `survivorsExcludingHarvest`, and
+    `survivalEstimate`'s description was corrected — it read "initialCount - cumulativeMortality",
+    omitting the harvest term MOD-04 R4 has always specified. The two figures answer different
+    questions and had been conflated: `survivalEstimate` is stock still in the pond (drives biomass
+    and feed), while survival *rate* must exclude harvest, because a harvested fish survived. Without
+    `harvestedCount` on the wire a client could not tell the two apart, so the web overview labelled
+    harvested fish as "lost" and a healthy 60%-harvested batch reported a 40% survival rate. See the
+    AC-099 amendment in `modules/07-health-growth-harvest.md`.
     Tenant isolation (NFR-011): all `/projects/{projectId}/...` resources are auto-scoped to the
     caller's ProjectMembership; a non-member receives 403/404 uniformly and never another
     project's data.
@@ -718,7 +734,9 @@ components:
         speciesId: { type: string, format: uuid }
         initialCount: { type: integer }
         cumulativeMortality: { type: integer }
-        survivalEstimate: { type: integer, description: initialCount - cumulativeMortality }
+        harvestedCount: { type: integer }
+        survivalEstimate: { type: integer, description: "Fish still in the pond: max(0, initialCount - cumulativeMortality - harvestedCount) (MOD-04 R4). Drives biomass and feed." }
+        survivorsExcludingHarvest: { type: integer, description: "Fish that did not die: max(0, initialCount - cumulativeMortality) (MOD-04 R4a). Drives survival rate - a harvested fish survived, so it must not count as a loss." }
         latestAvgWeightG: { type: number, nullable: true }
         status: { $ref: '#/components/schemas/BatchStatus' }
         stockedOn: { type: string, format: date }
@@ -955,6 +973,7 @@ components:
         severity: { $ref: '#/components/schemas/AlertSeverity' }
         state: { $ref: '#/components/schemas/AlertState' }
         message: { type: string }
+        sourceRef: { type: string, description: "The entity this alert is about — pond id for WATER_THRESHOLD/WATER_EMERGENCY, batch id for ABNORMAL_MORTALITY, inventory item id for LOW_STOCK, task id for MISSED_TASK. Lets a client correlate an alert to the row it belongs to instead of parsing `message`." }
         raisedAt: { type: string, format: date-time }
         acknowledgedAt: { type: string, format: date-time, nullable: true }
         escalatedAt: { type: string, format: date-time, nullable: true, description: "TASK-017 addition — set once if this CRITICAL alert was re-notified past the SLA (R7/AC-054)." }

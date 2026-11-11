@@ -34,7 +34,7 @@ Code repos (created in Phase 7) hold only generated code plus their own `.cursor
 | `INDEX.md` | 1 (refreshed each phase) | ✅ Current | — |
 | `PRODUCT_SPECIFICATION.md` | 2 | ✅ Complete | FR-001…FR-061, NFR-001…NFR-016 |
 | `TECHNICAL_SPECIFICATION.md` | 3 | ✅ Complete | — |
-| `DECISIONS.md` | 3 (+P7 amend) | ✅ Complete | ADR-001…ADR-017 (ADR-017 reverted; ADR-002 governs repo layout) |
+| `DECISIONS.md` | 3 (+P7 amend, +construction amend) | ✅ Complete | ADR-001…ADR-020 (ADR-017 reverted; ADR-019 unassigned; ADR-002 governs repo layout; ADR-020 = Expo mobile stack) |
 | `contracts/openapi.yaml` | 3 (+P6 closure) | ✅ Complete | CON-001…CON-048 (CON-049…057 reserved) |
 | `contracts/design-tokens.json` | 3 | ✅ Complete (stub) | full token values live in `design/Design_System/tokens/` |
 | `contracts/schemas/` | 3 | ✅ Complete (pointer) | — |
@@ -53,7 +53,7 @@ Code repos (created in Phase 7) hold only generated code plus their own `.cursor
 | `modules/08-finance-roi.md` | 5 | ✅ Complete | AC-107…AC-117 |
 | `modules/10-monitoring-reporting.md` | 5 | ✅ Complete | AC-118…AC-126 |
 | `modules/12-worker-mobile-app.md` | 5 | ✅ Complete | AC-127…AC-139 |
-| `BACKLOG.md` | 6 | ✅ Complete | TASK-001…TASK-051 |
+| `BACKLOG.md` | 6 (+construction audits) | ✅ Complete | TASK-001…TASK-068 (053…060 reserved; 066/067/068 blocked) |
 | `TRACEABILITY_MATRIX.md` | 6 | ✅ Complete | — |
 | `MODULE_PROGRESS_TRACKER.md` | 7 | ✅ Complete | — |
 | `DESIGN_PROCESS.md` | design-first (ahead of P7 web/mobile build) | ✅ Complete | screen-id → file map; §3b nav, §3c data-integrity, §4 review log, §5 punch-list |
@@ -73,12 +73,12 @@ Legend: ✅ Complete · ⏳ Not started · 🔄 In progress
 | `RISK-` | Risk | **RISK-007** | PROJECT_CONCEPT_NOTE.md |
 | `FR-` | Functional requirement | **FR-061** | PRODUCT_SPECIFICATION.md |
 | `NFR-` | Non-functional requirement | **NFR-016** | PRODUCT_SPECIFICATION.md |
-| `ADR-` | Architecture decision | **ADR-018** | DECISIONS.md |
+| `ADR-` | Architecture decision | **ADR-020** | DECISIONS.md |
 | `CON-` | Contract element | **CON-048** (CON-049…057 reserved) | contracts/openapi.yaml |
 | `FT-` | Feature | **FT-069** | FEATURE_LIST.md |
 | `MOD-` | Module | **MOD-12** | MODULE_LIST.md |
-| `AC-` | Acceptance criterion | **AC-143** | modules/ · BACKLOG.md |
-| `TASK-` | Backlog card | **TASK-051** | BACKLOG.md |
+| `AC-` | Acceptance criterion | **AC-145** | modules/ · BACKLOG.md |
+| `TASK-` | Backlog card | **TASK-068** (TASK-053…060 reserved for the remaining web screens) | BACKLOG.md |
 
 > IDs are immutable. Never renumber; add new IDs and mark dead ones `[deprecated]`.
 

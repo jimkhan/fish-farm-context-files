@@ -6,6 +6,13 @@
 > implemented (backend) and consumed (client) by a task. Cells reference the **delivering** task;
 > where a surface is bundled into a shell/consumer card that is noted. Authored after the Phase-6
 > closure pass (added TASK-046…TASK-050, CON-047, CON-048).
+>
+> **2026-09-25 mobile update.** The design↔backlog audit added TASK-061…TASK-064 for the four
+> approved worker screens that had no card (M-08 emergency, M-04 feeding, M-05 water reading,
+> M-06 mortality & sampling) plus **AC-144** (the offline-emergency guarantee, which MOD-12 §2.5
+> edge case 9 described with no AC to test it). All eight mobile cards — TASK-042…045 and
+> TASK-061…064 — are now implemented and awaiting human review; the mobile-surface cells below
+> name the delivering card rather than the shell/composite that merely touched the domain.
 
 ---
 
@@ -60,14 +67,14 @@ Surface legend per cell: **B** backend · **W** web · **M** mobile · **S** sha
 | FR-017 | FT-024 | B | MOD-05 | TASK-021 |
 | FR-018 | FT-025 | B, M | MOD-05 | TASK-021 (B); TASK-043 (M) |
 | FR-019 | FT-026 | M, B | MOD-05 | TASK-021 (B reminders); TASK-044 (M local reminders) |
-| FR-020 | FT-027 | B, M | MOD-05 | TASK-022 (B); TASK-043 (M) |
-| FR-021 | FT-028 | M | MOD-05 | TASK-043 (M check-tray) |
-| FR-022 | FT-032, FT-037 | B, M | MOD-06 | TASK-023, TASK-027 (B); TASK-043 (M) |
+| FR-020 | FT-027 | B, M | MOD-05 | TASK-022 (B); TASK-043 (M daily log), TASK-062 (M feeding screen) |
+| FR-021 | FT-028 | M | MOD-05 | TASK-043 (M check-tray), TASK-062 (M feeding screen) |
+| FR-022 | FT-032, FT-037 | B, M | MOD-06 | TASK-023, TASK-027 (B); TASK-043 (M DO/temp), TASK-063 (M all 7 parameters) |
 | FR-023 | FT-033 | B, W | MOD-06 | TASK-023 (B); TASK-039 (W thresholds view) |
 | FR-024 | FT-034 | W | MOD-06 | TASK-026 (B data) + TASK-039 (W charts) |
-| FR-025 | FT-035 | B, M | MOD-06 | TASK-025 (B); TASK-043/044 (M) · CON-050 reserved |
-| FR-026 | FT-036 | M, B | MOD-06 | TASK-024 (B); TASK-043 (M emergency) |
-| FR-027 | FT-038 | B, M | MOD-07 | TASK-028 (B); TASK-043 (M) |
+| FR-025 | FT-035 | B, M | MOD-06 | TASK-025 (B); TASK-063 (M aeration/chain-drag) · CON-050 reserved |
+| FR-026 | FT-036 | M, B | MOD-06 | TASK-024 (B); TASK-061 (M emergency, AC-086/AC-144) |
+| FR-027 | FT-038 | B, M | MOD-07 | TASK-028 (B); TASK-043 (M daily log), TASK-064 (M mortality screen) |
 | FR-028 | FT-020, FT-038 | B | MOD-04/07 | TASK-019 + TASK-028 |
 | FR-029 | FT-039 | B, W, M | MOD-07 | TASK-028 (B, done — CON-051 delivered) · W treatments UI (P2) |
 | FR-030 | FT-040 | B | MOD-07 | TASK-028 |
@@ -75,7 +82,7 @@ Surface legend per cell: **B** backend · **W** web · **M** mobile · **S** sha
 | FR-032 | FT-068 | M | MOD-12 | TASK-044 |
 | FR-033 | FT-066 | M | MOD-12 | TASK-043 |
 | FR-034 | FT-064, FT-065 | M, B | MOD-12 | TASK-040 (B); TASK-042 (M engine) |
-| FR-035 | FT-041 | B, M, W | MOD-07 | TASK-029 (B, done — CON-052 delivered for ADG/SGR); TASK-043 (M) · W sampling view (P2) |
+| FR-035 | FT-041 | B, M, W | MOD-07 | TASK-029 (B, done — CON-052 delivered for ADG/SGR); TASK-064 (M sampling) · W sampling view (P2) |
 | FR-036 | FT-042 | B, W | MOD-07 | TASK-029 (B, done — CON-052 delivered for ADG/SGR) · W growth charts (P2) |
 | FR-037 | FT-043 | B, W | MOD-07 | TASK-030 (B) · W FCR view (P2) |
 | FR-038 | FT-022 | B, W | MOD-04 | TASK-019 (B); TASK-012/014 (W biomass overview) + **TASK-052 (W per-batch)** |

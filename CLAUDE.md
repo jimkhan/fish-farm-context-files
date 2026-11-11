@@ -29,7 +29,7 @@ A multi-project, multi-site polyculture aquaculture management system (Banglades
 | Backend | NestJS (TypeScript), modular monolith, Clean Architecture |
 | ORM / DB | TypeORM (Data Mapper) + PostgreSQL |
 | Owner web | Next.js (TypeScript) |
-| Worker app | React Native (TypeScript), offline-first, Bangla |
+| Worker app | **Expo SDK 57** + React Native (TypeScript), offline-first, Bangla (ADR-020) |
 | Validation | class-validator / zod at the presentation boundary (DTOs) |
 | Auth | JWT sessions; membership-based authorization |
 | Push | FCM (SMS/WhatsApp adapters are Phase 2 stubs) |
@@ -70,6 +70,41 @@ presentation/    controllers, request/response DTOs, guards
 - **Time:** store UTC; convert for display. Bangla dates are display-only via `packages/calendar`.
 - **Every project-owned table** carries a `project_id` column (indexed), even when reachable via pond/batch — this enables cheap, uniform isolation filtering.
 
+## 5b. Input validation (EVERY form, EVERY surface — no exceptions)
+
+Every input the user can type into, step, pick or toggle is validated. This is not a per-screen
+choice; a form that can be submitted in an invalid state is a defect, the same as a failing test.
+
+**The rules**
+1. **Never submit an invalid form.** The submit handler validates first and stops on failure —
+   disabling the button is not enough on its own (a disabled-looking control still gets pressed on a
+   cheap touchscreen, and the web surface has keyboard submit). No request leaves the client for a
+   form that cannot succeed.
+2. **A message per field, next to that field.** One message at a time (the first failing rule),
+   placed under the input it belongs to, plus the field's error styling. A single form-level "invalid
+   input" banner is not acceptable.
+3. **Show errors only after the field is touched or submit was pressed.** A cold-open form never
+   greets the user with red.
+4. **Client rules mirror the server contract; they never invent stricter ones.** Read the DTO /
+   `contracts/openapi.yaml` before writing a rule. Being stricter than the API locks users out of
+   valid data (e.g. login's password is `MinLength(1)` server-side — a min-8 rule there would lock a
+   worker out of their own account; min-8 belongs to password *reset*, where the contract sets it).
+5. **Client validation is a courtesy, never the security boundary.** The server re-validates
+   everything; DTO validation at the presentation boundary stays mandatory (§5).
+6. **Rules are pure, shared and tested.** Compose them from the surface's shared validation module
+   (`fish-farm-mobile-app/src/validation`, and the web equivalent) — never a regex inlined in a
+   screen. Each rule gets unit tests, and each form gets a test proving an empty/invalid submit is
+   refused and the message appears.
+7. **Messages are i18n keys, not strings.** A rule returns `{messageKey, params}`; only the i18n
+   layer renders text. The worker app is Bangla-only with Bengali numerals (NFR-002, AC-138), so a
+   validator that formats its own message will leak Western digits or English.
+8. **Keyboard-free worker inputs validate too.** Steppers and chips constrain values at the edges
+   (min/max, allowed set) rather than letting an out-of-range value reach the queue.
+
+**Definition of done additions** (see §7): every new form has (a) a schema built from shared rules,
+(b) per-field messages in the surface's language, (c) a test that an invalid submit is blocked and
+does not call the API, and (d) rules that match the contract they post to.
+
 ## 6. Security & access
 - Authorization is by `ProjectMembership` role (`OWNER` / `WORKER` / `PARTNER`), resolved per project per request — not a global role.
 - `WORKER`: operational read/write on their one project; no finance, no settings.
@@ -82,6 +117,8 @@ A unit of work is DONE only when all hold:
 - [ ] Domain logic has unit tests; module has an integration test for one happy path + one failure path.
 - [ ] **Tenant isolation test** where the unit touches project-owned data: a user without membership is denied (negative test is a deliverable).
 - [ ] Offline path verified for any worker-app unit (write offline → sync → assert).
+- [ ] **Every form in the unit validates per §5b**: shared pure rules, a per-field message in the
+  surface's language, and a test proving an invalid/empty submit is blocked and never calls the API.
 - [ ] Calendar units pass the **anchor tests** (21 Feb=8 Falgun, 26 Mar=12 Choitro, 16 Dec=1 Poush, 14 Apr=1 Boishakh).
 - [ ] Parent story's acceptance criteria demonstrably met.
 - [ ] Migration included and reversible; no secrets in code.
@@ -126,8 +163,25 @@ Modules build in `MODULES_OVERVIEW.md` implementation order; the depend-on edges
 runner). `migration:*` scripts additionally need `DB_HOST/DB_PORT/DB_USERNAME/DB_PASSWORD/DB_NAME`
 env vars pointing at a reachable Postgres.
 
-Web (`fish-farm-web`) and mobile (`fish-farm-mobile-app`) commands are added when those repos are
-scaffolded. Keep these accurate as the project grows; the agent uses them to self-verify before handing off.
+## 10b. Commands (mobile — `fish-farm-mobile-app/`; scaffolded 2026-08-23)
+```
+# install:              npm install               # postinstall syncs tokens + regenerates the API client
+# native project:       npm run prebuild          # generate android/ from app.json (Expo CNG; not committed)
+#                       npm run prebuild:clean    # regenerate from scratch
+# dev server:           npm start                 # expo start --dev-client  (Expo Go will NOT work)
+# run on Android:       npm run android           # expo run:android
+# release build:        npm run build:android
+# lint / typecheck:     npm run lint  |  npm run typecheck
+# test:                 npm test                  # jest (jest-expo); offline write->sync->no-loss suite
+# env/deps check:       npm run doctor            # expo-doctor
+# regenerate contracts: npm run contracts:sync    # tokens:sync + api:generate (openapi.yaml -> typed client)
+```
+**Stack (ADR-020):** Expo SDK 57 + RN 0.86.x, New Architecture, Android-first (API 28+).
+WatermelonDB is native, so development needs a **dev client** build, not Expo Go. `android/` is
+generated — express native changes as Expo config plugins in `app.json`, never by editing `android/`.
+
+Web (`fish-farm-web`) commands are added when that repo's scaffold is revisited. Keep these accurate
+as the project grows; the agent uses them to self-verify before handing off.
 
 ## 11. What the agent must NOT do
 - Put TypeORM decorators on domain entities, or use Active Record.

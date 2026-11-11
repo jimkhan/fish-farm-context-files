@@ -195,6 +195,13 @@ below** — this table is the source of truth for which file holds which screen:
 | M-08 | Water Emergency | P1 | One-tap CRITICAL raise; offline "will send when online" | ✅ |
 | M-09 | Camera view | P2 | Live site stream; offline placeholder | ✅ |
 | M-10 | Sync / Queue status | P1 | Pending/synced/conflict/failed items; last sync; retry/conflict review | ✅ |
+| M-11 | আরও / More tab | P2 | The fifth bottom-nav destination: everything that is not one of the four daily actions (mortality, emergency, camera, sync status, sign-out) | ⬜ **no mockup — see §4 note of 2026-09-25** |
+
+> **M-11 was never designed.** Every approved mockup shows আরও as the fifth bottom-nav item, but no
+> frame shows the screen behind it — the gap surfaced only when the tab was built (2026-09-25). It is
+> implemented from the F-02 language rather than from a frame; a mockup would settle the questions
+> code had to answer on its own (grouping, whether sign-out belongs here, whether the bound project
+> is shown).
 
 Suggested design order: **F-01 → F-02** (lock both languages), then web **W-03, W-04** (the shell &
 portfolio set the pattern), then mobile **M-02, M-03** (home + the make-or-break daily log), then fan
@@ -400,6 +407,28 @@ directly from disk and runs one consolidated pass covering:
 ---
 
 ## 4. REVIEW LOG (per-screen decisions & revisions)
+
+### M-07 + M-11 — 2026-09-25 — build-time design audit (mobile)
+
+Found while making the কাজ and আরও tabs match the design system, after the worker app was built:
+
+1. **M-07 was missing the app chrome.** F-02 §01 defines the brand band (project/title · sync pill ·
+   Bangla date + ritu) as *app chrome* — it belongs on every worker screen, and every M-* frame
+   carries it. The tasks tab rendered without it, so the screen could not answer "am I online?".
+   Fixed: it now uses the shared `BrandHeader`, the same component M-02/M-03/M-08 use.
+2. **M-07's empty state fired on the wrong condition.** The design's EMPTY frame means *nothing due
+   today* — with আসন্ন কাজ still listed beneath it. The code only showed it when the worker had **no
+   tasks at all**, so a day with nothing due but work upcoming rendered a headless blank. Fixed.
+   The bare fallback line is now the designed state card (icon · title · calm Bangla detail).
+3. **M-07's missed rows dropped the pond.** `.miss-row`'s meta is "pond · overdue note"; the code
+   showed only the overdue note, so the worker could not tell *which* pond was overdue. Fixed.
+4. **The `streak` pill is not implementable honestly.** The ALL DONE frame shows "টানা ৭ দিন সব কাজ
+   শেষ", but a truthful streak needs per-day history of *every* task due and completed, and the
+   mobile mirror keeps only current tasks (recurrence rolls a single row forward). It is omitted
+   rather than faked — the same rule as TASK-064's "do not fabricate a server figure". It needs
+   either a server-provided streak or a retained local history; **carded as TASK-068**.
+5. **M-11 (আরও) has no mockup at all** — see the inventory note above.
+
 
 ### §5 CONSOLIDATED BATCH REVIEW — 2026-07-25 — all 30 screens design-reviewed ✅
 

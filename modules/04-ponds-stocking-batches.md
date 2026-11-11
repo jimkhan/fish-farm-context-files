@@ -61,6 +61,12 @@ biomass; the owner sees biomass in the portfolio and project dashboard. Partner 
 - **R3** Each Stocking creates **exactly one** Batch (`Stocking 1—1 Batch`).
 - **R4** `survival_estimate = max(0, initial_count − cumulative_mortality − harvested_count)`; it is
   never negative; if mortality/harvest would exceed initial, clamp at 0 and flag a data anomaly.
+  This is the **stock** figure — fish still in the pond — and is what biomass and feed quotas use.
+- **R4a** *(added 2026-08-17)* `survivors_excluding_harvest = max(0, initial_count −
+  cumulative_mortality)`. This is the **survival** figure, and the only correct basis for survival
+  rate (AC-099, amended): a harvested fish survived, so counting it as a loss misreports a
+  successful harvest as mortality. Keep the two apart — conflating them is the specific defect this
+  rule exists to prevent.
 - **R5** A pond may hold **multiple batches** (true polyculture: multiple species). Density advisory
   is computed **per species** (and a total-pond density is available).
 - **R6** Biomass uses the **latest sampling average weight** per species; before the first sampling

@@ -180,8 +180,22 @@ denied (AC-105); harvest → biomass reduce + revenue (AC-102). Money-as-minor-u
   and SGR are returned per species. — parent FR-036
 - **AC-098** — *Given* pond feed input and biomass gain, *When* FCR is requested, *Then* it is
   computed **at pond level**; a per-species FCR request is refused (`NOT_SUPPORTED`). — parent FR-037
-- **AC-099** — *Given* a batch, *When* survival rate is requested, *Then* it equals current survival
-  ÷ initial count. — parent FR-037
+- **AC-099** *(amended 2026-08-17 — survival excludes harvest)* — *Given* a batch, *When* survival
+  rate is requested, *Then* it equals `survivors_excluding_harvest ÷ initial_count`, where
+  `survivors_excluding_harvest = max(0, initial_count − cumulative_mortality)` (MOD-04 R4a). —
+  parent FR-037
+
+  > **Why amended.** "Current survival" resolved to MOD-04 R4's `survival_estimate`, which also
+  > subtracts `harvested_count`. That figure is correct for *stock* — biomass and feed quotas must
+  > drop when fish leave the pond — but wrong for *survival*, which measures husbandry. Under the
+  > old reading a farmer who harvested 60% of a flawless batch saw **"survival rate 40%"**,
+  > presented identically to a 60% die-off, on a headline health KPI. A harvested fish survived; it
+  > was sold, not lost.
+  >
+  > The two figures are now distinct on `Batch` (`survivalEstimate` vs `survivorsExcludingHarvest`,
+  > both on the wire since openapi 0.1.14, along with `harvestedCount`) and in the read models that
+  > consume them — `GET /projects/{id}/biomass` and `GET .../ponds/{pondId}/fcr`. Biomass and feed
+  > continue to use `survivalEstimate`; only the survival *rate* changed.
 - **AC-100** — *Given* a mortality spike above baseline, *When* detected, *Then*
   `AbnormalMortalityDetected` is emitted and a single alert is raised via MOD-09. — parent FR-030
 - **AC-101** — *Given* a treatment with a withdrawal period, *When* an EXPORT harvest is attempted
